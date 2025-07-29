@@ -22,7 +22,7 @@ export default function Navigation() {
               className="text-[24px] font-medium text-[#15171a] leading-normal"
               style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}
             >
-              buythatworks
+              workswith
             </span>
           </Link>
         </div>

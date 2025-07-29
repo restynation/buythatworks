@@ -6,7 +6,7 @@ import React from 'react'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'buythatworks - Mac Monitor Compatibility',
+  title: 'workswith - Mac Monitor Compatibility',
   description: 'Verify whether your Mac and external monitor work together at full performance',
 }
 
