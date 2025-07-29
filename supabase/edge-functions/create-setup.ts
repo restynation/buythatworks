@@ -1,0 +1,144 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
+  try {
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    const { setup, blocks, edges } = await req.json()
+
+    // Validate input
+    if (!setup.name || !setup.user_name || !setup.password_hash) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required setup fields' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (!blocks || blocks.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'Setup must have at least one block' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Count computers
+    const computerBlocks = blocks.filter((block: any) => {
+      // Look up device type name
+      return block.device_type_id === 1 // computer ID
+    })
+
+    if (computerBlocks.length !== 1) {
+      return new Response(
+        JSON.stringify({ error: 'Setup must have exactly one computer' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Validate that all blocks have required data
+    for (const block of blocks) {
+      const deviceTypeId = block.device_type_id
+      
+      // Computer and monitor need product_id
+      if ([1, 2].includes(deviceTypeId) && !block.product_id) {
+        return new Response(
+          JSON.stringify({ error: 'Computer and monitor blocks must have a product selected' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+      
+      // Other devices need custom_name
+      if (![1, 2].includes(deviceTypeId) && !block.custom_name?.trim()) {
+        return new Response(
+          JSON.stringify({ error: 'Hub, mouse, and keyboard blocks must have a name' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+    }
+
+    // Create setup in transaction
+    const { data: setupData, error: setupError } = await supabase
+      .from('setups')
+      .insert([setup])
+      .select('id')
+      .single()
+
+    if (setupError) {
+      console.error('Setup creation error:', setupError)
+      return new Response(
+        JSON.stringify({ error: 'Failed to create setup' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const setupId = setupData.id
+
+    // Create blocks with setup_id
+    const blocksWithSetupId = blocks.map((block: any) => ({
+      ...block,
+      setup_id: setupId
+    }))
+
+    const { data: blocksData, error: blocksError } = await supabase
+      .from('setup_blocks')
+      .insert(blocksWithSetupId)
+      .select('id')
+
+    if (blocksError) {
+      console.error('Blocks creation error:', blocksError)
+      // Clean up setup
+      await supabase.from('setups').delete().eq('id', setupId)
+      return new Response(
+        JSON.stringify({ error: 'Failed to create setup blocks' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Create edges if provided
+    if (edges && edges.length > 0) {
+      const edgesWithSetupId = edges.map((edge: any) => ({
+        ...edge,
+        setup_id: setupId
+      }))
+
+      const { error: edgesError } = await supabase
+        .from('setup_edges')
+        .insert(edgesWithSetupId)
+
+      if (edgesError) {
+        console.error('Edges creation error:', edgesError)
+        // Clean up setup and blocks
+        await supabase.from('setups').delete().eq('id', setupId)
+        return new Response(
+          JSON.stringify({ error: 'Failed to create setup edges' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ setupId }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error('Error:', error)
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+}) 
