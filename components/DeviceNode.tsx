@@ -18,9 +18,10 @@ interface DeviceNodeData {
 interface Props {
   id: string
   data: DeviceNodeData
+  selected?: boolean
 }
 
-export default function DeviceNode({ id, data }: Props) {
+export default function DeviceNode({ id, data, selected }: Props) {
   const [openDropdown, setOpenDropdown] = useState(false)
   const [closingDropdown, setClosingDropdown] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -137,7 +138,11 @@ export default function DeviceNode({ id, data }: Props) {
   const filteredProducts = getFilteredProducts()
 
   return (
-    <div className="relative group bg-white border border-[#e1e3e6] rounded-[24px] w-[180px] h-[180px] p-2">
+    <div className={`relative group bg-white rounded-[24px] w-[180px] h-[180px] p-2 ${
+      selected 
+        ? 'border-2 border-[#15171a]' 
+        : 'border border-[#e1e3e6]'
+    }`}>
       {/* Connection Handles - Updated design */}
       <Handle 
         id="left"
