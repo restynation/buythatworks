@@ -11,6 +11,7 @@ import ReactFlow, {
   ReactFlowProvider,
   useNodesState,
   useEdgesState,
+  useReactFlow,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { supabase } from '@/lib/supabase'
@@ -35,7 +36,8 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([])
   const [portTypes, setPortTypes] = useState<PortType[]>([])
   const [products, setProducts] = useState<Product[]>([])
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; flowPosition: { x: number; y: number } } | null>(null)
+  const { screenToFlowPosition } = useReactFlow()
 
   // React Flow 이벤트 핸들러
   const onNodesChange = useCallback((changes: any) => {
@@ -144,6 +146,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }
 
   const addNewDevice = (deviceType: DeviceType, position: { x: number; y: number }) => {
+    console.log('Adding new device:', deviceType.name, 'at position:', position)
     const newNode: Node = {
       id: `${deviceType.name}-${Date.now()}`,
       type: 'device',
@@ -163,9 +166,16 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   const handlePaneClick = (event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect()
+    const clientX = event.clientX - rect.left
+    const clientY = event.clientY - rect.top
+    const flowPosition = screenToFlowPosition({ x: clientX, y: clientY })
+    
+    console.log('Pane clicked at:', { clientX, clientY, flowPosition })
+    
     setContextMenu({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
+      x: clientX,
+      y: clientY,
+      flowPosition
     })
   }
 
@@ -218,15 +228,18 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
           }}
         >
           <div className="p-1">
-            {availableDeviceTypes.map(deviceType => (
-              <button
-                key={deviceType.id}
-                onClick={() => addNewDevice(deviceType, { x: contextMenu.x - 90, y: contextMenu.y - 90 })}
-                className="w-full text-left capitalize px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
-              >
-                {deviceType.name}
-              </button>
-            ))}
+                         {availableDeviceTypes.map(deviceType => (
+               <button
+                 key={deviceType.id}
+                 onClick={() => {
+                   console.log('Device type clicked:', deviceType.name)
+                   addNewDevice(deviceType, contextMenu.flowPosition)
+                 }}
+                 className="w-full text-left capitalize px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
+               >
+                 {deviceType.name}
+               </button>
+             ))}
           </div>
         </div>
       )}
