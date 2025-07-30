@@ -161,7 +161,7 @@ export default function Navigation() {
                       onClick={handleMobileMenuItemClick}
                       className={`block px-3 py-3 text-[16px] transition-colors rounded-md ${
                         pathname === item.href 
-                          ? 'font-medium text-[#15171a] bg-gray-50' 
+                          ? 'font-medium text-[#15171a]' 
                           : 'font-normal text-gray-700 hover:text-[#15171a] hover:bg-gray-50'
                       }`}
                     >
