@@ -150,7 +150,7 @@ export default function DeviceNode({ id, data }: Props) {
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!w-3 !h-3 !bg-transparent !border-0 !left-[-6px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
+        className="!w-6 !h-6 !bg-transparent !border-0 !left-[-12px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -165,7 +165,7 @@ export default function DeviceNode({ id, data }: Props) {
         id="right-target"
         type="target" 
         position={Position.Right} 
-        className="!w-3 !h-3 !bg-transparent !border-0 !right-[-6px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
+        className="!w-6 !h-6 !bg-transparent !border-0 !right-[-12px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -180,7 +180,7 @@ export default function DeviceNode({ id, data }: Props) {
         id="top-target"
         type="target" 
         position={Position.Top} 
-        className="!w-3 !h-3 !bg-transparent !border-0 !top-[-6px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
+        className="!w-6 !h-6 !bg-transparent !border-0 !top-[-12px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -195,7 +195,7 @@ export default function DeviceNode({ id, data }: Props) {
         id="bottom-target"
         type="target" 
         position={Position.Bottom} 
-        className="!w-3 !h-3 !bg-transparent !border-0 !bottom-[-6px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
+        className="!w-6 !h-6 !bg-transparent !border-0 !bottom-[-12px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
 

@@ -40,6 +40,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   const [products, setProducts] = useState<Product[]>([])
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; flowPosition: { x: number; y: number } } | null>(null)
   const [isConnecting, setIsConnecting] = useState(false)
+  const [justFinishedConnection, setJustFinishedConnection] = useState(false)
   const { screenToFlowPosition } = useReactFlow()
   const contextMenuRef = useRef<HTMLDivElement>(null)
 
@@ -172,7 +173,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }
 
   const handlePaneClick = (event: React.MouseEvent) => {
-    console.log('UploadCanvas: Pane clicked, isConnecting:', isConnecting)
+    console.log('UploadCanvas: Pane clicked, isConnecting:', isConnecting, 'justFinishedConnection:', justFinishedConnection)
     console.log('UploadCanvas: dropdown-closing flag present:', document.body.hasAttribute('data-dropdown-closing'))
     
     // Extract values before setTimeout to avoid SyntheticEvent pooling issues
@@ -185,9 +186,9 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     event.preventDefault()
     event.stopPropagation()
     
-    // Prevent context menu if we're in the middle of a connection
-    if (isConnecting) {
-      console.log('UploadCanvas: Currently connecting, preventing context menu')
+    // Prevent context menu if we're in the middle of a connection or just finished one
+    if (isConnecting || justFinishedConnection) {
+      console.log('UploadCanvas: Currently connecting or just finished, preventing context menu')
       return
     }
     
@@ -206,7 +207,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     
     // Double-check after a small delay
     setTimeout(() => {
-      if (document.body.hasAttribute('data-dropdown-closing') || isConnecting) {
+      if (document.body.hasAttribute('data-dropdown-closing') || isConnecting || justFinishedConnection) {
         console.log('UploadCanvas: Preventing context menu after delay check')
         return
       }
@@ -218,7 +219,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         y: clientY,
         flowPosition
       })
-    }, 100)
+    }, 150)
   }
 
   const onConnectStart = useCallback((event: any, params: any) => {
@@ -229,6 +230,12 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   const onConnectEnd = useCallback((event: any) => {
     console.log('Connection end')
     setIsConnecting(false)
+    setJustFinishedConnection(true)
+    
+    // Clear the flag after a delay to prevent context menu
+    setTimeout(() => {
+      setJustFinishedConnection(false)
+    }, 300)
   }, [])
 
   const onConnect = useCallback((connection: Connection) => {
@@ -327,7 +334,8 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
         minZoom={0.3}
         maxZoom={2}
-        connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 2 }}
+        connectionRadius={25}
+        connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 3, strokeDasharray: '5,5' }}
         snapToGrid={false}
         snapGrid={[15, 15]}
         deleteKeyCode={['Delete', 'Backspace']}
