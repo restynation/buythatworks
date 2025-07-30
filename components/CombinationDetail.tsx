@@ -297,7 +297,7 @@ export default function CombinationDetail({ setupId }: Props) {
               value={deletePin}
               onChange={(e) => setDeletePin(e.target.value)}
               placeholder="Enter PIN"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent mb-4"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#15171a] focus:border-[#15171a] mb-4"
             />
             
             <div className="flex space-x-3">

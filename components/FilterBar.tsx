@@ -110,7 +110,7 @@ export default function FilterBar({ filters, onFiltersChange }: Props) {
               setShowDropdown(e.target.value.length > 0)
             }}
             onFocus={() => setShowDropdown(searchTerm.length > 0)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#15171a] focus:border-[#15171a]"
           />
           
           {showDropdown && filteredProducts.length > 0 && (

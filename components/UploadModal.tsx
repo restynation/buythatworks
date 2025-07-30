@@ -23,6 +23,8 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
   })
   const [image, setImage] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [commentFocused, setCommentFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -377,6 +379,8 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
               <textarea
                 value={formData.comment}
                 onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
+                onFocus={() => setCommentFocused(true)}
+                onBlur={() => setCommentFocused(false)}
                 className={`basis-0 font-['Pretendard'] font-normal grow h-full leading-[24px] min-h-px min-w-px not-italic relative shrink-0 text-[16px] text-left bg-transparent border-none outline-none resize-none ${
                   formData.comment ? 'text-[#15171a]' : 'text-[#c4c7cc]'
                 }`}
@@ -384,7 +388,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 required
               />
             </div>
-            <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-[12px]" />
+            <div className={`absolute border-2 border-solid inset-0 pointer-events-none rounded-[12px] transition-colors ${
+              commentFocused ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+            }`} />
           </div>
         </div>
 
@@ -401,6 +407,8 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 pattern="[0-9]{4}"
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
                 className={`basis-0 font-['Pretendard'] font-normal grow leading-[20px] min-h-px min-w-px not-italic relative shrink-0 text-[14px] text-center bg-transparent border-none outline-none ${
                   formData.password ? 'text-[#15171a]' : 'text-[#c4c7cc]'
                 }`}
@@ -408,7 +416,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 required
               />
             </div>
-            <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-[24px]" />
+            <div className={`absolute border-2 border-solid inset-0 pointer-events-none rounded-[24px] transition-colors ${
+              passwordFocused ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+            }`} />
           </div>
         </div>
 
