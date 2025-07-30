@@ -418,9 +418,9 @@ export default function CombinationsPage() {
         </label>
       </div>
 
-             {/* 결과 그리드 */}
-       <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(700px, 1fr))' }}>
-                 {isLoading ? (
+      {/* 결과 그리드 */}
+      <div className="results-grid gap-2">
+        {isLoading ? (
           // 간단한 로딩 스켈레톤
           Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="h-80 rounded-[32px] skeleton-shimmer"></div>

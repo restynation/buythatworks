@@ -123,3 +123,22 @@
     background-position: 200% 0;
   }
 } 
+
+/* Responsive results grid for combinations page */
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 733px) {
+  .results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(700px, 1fr));
+  }
+}
+
+/* Loading skeleton shimmer animation */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+} 
