@@ -189,15 +189,14 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   return (
     <div className="h-full w-full relative">
-      <div className="absolute top-20 left-4 z-10" ref={menuRef}>
+      <div className="absolute top-16 left-2 z-10" ref={menuRef}>
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="bg-white border border-gray-200 rounded-[12px] px-4 py-2 flex items-center gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          className="w-12 h-12 bg-white rounded-[24px] flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm border border-gray-100"
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 17.5V2.5M2.5 10H17.5" stroke="#15171A" stroke-width="1.5" stroke-linecap="round"/>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z" fill="#6B7280"/>
           </svg>
-          Add Device
         </button>
 
         {isMenuOpen && (
