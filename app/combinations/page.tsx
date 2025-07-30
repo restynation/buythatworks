@@ -203,9 +203,56 @@ export default function CombinationsPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-white h-[calc(100vh-4rem)] px-4 py-4 overflow-y-auto">
-        <div className="flex items-center justify-center h-full">
-          <div className="text-lg text-gray-600">Loading...</div>
+      <div className="bg-white h-[calc(100vh-4rem)] p-4 overflow-y-auto">
+        {/* 필터 섹션 스켈레톤 */}
+        <div className="bg-white p-0 rounded-[24px] mb-4">
+          <div className="flex gap-2 items-center flex-wrap">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="w-[180px] h-[72px] bg-gray-200 rounded-[24px] animate-pulse"></div>
+            ))}
+            <div className="w-[180px] h-[72px] bg-gray-100 rounded-[24px] animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* 체크박스 섹션 스켈레톤 */}
+        <div className="bg-white p-0 rounded-[24px] mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 bg-gray-200 rounded-[12px] animate-pulse"></div>
+            <div className="h-4 bg-gray-200 rounded-md w-48 animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* 결과 그리드 스켈레톤 */}
+        <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(700px, 1fr))' }}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 animate-pulse">
+              <div className="h-full flex flex-col gap-20">
+                {/* 헤더 스켈레톤 */}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="h-7 bg-gray-200 rounded-md mb-2 w-48"></div>
+                    <div className="h-4 bg-gray-200 rounded-md w-32"></div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 bg-gray-200 rounded-md w-6"></div>
+                    <div className="h-5 bg-gray-200 rounded-md w-16"></div>
+                  </div>
+                </div>
+
+                {/* 제품 블록들 스켈레톤 */}
+                <div className="flex gap-2 flex-wrap">
+                  {Array.from({ length: 4 }).map((_, idx) => (
+                    <div key={idx} className="w-[140px] h-[140px] bg-gray-200 rounded-[24px] p-2">
+                      <div className="w-[124px] h-[108px] bg-gray-300 rounded-[12px] p-3 mb-2">
+                        <div className="w-full h-full bg-gray-400 rounded-md"></div>
+                      </div>
+                      <div className="h-4 bg-gray-300 rounded-md w-20 mx-auto"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     )
