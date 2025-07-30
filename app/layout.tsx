@@ -2,7 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import Navigation from '@/components/Navigation'
 import React from 'react'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -36,10 +36,11 @@ export const metadata: Metadata = {
     description: 'Verify whether your Mac and external monitor work together at full performance',
     images: ['/opengraph-image.png'],
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({
