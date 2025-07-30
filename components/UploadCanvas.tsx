@@ -229,8 +229,9 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
+        style={{ backgroundColor: '#F9F9FA' }}
       >
-        <Background />
+        <Background color="#F9F9FA" />
         <Controls />
       </ReactFlow>
     </div>
