@@ -184,6 +184,18 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     event.preventDefault()
     event.stopPropagation()
     
+    // Check if this is a connection drag end (React Flow adds specific classes during connections)
+    const target = event.target as HTMLElement
+    const isConnectionEnd = target.closest('.react-flow__connection-line') || 
+                           target.closest('.react-flow__connectionline') ||
+                           document.querySelector('.react-flow__connection-line') ||
+                           document.querySelector('.react-flow__connectionline')
+    
+    if (isConnectionEnd) {
+      console.log('UploadCanvas: Connection drag detected, preventing context menu')
+      return
+    }
+    
     // Check if a dropdown is being closed (immediate check)
     if (document.body.hasAttribute('data-dropdown-closing')) {
       console.log('UploadCanvas: Dropdown is closing, preventing context menu (immediate)')
@@ -270,6 +282,20 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   return (
     <div className="h-full w-full relative z-0">
+      {/* CSS for selected edge styling */}
+      <style jsx>{`
+        .react-flow__edge.selected path {
+          stroke: #15171a !important;
+          stroke-width: 2px !important;
+        }
+        .react-flow__edge:hover path {
+          stroke: #374151 !important;
+        }
+        .react-flow__edge path {
+          cursor: pointer;
+        }
+      `}</style>
+      
       {/* React Flow */}
       <ReactFlow
         nodes={nodes}
@@ -291,6 +317,8 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         nodesDraggable={true}
         edgesFocusable={true}
         edgesUpdatable={false}
+        selectNodesOnDrag={false}
+        multiSelectionKeyCode={null}
         defaultEdgeOptions={{
           type: 'default',
           style: { 
