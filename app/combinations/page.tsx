@@ -498,7 +498,7 @@ export default function CombinationsPage() {
           })
         )}
       </div>
-
+      
       {/* 검색 결과 없음 화면 - 별도 컨테이너로 분리 */}
       {filteredSetups.length === 0 && !isLoading && (
         <div className="h-[calc(100vh-24rem)] flex items-center justify-center">
