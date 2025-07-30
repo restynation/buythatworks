@@ -33,32 +33,32 @@ export default function UploadPage() {
       
       <div className="relative h-[calc(100vh-10rem)] w-full bg-white rounded-3xl overflow-hidden">
         {/* 상단 입력 영역 - 캔버스 내부에 위치 */}
-        <div className="absolute top-2 left-2 right-2 z-10 p-2 bg-white/50 backdrop-blur-sm rounded-2xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
+        <div className="absolute top-2 left-2 right-2 z-10 px-3 py-2 bg-white/50 backdrop-blur-sm rounded-2xl">
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
               <input
                 type="text"
                 placeholder="Name your combination"
                 value={setupName}
                 onChange={(e) => setSetupName(e.target.value)}
-                className="text-2xl font-medium text-[#15171a] bg-transparent border-none outline-none placeholder-gray-400"
+                className="w-full text-2xl font-medium text-[#15171a] bg-transparent border-none outline-none placeholder-gray-400"
                 style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}
               />
-              <input
-                type="text"
-                placeholder="Builder name"
-                value={builderName}
-                onChange={(e) => setBuilderName(e.target.value)}
-                className="text-base text-gray-800 bg-transparent border border-gray-300 rounded-[24px] px-4 py-2 outline-none placeholder-gray-400 focus:ring-2 focus:ring-[#15171a]"
-              />
             </div>
+            <input
+              type="text"
+              placeholder="Builder name"
+              value={builderName}
+              onChange={(e) => setBuilderName(e.target.value)}
+              className="text-base text-gray-800 bg-transparent border border-gray-300 rounded-[24px] px-4 py-2 outline-none placeholder-gray-400 focus:ring-2 focus:ring-[#15171a]"
+            />
             
             <button
               onClick={handleUpload}
-              className="bg-[#15171a] text-white text-base font-medium px-5 py-2 rounded-[24px] flex items-center gap-2 hover:bg-gray-800 transition-colors"
+              className="bg-[#15171a] text-white text-sm font-normal px-5 py-2 rounded-[24px] flex items-center gap-2 hover:bg-gray-800 transition-colors"
             >
               Upload
-              <svg width="20" height="20" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="16" height="16" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 17H18V19H0V17ZM10 3.82843V15H8V3.82843L1.92893 9.8995L0.51472 8.4853L9 0L17.4853 8.4853L16.0711 9.8995L10 3.82843Z" fill="white"/>
               </svg>
             </button>
