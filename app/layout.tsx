@@ -10,14 +10,9 @@ export const metadata: Metadata = {
   title: 'workswith - Mac Monitor Compatibility',
   description: 'Verify whether your Mac and external monitor work together at full performance',
   icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
-      { url: '/favicon.ico', sizes: '16x16', type: 'image/x-icon' },
-    ],
+    icon: '/favicon.ico',
     shortcut: '/favicon.ico',
-    apple: [
-      { url: '/favicon.ico', sizes: '180x180', type: 'image/x-icon' },
-    ],
+    apple: '/favicon.ico',
   },
   openGraph: {
     title: 'workswith - Mac Monitor Compatibility',
@@ -56,13 +51,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="32x32" />
-        <link rel="apple-touch-icon" href="/favicon.ico" sizes="180x180" />
-        <link rel="shortcut icon" href="/favicon.ico" />
-      </head>
       <body className={inter.className}>
         <Navigation />
         <main className="min-h-screen">
