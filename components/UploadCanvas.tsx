@@ -35,8 +35,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([])
   const [portTypes, setPortTypes] = useState<PortType[]>([])
   const [products, setProducts] = useState<Product[]>([])
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
 
   // React Flow 이벤트 핸들러
   const onNodesChange = useCallback((changes: any) => {
@@ -70,16 +69,14 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }, [setEdges])
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false)
-      }
+    function handleClickOutside() {
+      setContextMenu(null)
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [menuRef])
+  }, [])
 
   useEffect(() => {
     loadReferenceData()
@@ -146,14 +143,11 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     setEdges((edges: Edge[]) => edges.filter((e: Edge) => e.source !== nodeId && e.target !== nodeId))
   }
 
-  const addNewDevice = (deviceType: DeviceType) => {
+  const addNewDevice = (deviceType: DeviceType, position: { x: number; y: number }) => {
     const newNode: Node = {
       id: `${deviceType.name}-${Date.now()}`,
       type: 'device',
-      position: { 
-        x: Math.random() * 500 + 200, 
-        y: Math.random() * 400 + 100 
-      },
+      position,
       data: {
         deviceType,
         products: products.filter(p => p.device_type_id === deviceType.id),
@@ -164,6 +158,15 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     }
 
     setNodes((nodes: Node[]) => [...nodes, newNode])
+    setContextMenu(null)
+  }
+
+  const handlePaneClick = (event: React.MouseEvent) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    setContextMenu({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    })
   }
 
   const onConnect = useCallback((connection: Connection) => {
@@ -189,36 +192,6 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   return (
     <div className="h-full w-full relative">
-      <div className="absolute top-20 left-2 z-10" ref={menuRef}>
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="w-12 h-12 bg-white rounded-[24px] flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z" fill="#6B7280"/>
-          </svg>
-        </button>
-
-        {isMenuOpen && (
-          <div className="absolute top-full left-20 mt-2 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2">
-            <div className="p-1">
-              {availableDeviceTypes.map(deviceType => (
-                <button
-                  key={deviceType.id}
-                  onClick={() => {
-                    addNewDevice(deviceType)
-                    setIsMenuOpen(false)
-                  }}
-                  className="w-full text-left capitalize px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
-                >
-                  {deviceType.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-      
       {/* React Flow */}
       <ReactFlow
         nodes={nodes}
@@ -226,6 +199,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         fitView
         style={{ backgroundColor: '#F9F9FA' }}
@@ -233,6 +207,29 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         <Background color="#F9F9FA" />
         <Controls />
       </ReactFlow>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <div 
+          className="absolute z-20 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2"
+          style={{ 
+            left: contextMenu.x, 
+            top: contextMenu.y 
+          }}
+        >
+          <div className="p-1">
+            {availableDeviceTypes.map(deviceType => (
+              <button
+                key={deviceType.id}
+                onClick={() => addNewDevice(deviceType, { x: contextMenu.x - 90, y: contextMenu.y - 90 })}
+                className="w-full text-left capitalize px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
+              >
+                {deviceType.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
