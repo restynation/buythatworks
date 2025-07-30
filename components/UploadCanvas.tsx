@@ -243,6 +243,17 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       label: defaultPortType.code,
       sourceHandle: connection.sourceHandle,
       targetHandle: connection.targetHandle,
+      style: { 
+        stroke: '#6b7280', 
+        strokeWidth: 2,
+        cursor: 'pointer'
+      },
+      labelStyle: { 
+        fontSize: 10, 
+        fontWeight: 500 
+      },
+      focusable: true,
+      deletable: true,
       data: {
         sourcePortType: defaultPortType,
         targetPortType: defaultPortType,
@@ -275,6 +286,23 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         snapToGrid={false}
         snapGrid={[15, 15]}
         deleteKeyCode="Delete"
+        elementsSelectable={true}
+        nodesConnectable={true}
+        nodesDraggable={true}
+        edgesFocusable={true}
+        edgesUpdatable={false}
+        defaultEdgeOptions={{
+          type: 'default',
+          style: { 
+            stroke: '#6b7280', 
+            strokeWidth: 2,
+            cursor: 'pointer'
+          },
+          labelStyle: { 
+            fontSize: 10, 
+            fontWeight: 500 
+          }
+        }}
         style={{ backgroundColor: '#F9F9FA' }}
         proOptions={{ hideAttribution: true }}
       >
