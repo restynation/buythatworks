@@ -264,7 +264,9 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         onConnect={onConnect}
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
-        fitView
+        defaultViewport={{ x: 0, y: 0, zoom: 0.75 }}
+        minZoom={0.3}
+        maxZoom={2}
         style={{ backgroundColor: '#F9F9FA' }}
         proOptions={{ hideAttribution: true }}
       >
