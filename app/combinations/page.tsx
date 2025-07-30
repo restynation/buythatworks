@@ -319,17 +319,11 @@ export default function CombinationsPage() {
                 <div className="w-16 h-16 flex items-center justify-center">
                   <svg 
                     className="w-16 h-16 text-[#c4c7cc]"
-                    fill="none" 
-                    stroke="currentColor" 
+                    fill="currentColor" 
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={1.5} 
-                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" 
-                    />
+                    <path d="M4.25 5.61C4.25 5.2 4.59 4.86 5 4.86H19C19.41 4.86 19.75 5.2 19.75 5.61C19.75 5.85 19.63 6.07 19.44 6.19L14.75 9.54V15.39C14.75 15.68 14.6 15.95 14.35 16.1L12.85 17.1C12.54 17.3 12.11 17.26 11.85 17L11.25 16.4V9.54L6.56 6.19C6.37 6.07 6.25 5.85 6.25 5.61H4.25Z" />
                   </svg>
                 </div>
               </div>
