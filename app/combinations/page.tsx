@@ -315,18 +315,24 @@ export default function CombinationsPage() {
            {/* 새 필터 추가 */}
            <div className="bg-white border border-[#e1e3e6] rounded-[24px] w-[180px] h-[180px] p-2">
              <div className="flex flex-col h-full">
-               <div className="w-[164px] h-[124px] p-4 flex items-center justify-center">
-                 <div className="relative w-16 h-16">
-                   <div className="absolute inset-[20.833%]">
-                     <img 
-                       alt="Add filter" 
-                       className="block max-w-none size-full" 
-                       src="/0d0a870ed696a2ff5260f6d8c8f8036e34e6640d.svg" 
-                       style={{ filter: 'brightness(0) saturate(100%) invert(78%) sepia(7%) saturate(280%) hue-rotate(202deg) brightness(95%) contrast(91%)' }}
-                     />
-                   </div>
-                 </div>
-               </div>
+                             <div className="w-[164px] h-[124px] p-4 flex items-center justify-center">
+                <div className="w-16 h-16 flex items-center justify-center">
+                  <svg 
+                    className="w-16 h-16 text-[#c4c7cc]"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={1.5} 
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" 
+                    />
+                  </svg>
+                </div>
+              </div>
                <div className="relative" data-dropdown>
                  <button
                    onClick={() => toggleDropdown('add-more')}
