@@ -71,14 +71,21 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }, [setEdges])
 
   useEffect(() => {
-    function handleClickOutside() {
-      setContextMenu(null)
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Element
+      if (contextMenu && !target.closest('.context-menu')) {
+        console.log('Closing context menu due to outside click')
+        setContextMenu(null)
+      }
     }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
+    
+    if (contextMenu) {
+      document.addEventListener("mousedown", handleClickOutside)
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside)
+      }
     }
-  }, [])
+  }, [contextMenu])
 
   useEffect(() => {
     loadReferenceData()
@@ -165,6 +172,12 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }
 
   const handlePaneClick = (event: React.MouseEvent) => {
+    // 기존 메뉴가 있으면 먼저 닫기
+    if (contextMenu) {
+      setContextMenu(null)
+      return
+    }
+    
     const rect = event.currentTarget.getBoundingClientRect()
     const clientX = event.clientX - rect.left
     const clientY = event.clientY - rect.top
@@ -218,28 +231,34 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         <Controls />
       </ReactFlow>
 
-      {/* Context Menu */}
+            {/* Context Menu */}
       {contextMenu && (
         <div 
-          className="absolute z-20 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2"
+          className="context-menu absolute z-20 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2"
           style={{ 
             left: contextMenu.x, 
             top: contextMenu.y 
           }}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="p-1">
-                         {availableDeviceTypes.map(deviceType => (
-               <button
-                 key={deviceType.id}
-                 onClick={() => {
-                   console.log('Device type clicked:', deviceType.name)
-                   addNewDevice(deviceType, contextMenu.flowPosition)
-                 }}
-                 className="w-full text-left capitalize px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
-               >
-                 {deviceType.name}
-               </button>
-             ))}
+            {availableDeviceTypes.map(deviceType => (
+              <button
+                key={deviceType.id}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  console.log('Device type clicked:', deviceType.name, 'Position:', contextMenu.flowPosition)
+                  addNewDevice(deviceType, contextMenu.flowPosition)
+                }}
+                onMouseDown={(e) => {
+                  e.stopPropagation()
+                  console.log('Device button mouse down:', deviceType.name)
+                }}
+                className="w-full text-left capitalize px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
+              >
+                {deviceType.name}
+              </button>
+            ))}
           </div>
         </div>
       )}
