@@ -226,16 +226,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-lg p-4 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-
+      <div className="bg-white rounded-[24px] p-4 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-2">
           {/* Select your combi's type */}
           <div className="bg-white p-4 rounded-lg w-full">
@@ -244,24 +235,39 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
             </h2>
             <div className="flex gap-2">
               {/* It's my current setup - 280x280px card */}
-              <div className="w-[280px] h-[280px] rounded-lg relative">
+              <div className="w-[280px] h-[280px] rounded-[24px] relative">
                 <div className="p-6 h-full flex flex-col gap-6">
                   <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="setupType"
-                      value="current"
-                      checked={formData.setupType === 'current'}
-                      onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
-                      className="w-6 h-6 text-[#15171a] border-gray-300 focus:ring-[#15171a] focus:ring-2"
-                    />
+                    <label className="cursor-pointer">
+                      <div className="relative">
+                        <input
+                          type="radio"
+                          name="setupType"
+                          value="current"
+                          checked={formData.setupType === 'current'}
+                          onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
+                          className="sr-only"
+                        />
+                        <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
+                          formData.setupType === 'current'
+                            ? 'bg-black border-black' 
+                            : 'bg-white border-[#e1e3e6]'
+                        }`}>
+                          {formData.setupType === 'current' && (
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </label>
                     <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
                       It's my current setup
                     </span>
                   </div>
                   
                   {/* Image Upload Area - Inside the card */}
-                  <div className="flex-1 bg-white rounded-sm border border-[#e1e3e6] flex flex-col items-center justify-center p-0">
+                  <div className="flex-1 bg-white rounded-[12px] border border-[#e1e3e6] flex flex-col items-center justify-center p-0">
                     <input
                       type="file"
                       accept="image/*"
@@ -291,37 +297,52 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                     </label>
                   </div>
                 </div>
-                <div className="absolute border border-[#15171a] inset-0 pointer-events-none rounded-lg" />
+                <div className="absolute border border-[#15171a] inset-0 pointer-events-none rounded-[24px]" />
               </div>
 
               {/* It's my dream setup - 280x280px card */}
-              <div className="w-[280px] h-[280px] rounded-lg relative">
+              <div className="w-[280px] h-[280px] rounded-[24px] relative">
                 <div className="p-6 h-full flex flex-col gap-6">
                   <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="setupType"
-                      value="dream"
-                      checked={formData.setupType === 'dream'}
-                      onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
-                      className="w-6 h-6 text-[#15171a] border-gray-300 focus:ring-[#15171a] focus:ring-2"
-                    />
+                    <label className="cursor-pointer">
+                      <div className="relative">
+                        <input
+                          type="radio"
+                          name="setupType"
+                          value="dream"
+                          checked={formData.setupType === 'dream'}
+                          onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
+                          className="sr-only"
+                        />
+                        <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
+                          formData.setupType === 'dream'
+                            ? 'bg-black border-black' 
+                            : 'bg-white border-[#e1e3e6]'
+                        }`}>
+                          {formData.setupType === 'dream' && (
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </label>
                     <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
                       It's my dream setup
                     </span>
                   </div>
                 </div>
-                <div className="absolute border border-[#e1e3e6] inset-0 pointer-events-none rounded-lg" />
+                <div className="absolute border border-[#e1e3e6] inset-0 pointer-events-none rounded-[24px]" />
               </div>
             </div>
           </div>
 
           {/* Leave your short comment */}
-          <div className="bg-white p-4 rounded-lg w-full">
-            <h3 className="text-[28px] font-medium text-[#15171a] mb-4" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
+          <div className="bg-white p-4 rounded-lg w-full flex flex-col items-center">
+            <h3 className="text-[28px] font-medium text-[#15171a] mb-4 self-start" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
               Leave your short comment
             </h3>
-            <div className="bg-white h-[120px] rounded-sm border border-[#e1e3e6] relative">
+            <div className="bg-white h-[120px] rounded-sm border border-[#e1e3e6] relative w-[600px]">
               <textarea
                 value={formData.comment}
                 onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
@@ -354,15 +375,17 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           </div>
 
           {/* Finish Button */}
-          <div className="px-6 py-4 bg-black rounded-lg w-full flex items-center justify-center">
-            <button
-              type="submit"
-              disabled={uploading}
-              className="text-white text-[20px] leading-[28px] font-normal px-3"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
-            >
-              {uploading ? 'Uploading...' : 'Finish'}
-            </button>
+          <div className="w-full flex justify-center">
+            <div className="w-[600px] px-6 py-4 bg-black rounded-[32px] flex items-center justify-center">
+              <button
+                type="submit"
+                disabled={uploading}
+                className="text-white text-[20px] leading-[28px] font-normal px-3"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              >
+                {uploading ? 'Uploading...' : 'Finish'}
+              </button>
+            </div>
           </div>
         </form>
       </div>
