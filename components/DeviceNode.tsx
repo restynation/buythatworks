@@ -33,30 +33,38 @@ export default function DeviceNode({ id, data }: Props) {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Element)) {
-        // Check if the click is on a React Flow node/element that should not close the dropdown
         const target = event.target as HTMLElement
         
-        // Don't close if clicking on React Flow handles or other nodes
-        if (target.closest('.react-flow__node') && !target.closest(`[data-id="${id}"]`)) {
-          return
-        }
+        console.log('DeviceNode: Outside click detected, target:', target.className)
         
-        // Don't close if clicking on React Flow background or edges
-        if (target.closest('.react-flow__pane') || target.closest('.react-flow__edge')) {
+        // If clicking on React Flow background, edges, or pane elements, prevent context menu from opening
+        const isReactFlowElement = target.closest('.react-flow__pane') || 
+                                 target.closest('.react-flow__edge') ||
+                                 target.classList.contains('react-flow__pane') ||
+                                 target.closest('.react-flow') ||
+                                 target.closest('[data-testid="rf__wrapper"]')
+        
+        if (isReactFlowElement) {
+          console.log('DeviceNode: React Flow element clicked, setting dropdown-closing flag')
           // Add a data attribute to indicate dropdown should not trigger context menu
           document.body.setAttribute('data-dropdown-closing', 'true')
           setTimeout(() => {
             document.body.removeAttribute('data-dropdown-closing')
-          }, 100)
+            console.log('DeviceNode: dropdown-closing flag removed')
+          }, 200)
         }
         
+        // Always close dropdown when clicking outside
+        console.log('DeviceNode: Closing dropdown')
         closeDropdown()
       }
     }
 
     if (openDropdown) {
+      console.log('DeviceNode: Adding outside click listener')
       document.addEventListener('mousedown', handleClickOutside)
       return () => {
+        console.log('DeviceNode: Removing outside click listener')
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }

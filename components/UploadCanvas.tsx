@@ -189,29 +189,46 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }
 
   const handlePaneClick = (event: React.MouseEvent) => {
-    // Check if a dropdown is being closed
+    console.log('UploadCanvas: Pane clicked, target:', (event.target as HTMLElement).className)
+    console.log('UploadCanvas: dropdown-closing flag present:', document.body.hasAttribute('data-dropdown-closing'))
+    
+    // Prevent default to ensure we control the behavior
+    event.preventDefault()
+    event.stopPropagation()
+    
+    // Check if a dropdown is being closed (immediate check)
     if (document.body.hasAttribute('data-dropdown-closing')) {
+      console.log('UploadCanvas: Dropdown is closing, preventing context menu (immediate)')
       return
     }
     
     // 기존 메뉴가 있으면 먼저 닫기
     if (contextMenu) {
+      console.log('UploadCanvas: Closing existing context menu')
       setContextMenu(null)
       return
     }
     
-    const rect = event.currentTarget.getBoundingClientRect()
-    const clientX = event.clientX - rect.left
-    const clientY = event.clientY - rect.top
-    const flowPosition = screenToFlowPosition({ x: clientX, y: clientY })
-    
-    console.log('Pane clicked at:', { clientX, clientY, flowPosition })
-    
-    setContextMenu({
-      x: clientX,
-      y: clientY,
-      flowPosition
-    })
+    // Double-check after a small delay to catch any late-setting dropdown-closing flags
+    setTimeout(() => {
+      if (document.body.hasAttribute('data-dropdown-closing')) {
+        console.log('UploadCanvas: Dropdown closing detected after delay, preventing context menu')
+        return
+      }
+      
+      const rect = event.currentTarget.getBoundingClientRect()
+      const clientX = event.clientX - rect.left
+      const clientY = event.clientY - rect.top
+      const flowPosition = screenToFlowPosition({ x: clientX, y: clientY })
+      
+      console.log('UploadCanvas: Opening context menu at:', { clientX, clientY, flowPosition })
+      
+      setContextMenu({
+        x: clientX,
+        y: clientY,
+        flowPosition
+      })
+    }, 50)
   }
 
   const onConnect = useCallback((connection: Connection) => {
