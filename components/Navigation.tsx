@@ -206,7 +206,7 @@ export default function Navigation() {
                             : 'animate-in fade-in slide-in-from-top-2'
                         }`}>
                           Available on desktop only
-                          <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
+                          <div className="absolute -top-1 left-6 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
                       )}
                       {item.disabled && showFinderTooltip && (
@@ -216,7 +216,7 @@ export default function Navigation() {
                             : 'animate-in fade-in slide-in-from-top-2'
                         }`}>
                           Coming soon
-                          <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
+                          <div className="absolute -top-1 left-6 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
                       )}
                     </div>
