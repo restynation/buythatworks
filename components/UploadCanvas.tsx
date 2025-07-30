@@ -32,11 +32,40 @@ interface UploadCanvasProps {
 }
 
 function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, setEdges }: UploadCanvasProps) {
-  const [, , onNodesChange] = useNodesState([])
-  const [, , onEdgesChange] = useEdgesState([])
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([])
   const [portTypes, setPortTypes] = useState<PortType[]>([])
   const [products, setProducts] = useState<Product[]>([])
+
+  // React Flow 이벤트 핸들러
+  const onNodesChange = useCallback((changes: any) => {
+    setNodes((nds: Node[]) => {
+      // React Flow의 applyNodeChanges 로직을 직접 구현
+      return changes.reduce((acc: Node[], change: any) => {
+        if (change.type === 'position' && change.dragging) {
+          return acc.map((node: Node) => 
+            node.id === change.id 
+              ? { ...node, position: change.position }
+              : node
+          )
+        }
+        if (change.type === 'remove') {
+          return acc.filter((node: Node) => node.id !== change.id)
+        }
+        return acc
+      }, nds)
+    })
+  }, [setNodes])
+
+  const onEdgesChange = useCallback((changes: any) => {
+    setEdges((eds: Edge[]) => {
+      return changes.reduce((acc: Edge[], change: any) => {
+        if (change.type === 'remove') {
+          return acc.filter((edge: Edge) => edge.id !== change.id)
+        }
+        return acc
+      }, eds)
+    })
+  }, [setEdges])
 
   useEffect(() => {
     loadReferenceData()
@@ -120,7 +149,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       }
     }
 
-    setNodes(nodes => [...nodes, newNode])
+    setNodes((nodes: Node[]) => [...nodes, newNode])
   }
 
   const onConnect = useCallback((connection: Connection) => {
@@ -139,7 +168,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       }
     } as Edge
 
-    setEdges(edges => addEdge(newEdge, edges))
+    setEdges((edges: Edge[]) => addEdge(newEdge, edges))
   }, [portTypes])
 
   const availableDeviceTypes = deviceTypes.filter(dt => dt.name !== 'computer')
