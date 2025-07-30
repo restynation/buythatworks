@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import ReactFlow, {
   Node,
   Edge,
@@ -35,6 +35,8 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([])
   const [portTypes, setPortTypes] = useState<PortType[]>([])
   const [products, setProducts] = useState<Product[]>([])
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   // React Flow 이벤트 핸들러
   const onNodesChange = useCallback((changes: any) => {
@@ -66,6 +68,18 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       }, eds)
     })
   }, [setEdges])
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [menuRef])
 
   useEffect(() => {
     loadReferenceData()
@@ -175,21 +189,35 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   return (
     <div className="h-full w-full relative">
-      {/* Toolbar */}
-      <div className="absolute top-4 left-4 z-10 bg-white rounded-[16px] shadow-lg p-4">
-        <h3 className="font-semibold mb-3">Add Device</h3>
-        <div className="space-y-2">
-          {availableDeviceTypes.map(deviceType => (
-            <button
-              key={deviceType.id}
-              onClick={() => addNewDevice(deviceType)}
-              className="w-full text-left px-3 py-2 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center space-x-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="capitalize">{deviceType.name}</span>
-            </button>
-          ))}
-        </div>
+      <div className="absolute top-20 left-4 z-10" ref={menuRef}>
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="bg-white border border-gray-200 rounded-[12px] px-4 py-2 flex items-center gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 17.5V2.5M2.5 10H17.5" stroke="#15171A" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Add Device
+        </button>
+
+        {isMenuOpen && (
+          <div className="absolute top-full mt-2 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2">
+            <div className="p-1">
+              {availableDeviceTypes.map(deviceType => (
+                <button
+                  key={deviceType.id}
+                  onClick={() => {
+                    addNewDevice(deviceType)
+                    setIsMenuOpen(false)
+                  }}
+                  className="w-full text-left capitalize px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
+                >
+                  {deviceType.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       
       {/* React Flow */}
