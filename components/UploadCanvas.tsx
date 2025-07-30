@@ -189,7 +189,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   return (
     <div className="h-full w-full relative">
-      <div className="absolute top-18 left-2 z-10" ref={menuRef}>
+      <div className="absolute top-20 left-2 z-10" ref={menuRef}>
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="w-12 h-12 bg-white rounded-[24px] flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
@@ -200,7 +200,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         </button>
 
         {isMenuOpen && (
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2">
+          <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2">
             <div className="p-1">
               {availableDeviceTypes.map(deviceType => (
                 <button
