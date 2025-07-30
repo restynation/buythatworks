@@ -110,7 +110,7 @@ export default function Navigation() {
                     {item.label}
                   </span>
                   {item.href === '/finder' && showDesktopFinderTooltip && (
-                    <div className={`absolute top-full left-4 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
+                    <div className={`absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
                       isClosingDesktopFinderTooltip 
                         ? 'animate-out fade-out slide-out-to-top-2' 
                         : 'animate-in fade-in slide-in-from-top-2'
@@ -200,23 +200,23 @@ export default function Navigation() {
                     >
                       {item.label}
                       {item.mobileDisabled && showUploadTooltip && (
-                        <div className={`absolute top-full left-6 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
+                        <div className={`absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
                           isClosingUploadTooltip 
                             ? 'animate-out fade-out slide-out-to-top-2' 
                             : 'animate-in fade-in slide-in-from-top-2'
                         }`}>
                           Available on desktop only
-                          <div className="absolute -top-1 left-6 w-2 h-2 bg-[#15171a] rotate-45"></div>
+                          <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
                       )}
                       {item.disabled && showFinderTooltip && (
-                        <div className={`absolute top-full left-6 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
+                        <div className={`absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
                           isClosingFinderTooltip 
                             ? 'animate-out fade-out slide-out-to-top-2' 
                             : 'animate-in fade-in slide-in-from-top-2'
                         }`}>
                           Coming soon
-                          <div className="absolute -top-1 left-6 w-2 h-2 bg-[#15171a] rotate-45"></div>
+                          <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
                       )}
                     </div>
