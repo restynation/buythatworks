@@ -19,8 +19,7 @@ export default function Navigation() {
         <div className="flex-1 min-w-0">
           <Link href="/" className="block">
             <span 
-              className="text-[24px] font-medium text-[#15171a] leading-normal"
-              style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}
+              className="text-[24px] font-medium text-[#15171a] leading-normal font-alpha-lyrae"
             >
               workswith
             </span>

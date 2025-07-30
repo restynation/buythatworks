@@ -447,8 +447,7 @@ export default function CombinationsPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 
-                          className="text-2xl font-medium text-[#15171a] mb-1 leading-normal"
-                          style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}
+                          className="text-2xl font-medium text-[#15171a] mb-1 leading-normal font-alpha-lyrae"
                         >
                           {setup.name}
                         </h3>
@@ -459,8 +458,7 @@ export default function CombinationsPage() {
                       <div className="flex items-center gap-2 text-gray-500">
                         <span className="text-base">by</span>
                         <span 
-                          className="text-lg text-[#15171a] leading-normal"
-                          style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}
+                          className="text-lg text-[#15171a] leading-normal font-alpha-lyrae"
                         >
                           {setup.user_name}
                         </span>

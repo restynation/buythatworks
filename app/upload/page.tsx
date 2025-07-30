@@ -41,8 +41,7 @@ export default function UploadPage() {
                 placeholder="Name your combination"
                 value={setupName}
                 onChange={(e) => setSetupName(e.target.value)}
-                className="w-full text-2xl font-medium text-[#15171a] bg-transparent border-none outline-none placeholder-gray-400"
-                style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}
+                className="flex-1 bg-transparent border-none outline-none text-2xl font-medium text-[#15171a] placeholder-gray-400 font-alpha-lyrae"
               />
             </div>
             <input
