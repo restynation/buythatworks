@@ -30,6 +30,10 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
     }
   }
 
+  const handleCardClick = (type: 'current' | 'dream') => {
+    setFormData(prev => ({ ...prev, setupType: type }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -234,105 +238,115 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
               Select your combi's type
             </h2>
             <div className="flex gap-2">
-              {/* It's my current setup - 280x280px card */}
-              <div className="w-[280px] h-[280px] rounded-[24px] relative">
+              {/* It's my dream setup - 280x280px card (왼쪽) */}
+              <div 
+                className="w-[280px] h-[280px] rounded-[24px] relative cursor-pointer"
+                onClick={() => handleCardClick('dream')}
+              >
                 <div className="p-6 h-full flex flex-col gap-6">
                   <div className="flex items-center gap-3">
-                    <label className="cursor-pointer">
-                      <div className="relative">
-                        <input
-                          type="radio"
-                          name="setupType"
-                          value="current"
-                          checked={formData.setupType === 'current'}
-                          onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
-                          className="sr-only"
-                        />
-                        <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
-                          formData.setupType === 'current'
-                            ? 'bg-black border-black' 
-                            : 'bg-white border-[#e1e3e6]'
-                        }`}>
-                          {formData.setupType === 'current' && (
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </div>
+                    <div className="relative">
+                      <input
+                        type="radio"
+                        name="setupType"
+                        value="dream"
+                        checked={formData.setupType === 'dream'}
+                        onChange={() => {}} // 클릭은 카드에서 처리
+                        className="sr-only"
+                      />
+                      <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
+                        formData.setupType === 'dream'
+                          ? 'bg-black border-black' 
+                          : 'bg-white border-[#e1e3e6]'
+                      }`}>
+                        {formData.setupType === 'dream' && (
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
                       </div>
-                    </label>
-                    <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-                      It's my current setup
-                    </span>
-                  </div>
-                  
-                  {/* Image Upload Area - Inside the card */}
-                  <div className="flex-1 bg-white rounded-[12px] border border-[#e1e3e6] flex flex-col items-center justify-center p-0">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="hidden"
-                      id="image-upload"
-                    />
-                    <label
-                      htmlFor="image-upload"
-                      className="flex flex-col items-center justify-center cursor-pointer w-full h-full p-4"
-                    >
-                      <div className="w-10 h-10 mb-1 flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M5 5V19H19V12H21V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H12V5H5ZM15 7V4H17V7H20V9H17V12H15V9H12V7H15Z" fill="#15171a"/>
-                        </svg>
-                      </div>
-                      {image ? (
-                        <p className="text-[14px] leading-[20px] text-center text-gray-500">
-                          Selected: {image.name}
-                        </p>
-                      ) : (
-                        <div className="text-[14px] leading-[20px] text-center text-gray-500">
-                          <p>Show your image!</p>
-                          <p>(Optional)</p>
-                        </div>
-                      )}
-                    </label>
-                  </div>
-                </div>
-                <div className="absolute border border-[#15171a] inset-0 pointer-events-none rounded-[24px]" />
-              </div>
-
-              {/* It's my dream setup - 280x280px card */}
-              <div className="w-[280px] h-[280px] rounded-[24px] relative">
-                <div className="p-6 h-full flex flex-col gap-6">
-                  <div className="flex items-center gap-3">
-                    <label className="cursor-pointer">
-                      <div className="relative">
-                        <input
-                          type="radio"
-                          name="setupType"
-                          value="dream"
-                          checked={formData.setupType === 'dream'}
-                          onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
-                          className="sr-only"
-                        />
-                        <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
-                          formData.setupType === 'dream'
-                            ? 'bg-black border-black' 
-                            : 'bg-white border-[#e1e3e6]'
-                        }`}>
-                          {formData.setupType === 'dream' && (
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </div>
-                      </div>
-                    </label>
+                    </div>
                     <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
                       It's my dream setup
                     </span>
                   </div>
                 </div>
-                <div className="absolute border border-[#e1e3e6] inset-0 pointer-events-none rounded-[24px]" />
+                <div className={`absolute inset-0 pointer-events-none rounded-[24px] border ${
+                  formData.setupType === 'dream' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+                }`} />
+              </div>
+
+              {/* It's my current setup - 280x280px card (오른쪽) */}
+              <div 
+                className="w-[280px] h-[280px] rounded-[24px] relative cursor-pointer"
+                onClick={() => handleCardClick('current')}
+              >
+                <div className="p-6 h-full flex flex-col gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <input
+                        type="radio"
+                        name="setupType"
+                        value="current"
+                        checked={formData.setupType === 'current'}
+                        onChange={() => {}} // 클릭은 카드에서 처리
+                        className="sr-only"
+                      />
+                      <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
+                        formData.setupType === 'current'
+                          ? 'bg-black border-black' 
+                          : 'bg-white border-[#e1e3e6]'
+                      }`}>
+                        {formData.setupType === 'current' && (
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                      It's my current setup
+                    </span>
+                  </div>
+                  
+                  {/* Image Upload Area - dream setup 선택 시 숨김 */}
+                  {formData.setupType === 'current' && (
+                    <div className="flex-1 bg-white rounded-[12px] border border-[#e1e3e6] flex flex-col items-center justify-center p-0">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                        id="image-upload"
+                        onClick={(e) => e.stopPropagation()} // 파일 업로드 클릭 시 카드 선택 방지
+                      />
+                      <label
+                        htmlFor="image-upload"
+                        className="flex flex-col items-center justify-center cursor-pointer w-full h-full p-4"
+                        onClick={(e) => e.stopPropagation()} // 라벨 클릭 시 카드 선택 방지
+                      >
+                        <div className="w-10 h-10 mb-1 flex items-center justify-center">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 5V19H19V12H21V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H12V5H5ZM15 7V4H17V7H20V9H17V12H15V9H12V7H15Z" fill="#15171a"/>
+                          </svg>
+                        </div>
+                        {image ? (
+                          <p className="text-[14px] leading-[20px] text-center text-gray-500">
+                            Selected: {image.name}
+                          </p>
+                        ) : (
+                          <div className="text-[14px] leading-[20px] text-center text-gray-500">
+                            <p>Show your image!</p>
+                            <p>(Optional)</p>
+                          </div>
+                        )}
+                      </label>
+                    </div>
+                  )}
+                </div>
+                <div className={`absolute inset-0 pointer-events-none rounded-[24px] border ${
+                  formData.setupType === 'current' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+                }`} />
               </div>
             </div>
           </div>
@@ -342,11 +356,11 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
             <h3 className="text-[28px] font-medium text-[#15171a] mb-4 self-start" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
               Leave your short comment
             </h3>
-            <div className="bg-white h-[120px] rounded-sm border border-[#e1e3e6] relative w-[600px]">
+            <div className="bg-white h-[120px] rounded-[12px] border border-[#e1e3e6] relative w-[600px]">
               <textarea
                 value={formData.comment}
                 onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
-                className="w-full h-full px-4 py-3 border-none outline-none resize-none text-[16px] leading-[24px] text-[#c4c7cc]"
+                className="w-full h-full px-4 py-3 border-none outline-none resize-none text-[16px] leading-[24px] text-[#c4c7cc] rounded-[12px]"
                 placeholder="MacBook is God"
                 style={{ fontFamily: "'Pretendard', sans-serif" }}
                 required
@@ -366,7 +380,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 pattern="[0-9]{4}"
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                className="w-full px-3 py-2 border border-[#e1e3e6] rounded text-[14px] leading-[20px] text-center text-[#c4c7cc]"
+                className="w-full px-3 py-2 border border-[#e1e3e6] rounded-[24px] text-[14px] leading-[20px] text-center text-[#c4c7cc]"
                 placeholder="****"
                 style={{ fontFamily: "'Pretendard', sans-serif" }}
                 required
