@@ -46,17 +46,17 @@ export default function UploadPage() {
                 placeholder="Builder name"
                 value={builderName}
                 onChange={(e) => setBuilderName(e.target.value)}
-                className="text-lg text-gray-600 bg-transparent border border-gray-300 rounded-md px-2 py-1 outline-none placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
+                className="text-base text-gray-800 bg-transparent border border-gray-300 rounded-[12px] px-4 py-2 outline-none placeholder-gray-400 focus:ring-2 focus:ring-[#15171a]"
               />
             </div>
             
             <button
               onClick={handleUpload}
-              className="bg-[#15171a] text-white px-6 py-3 rounded-[24px] font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors"
+              className="bg-[#15171a] text-white text-base font-medium px-5 py-2 rounded-[12px] flex items-center gap-2 hover:bg-gray-800 transition-colors"
             >
               Upload
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.5 12.5V13.5C17.5 14.9001 17.5 15.6002 17.2275 16.135C16.9878 16.6054 16.6054 16.9878 16.135 17.2275C15.6002 17.5 14.9001 17.5 13.5 17.5H6.5C5.09987 17.5 4.3998 17.5 3.86502 17.2275C3.39462 16.9878 3.01217 16.6054 2.77248 16.135C2.5 15.6002 2.5 14.9001 2.5 13.5V12.5M14.1667 6.66667L10 2.5M10 2.5L5.83333 6.66667M10 2.5V12.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
           </div>
