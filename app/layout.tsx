@@ -1,6 +1,7 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import Navigation from '@/components/Navigation'
+import MobileKeyboardHandler from '@/components/MobileKeyboardHandler'
 import React from 'react'
 import type { Metadata, Viewport } from 'next'
 
@@ -42,6 +43,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -52,6 +56,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <MobileKeyboardHandler />
         <Navigation />
         <main className="min-h-screen">
           {children}
