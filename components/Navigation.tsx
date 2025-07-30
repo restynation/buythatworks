@@ -118,26 +118,26 @@ export default function Navigation() {
           {/* 햄버거 메뉴 버튼 */}
           <button
             onClick={toggleMobileMenu}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-md hover:bg-gray-100 transition-colors relative z-60"
             aria-label="Toggle menu"
           >
-            <div className="w-6 h-6 flex flex-col justify-center items-center">
-              <div className={`w-5 h-0.5 bg-[#15171a] transition-all duration-300 ${
-                isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : 'mb-1'
+            <div className="w-6 h-6 flex flex-col justify-center items-center space-y-1">
+              <div className={`w-5 h-0.5 bg-[#15171a] transition-all duration-300 transform origin-center ${
+                isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''
               }`} />
               <div className={`w-5 h-0.5 bg-[#15171a] transition-all duration-300 ${
-                isMobileMenuOpen ? 'opacity-0' : 'mb-1'
+                isMobileMenuOpen ? 'opacity-0 scale-0' : ''
               }`} />
-              <div className={`w-5 h-0.5 bg-[#15171a] transition-all duration-300 ${
-                isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''
+              <div className={`w-5 h-0.5 bg-[#15171a] transition-all duration-300 transform origin-center ${
+                isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''
               }`} />
             </div>
           </button>
         </div>
 
-        {/* 모바일 드롭다운 메뉴 */}
+        {/* 모바일 드롭다운 메뉴 - absolute positioning으로 변경 */}
         {isMobileMenuOpen && (
-          <div className="bg-white border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
+          <div className="absolute top-16 left-0 right-0 bg-white border-t border-gray-100 shadow-lg animate-in fade-in slide-in-from-top-2 z-60">
             <div className="px-4 py-3 space-y-1">
               {navItems.map((item) => (
                 <div key={item.href} className="relative">
@@ -148,7 +148,7 @@ export default function Navigation() {
                     >
                       {item.label}
                       {item.mobileDisabled && showTooltip && (
-                        <div className="absolute top-full left-3 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-10 animate-in fade-in slide-in-from-top-2">
+                        <div className="absolute top-full left-3 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-70 animate-in fade-in slide-in-from-top-2">
                           Available on desktop only
                           <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
@@ -183,10 +183,10 @@ export default function Navigation() {
         )}
       </div>
 
-      {/* 모바일 메뉴 오버레이 */}
+      {/* 모바일 메뉴 오버레이 - z-index 낮춤 */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-25 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-25 z-30 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
