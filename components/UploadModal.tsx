@@ -388,7 +388,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 required
               />
             </div>
-            <div className={`absolute border-2 border-solid inset-0 pointer-events-none rounded-[12px] transition-colors ${
+            <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[12px] transition-colors ${
               commentFocused ? 'border-[#15171a]' : 'border-[#e1e3e6]'
             }`} />
           </div>
@@ -416,7 +416,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 required
               />
             </div>
-            <div className={`absolute border-2 border-solid inset-0 pointer-events-none rounded-[24px] transition-colors ${
+            <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] transition-colors ${
               passwordFocused ? 'border-[#15171a]' : 'border-[#e1e3e6]'
             }`} />
           </div>
