@@ -318,12 +318,12 @@ export default function CombinationsPage() {
                              <div className="w-[164px] h-[124px] p-4 flex items-center justify-center">
                 <div className="w-16 h-16 flex items-center justify-center">
                   <svg 
-                    className="w-16 h-16 text-[#c4c7cc]"
-                    fill="currentColor" 
-                    viewBox="0 0 24 24"
+                    className="w-16 h-16"
+                    viewBox="0 0 18 18" 
+                    fill="none" 
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path d="M4.25 5.61C4.25 5.2 4.59 4.86 5 4.86H19C19.41 4.86 19.75 5.2 19.75 5.61C19.75 5.85 19.63 6.07 19.44 6.19L14.75 9.54V15.39C14.75 15.68 14.6 15.95 14.35 16.1L12.85 17.1C12.54 17.3 12.11 17.26 11.85 17L11.25 16.4V9.54L6.56 6.19C6.37 6.07 6.25 5.85 6.25 5.61H4.25Z" />
+                    <path d="M18 0V2H17L12 9.5V18H6V9.5L1 2H0V0H18ZM3.4037 2L8 8.8944V16H10V8.8944L14.5963 2H3.4037Z" fill="#C4C7CC"/>
                   </svg>
                 </div>
               </div>
