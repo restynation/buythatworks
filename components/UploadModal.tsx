@@ -230,7 +230,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="box-border content-stretch flex flex-col gap-2 items-center justify-center p-0 relative rounded-[32px] bg-white w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="box-border content-stretch flex flex-col gap-2 items-center justify-center p-0 relative rounded-[32px] w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         {/* Select your combi's type */}
         <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-center overflow-clip p-[16px] relative rounded-lg shrink-0 w-full">
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
@@ -239,7 +239,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           <div className="box-border content-stretch flex flex-row gap-2 items-start justify-start p-0 relative shrink-0">
             {/* It's my dream setup - 280x280px card (왼쪽) */}
             <div 
-              className="relative rounded-lg shrink-0 size-[280px] cursor-pointer"
+              className="relative rounded-[24px] shrink-0 size-[280px] cursor-pointer"
               onClick={() => handleCardClick('dream')}
             >
               <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative size-[280px]">
@@ -253,7 +253,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                       onChange={() => {}}
                       className="sr-only"
                     />
-                    <div className={`relative rounded-sm shrink-0 size-6 ${
+                    <div className={`relative rounded-[16px] shrink-0 size-6 ${
                       formData.setupType === 'dream' 
                         ? 'bg-[#000000]' 
                         : ''
@@ -268,7 +268,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                         )}
                       </div>
                       {formData.setupType !== 'dream' && (
-                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-sm" />
+                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
                       )}
                     </div>
                   </div>
@@ -277,14 +277,14 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                   </div>
                 </div>
               </div>
-              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-lg ${
+              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
                 formData.setupType === 'dream' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
               }`} />
             </div>
 
             {/* It's my current setup - 280x280px card (오른쪽) */}
             <div 
-              className="relative rounded-lg shrink-0 size-[280px] cursor-pointer"
+              className="relative rounded-[24px] shrink-0 size-[280px] cursor-pointer"
               onClick={() => handleCardClick('current')}
             >
               <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative size-[280px]">
@@ -298,7 +298,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                       onChange={() => {}}
                       className="sr-only"
                     />
-                    <div className={`relative rounded-sm shrink-0 size-6 ${
+                    <div className={`relative rounded-[16px] shrink-0 size-6 ${
                       formData.setupType === 'current' 
                         ? 'bg-[#000000]' 
                         : ''
@@ -313,7 +313,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                         )}
                       </div>
                       {formData.setupType !== 'current' && (
-                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-sm" />
+                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
                       )}
                     </div>
                   </div>
@@ -324,7 +324,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 
                 {/* Image Upload Area - current setup일 때만 표시 */}
                 {formData.setupType === 'current' && (
-                  <div className="basis-0 bg-[#ffffff] grow min-h-px min-w-px relative rounded-sm shrink-0 w-full">
+                  <div className="basis-0 bg-[#ffffff] grow min-h-px min-w-px relative rounded-[12px] shrink-0 w-full">
                     <div className="box-border content-stretch flex flex-col gap-1 items-center justify-center overflow-clip p-0 relative size-full">
                       <input
                         type="file"
@@ -356,11 +356,11 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                         )}
                       </label>
                     </div>
-                    <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-sm" />
+                    <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-[12px]" />
                   </div>
                 )}
               </div>
-              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-lg ${
+              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
                 formData.setupType === 'current' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
               }`} />
             </div>
@@ -372,7 +372,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             Leave your short comment
           </div>
-          <div className="bg-[#ffffff] h-[120px] relative rounded-sm shrink-0 w-full">
+          <div className="bg-[#ffffff] h-[120px] relative rounded-[12px] shrink-0 w-full">
             <div className="box-border content-stretch flex flex-row h-[120px] items-center justify-start overflow-clip px-4 py-3 relative w-full">
               <textarea
                 value={formData.comment}
@@ -384,7 +384,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 required
               />
             </div>
-            <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-sm" />
+            <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-[12px]" />
           </div>
         </div>
 
@@ -393,7 +393,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             4-digit Password
           </div>
-          <div className="bg-[#ffffff] relative rounded shrink-0 w-32">
+          <div className="bg-[#ffffff] relative rounded-[24px] shrink-0 w-32">
             <div className="box-border content-stretch flex flex-row items-center justify-start overflow-clip px-3 py-2 relative size-full">
               <input
                 type="password"
@@ -408,13 +408,13 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 required
               />
             </div>
-            <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded" />
+            <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-[24px]" />
           </div>
         </div>
 
         {/* Finish Button */}
-        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-lg shrink-0 w-full">
-          <div className="absolute bg-[#000000] inset-0 rounded-lg" />
+        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-[32px] shrink-0 w-full">
+          <div className="absolute bg-[#000000] inset-0 rounded-[32px]" />
           <button
             type="submit"
             onClick={handleSubmit}
