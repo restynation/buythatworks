@@ -226,9 +226,9 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         nodeTypes={nodeTypes}
         fitView
         style={{ backgroundColor: '#F9F9FA' }}
+        proOptions={{ hideAttribution: true }}
       >
         <Background color="#F9F9FA" />
-        <Controls />
       </ReactFlow>
 
             {/* Context Menu */}
