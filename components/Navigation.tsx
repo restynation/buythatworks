@@ -136,9 +136,9 @@ export default function Navigation() {
           </button>
         </div>
 
-        {/* 모바일 확장 메뉴 - 중앙 정렬 */}
+        {/* 모바일 확장 메뉴 - 전체 너비 */}
         {isMobileMenuOpen && (
-          <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-80 bg-white z-30 animate-in fade-in slide-in-from-top-2">
+          <div className="absolute top-16 left-0 right-0 bg-white z-30 animate-in fade-in slide-in-from-top-2">
             <div className="px-4 py-3 space-y-1">
               {navItems.map((item) => (
                 <div key={item.href} className="relative">
