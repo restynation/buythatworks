@@ -12,6 +12,8 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   useReactFlow,
+  applyNodeChanges,
+  applyEdgeChanges,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { supabase } from '@/lib/supabase'
@@ -56,35 +58,15 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     }
   }, [contextMenu])
 
-  // React Flow 이벤트 핸들러
+  // React Flow 이벤트 핸들러 - Fixed to prevent nodes disappearing
   const onNodesChange = useCallback((changes: any) => {
-    setNodes((nds: Node[]) => {
-      // React Flow의 applyNodeChanges 로직을 직접 구현
-      return changes.reduce((acc: Node[], change: any) => {
-        if (change.type === 'position' && change.dragging) {
-          return acc.map((node: Node) => 
-            node.id === change.id 
-              ? { ...node, position: change.position }
-              : node
-          )
-        }
-        if (change.type === 'remove') {
-          return acc.filter((node: Node) => node.id !== change.id)
-        }
-        return acc
-      }, nds)
-    })
+    console.log('Nodes change:', changes)
+    setNodes((nds: Node[]) => applyNodeChanges(changes, nds))
   }, [setNodes])
 
   const onEdgesChange = useCallback((changes: any) => {
-    setEdges((eds: Edge[]) => {
-      return changes.reduce((acc: Edge[], change: any) => {
-        if (change.type === 'remove') {
-          return acc.filter((edge: Edge) => edge.id !== change.id)
-        }
-        return acc
-      }, eds)
-    })
+    console.log('Edges change:', changes)
+    setEdges((eds: Edge[]) => applyEdgeChanges(changes, eds))
   }, [setEdges])
 
   useEffect(() => {

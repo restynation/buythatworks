@@ -138,14 +138,22 @@ export default function DeviceNode({ id, data }: Props) {
 
   return (
     <div className="relative group bg-white border border-[#e1e3e6] rounded-[24px] w-[180px] h-[180px] p-2">
-      {/* Connection Handles - Fixed with unique IDs and better positioning */}
+      {/* Connection Handles - Fixed with bidirectional support */}
       <Handle 
         id="left"
-        type="target" 
+        type="source" 
         position={Position.Left} 
         className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !left-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
+      <Handle 
+        id="left-target"
+        type="target" 
+        position={Position.Left} 
+        className="!w-4 !h-4 !bg-transparent !border-0 !left-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
+        style={{ pointerEvents: 'all' }}
+      />
+      
       <Handle 
         id="right"
         type="source" 
@@ -154,17 +162,40 @@ export default function DeviceNode({ id, data }: Props) {
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
-        id="top"
+        id="right-target"
         type="target" 
+        position={Position.Right} 
+        className="!w-4 !h-4 !bg-transparent !border-0 !right-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
+        style={{ pointerEvents: 'all' }}
+      />
+      
+      <Handle 
+        id="top"
+        type="source" 
         position={Position.Top} 
         className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !top-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
+        id="top-target"
+        type="target" 
+        position={Position.Top} 
+        className="!w-4 !h-4 !bg-transparent !border-0 !top-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
+        style={{ pointerEvents: 'all' }}
+      />
+      
+      <Handle 
         id="bottom"
         type="source" 
         position={Position.Bottom} 
         className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !bottom-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        style={{ pointerEvents: 'all' }}
+      />
+      <Handle 
+        id="bottom-target"
+        type="target" 
+        position={Position.Bottom} 
+        className="!w-4 !h-4 !bg-transparent !border-0 !bottom-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
 
