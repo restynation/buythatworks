@@ -1,21 +1,28 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Node, Edge } from 'reactflow'
 import { supabase } from '@/lib/supabase'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
 import bcrypt from 'bcryptjs'
 
-interface Props {
-  nodes: Node[]
-  edges: Edge[]
-  onClose: () => void
+interface DeviceBlock {
+  id: string
+  deviceType: { id: number; name: string }
+  product?: { id: number; brand: string; model: string }
+  customName?: string
+  position: { x: number; y: number }
 }
 
-export default function UploadModal({ nodes, edges, onClose }: Props) {
+interface Props {
+  isOpen: boolean
+  onClose: () => void
+  setupName: string
+  builderName: string
+  deviceBlocks: DeviceBlock[]
+}
+
+export default function UploadModal({ isOpen, onClose, setupName, builderName, deviceBlocks }: Props) {
   const [formData, setFormData] = useState({
-    setupName: '',
-    userName: '',
     password: '',
     setupType: 'current' as 'current' | 'dream',
     comment: '',
@@ -31,94 +38,110 @@ export default function UploadModal({ nodes, edges, onClose }: Props) {
       return
     }
 
-    if (!formData.comment || !formData.comment.trim()) {
+    if (!setupName.trim()) {
+      alert('Setup name is required')
+      return
+    }
+
+    if (!builderName.trim()) {
+      alert('Builder name is required')
+      return
+    }
+
+    if (!formData.comment.trim()) {
       alert('Comment is required')
       return
+    }
+
+    // 블록 검증
+    const computerBlocks = deviceBlocks.filter(b => b.deviceType.name === 'computer')
+    if (computerBlocks.length !== 1) {
+      alert('Setup must have exactly one computer')
+      return
+    }
+
+    for (const block of deviceBlocks) {
+      if (['computer', 'monitor'].includes(block.deviceType.name)) {
+        if (!block.product) {
+          alert(`${block.deviceType.name} must have a product selected`)
+          return
+        }
+      } else {
+        if (!block.customName?.trim()) {
+          alert(`${block.deviceType.name} must have a name`)
+          return
+        }
+      }
     }
 
     setUploading(true)
 
     try {
-      // Hash the password
-      const passwordHash = await bcrypt.hash(formData.password, 10)
-
-      // Upload image if provided
+      // 📸 이미지 업로드
       let imageUrl = null
-      if (image && formData.setupType === 'current') {
+      if (image) {
         console.log('📸 Uploading image...')
-        const fileName = `${Date.now()}-${image.name}`
+        const fileExt = image.name.split('.').pop()
+        const fileName = `${Date.now()}.${fileExt}`
+        
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('setup-images')
           .upload(fileName, image)
-
+        
         if (uploadError) {
-          console.error('Image upload error:', uploadError)
-          alert(`Image upload failed: ${uploadError.message}`)
+          console.error('Image upload failed:', uploadError)
+          alert('Failed to upload image')
           setUploading(false)
           return
         }
-
+        
         const { data: urlData } = supabase.storage
           .from('setup-images')
           .getPublicUrl(fileName)
         
         imageUrl = urlData.publicUrl
-        console.log('✅ Image uploaded successfully:', imageUrl)
       }
 
-      // Check for daisy chain (monitor-to-monitor connections)
-      const hasDaisyChain = edges.some(edge => {
-        const sourceNode = nodes.find(n => n.id === edge.source)
-        const targetNode = nodes.find(n => n.id === edge.target)
-        return sourceNode?.data.deviceType?.name === 'monitor' && 
-               targetNode?.data.deviceType?.name === 'monitor'
-      })
+      // 🔐 비밀번호 해시화
+      const passwordHash = await bcrypt.hash(formData.password, 10)
 
-      // Create setup via Edge Function
-      console.log('🚀 Creating setup via Edge Function...')
+      // 🏗️ Setup 생성
       const setupPayload = {
-        setup: {
-          name: formData.setupName,
-          user_name: formData.userName,
-          password_hash: passwordHash,
-          is_current: formData.setupType === 'current',
-          comment: formData.comment || null,
-          image_url: imageUrl,
-          daisy_chain: hasDaisyChain
-        },
-        blocks: nodes.map(node => ({
-          node_id: node.id, // React Flow node ID 추가
-          product_id: node.data.product?.id || null,
-          custom_name: node.data.customName || null,
-          device_type_id: node.data.deviceType.id,
-          position_x: node.position.x,
-          position_y: node.position.y
-        })),
-        edges: edges.map(edge => ({
-          source_block_id: edge.source,
-          target_block_id: edge.target,
-          source_port_type_id: edge.data?.sourcePortType?.id || 1,
-          target_port_type_id: edge.data?.targetPortType?.id || 1
-        }))
+        name: setupName,
+        user_name: builderName,
+        password_hash: passwordHash,
+        is_current: formData.setupType === 'current',
+        comment: formData.comment,
+        image_url: imageUrl,
+        daisy_chain: false
       }
-      
-      console.log('📦 Setup payload:', setupPayload)
-      
+
+      // Edge Function 호출
       const { data, error } = await supabase.functions.invoke('create-setup', {
-        body: setupPayload
+        body: {
+          setup: setupPayload,
+          blocks: deviceBlocks.map(block => ({
+            id: crypto.randomUUID(),
+            product_id: block.product?.id || null,
+            custom_name: block.customName || null,
+            device_type_id: block.deviceType.id,
+            position_x: block.position.x,
+            position_y: block.position.y
+          })),
+          edges: [] // 새 디자인에서는 연결선이 없음
+        }
       })
 
       if (error) {
-        console.error('Setup creation error:', error)
+        console.error('Setup creation failed:', error)
         let errorMessage = 'Failed to create setup'
         
-        if (error.message) {
-          errorMessage += `: ${error.message}`
-        }
-        
-        // Edge Function에서 반환된 에러 확인
-        if (data && data.error) {
-          errorMessage += `: ${data.error}`
+        if (error.message?.includes('duplicate key')) {
+          errorMessage = 'A setup with this name already exists'
+        } else if (error.message?.includes('password')) {
+          errorMessage = 'Invalid password format'
+        } else if (error.message?.includes('comment')) {
+          errorMessage = 'Comment is required'
         }
         
         alert(errorMessage)
@@ -126,30 +149,21 @@ export default function UploadModal({ nodes, edges, onClose }: Props) {
         return
       }
 
-      if (!data || !data.setupId) {
-        console.error('Invalid response from Edge Function:', data)
-        alert('Setup created but received invalid response')
-        setUploading(false)
-        return
-      }
-
-      console.log('✅ Setup created successfully:', data.setupId)
+      console.log('✅ Setup created successfully:', data)
       alert('Setup uploaded successfully!')
-      window.location.href = `/combinations/${data.setupId}`
-    } catch (err) {
-      console.error('Upload failed:', err)
+      onClose()
       
-      let errorMessage = 'Failed to upload setup'
+      // 폼 초기화
+      setFormData({
+        password: '',
+        setupType: 'current',
+        comment: '',
+      })
+      setImage(null)
       
-      if (err instanceof Error) {
-        errorMessage += `: ${err.message}`
-      } else if (typeof err === 'string') {
-        errorMessage += `: ${err}`
-      } else {
-        errorMessage += ': Unknown error occurred'
-      }
-      
-      alert(errorMessage)
+    } catch (error) {
+      console.error('Upload error:', error)
+      alert('Failed to upload setup. Please try again.')
     } finally {
       setUploading(false)
     }
@@ -159,80 +173,63 @@ export default function UploadModal({ nodes, edges, onClose }: Props) {
     const file = e.target.files?.[0]
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        alert('Image must be less than 5MB')
-        return
-      }
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file')
+        alert('Image must be smaller than 5MB')
         return
       }
       setImage(file)
     }
   }
 
+  if (!isOpen) return null
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-[24px] p-8 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">Upload Setup</h2>
+          <h2 className="text-2xl font-medium text-[#15171a]" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
+            Upload Setup
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Setup Name *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.setupName}
-              onChange={(e) => setFormData({ ...formData, setupName: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="e.g., My MacBook Pro Setup"
-            />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Setup Info Preview */}
+          <div className="bg-[#f9f9fa] rounded-[16px] p-4">
+            <h3 className="font-medium text-[#15171a] mb-2">Setup Preview</h3>
+            <p className="text-sm text-gray-600 mb-1">
+              <span className="font-medium">Name:</span> {setupName || 'Untitled Setup'}
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium">Builder:</span> {builderName || 'Anonymous'}
+            </p>
           </div>
 
+          {/* 4-Digit Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Your Name *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.userName}
-              onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="e.g., John Doe"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               4-Digit Password *
             </label>
             <input
               type="password"
-              required
               maxLength={4}
-              pattern="\d{4}"
+              pattern="[0-9]{4}"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="1234"
+              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+              className="w-full px-4 py-3 border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-lg font-mono"
+              placeholder="••••"
+              required
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Used to delete your setup later
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Enter 4 digits only</p>
           </div>
 
+          {/* Setup Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
               Setup Type *
             </label>
             <div className="space-y-2">
@@ -242,10 +239,10 @@ export default function UploadModal({ nodes, edges, onClose }: Props) {
                   name="setupType"
                   value="current"
                   checked={formData.setupType === 'current'}
-                  onChange={(e) => setFormData({ ...formData, setupType: e.target.value as 'current' | 'dream' })}
-                  className="mr-2"
+                  onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
+                  className="mr-3"
                 />
-                <span>Current - I own this setup</span>
+                <span>Current Setup (I actually use this)</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -253,78 +250,78 @@ export default function UploadModal({ nodes, edges, onClose }: Props) {
                   name="setupType"
                   value="dream"
                   checked={formData.setupType === 'dream'}
-                  onChange={(e) => setFormData({ ...formData, setupType: e.target.value as 'current' | 'dream' })}
-                  className="mr-2"
+                  onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
+                  className="mr-3"
                 />
-                <span>Dream - I want this setup</span>
+                <span>Dream Setup (I wish I had this)</span>
               </label>
             </div>
           </div>
 
-          {formData.setupType === 'current' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Photo (Optional)
-              </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="image-upload"
-                />
-                <label
-                  htmlFor="image-upload"
-                  className="cursor-pointer flex flex-col items-center space-y-2"
-                >
-                  <ImageIcon className="w-8 h-8 text-gray-400" />
-                  <span className="text-sm text-gray-600">
-                    {image ? image.name : 'Click to select image'}
-                  </span>
-                </label>
-              </div>
-            </div>
-          )}
-
+          {/* Photo Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Comment <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Photo (Optional)
+            </label>
+            <div className="border-2 border-dashed border-gray-300 rounded-[12px] p-6">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+                id="image-upload"
+              />
+              <label
+                htmlFor="image-upload"
+                className="flex flex-col items-center cursor-pointer"
+              >
+                <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
+                {image ? (
+                  <p className="text-sm text-green-600">
+                    Selected: {image.name}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600">
+                    Click to upload an image
+                  </p>
+                )}
+              </label>
+            </div>
+          </div>
+
+          {/* Comment */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Comment *
             </label>
             <textarea
               value={formData.comment}
-              onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="Tell us about your setup... (required)"
+              onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
+              className="w-full px-4 py-3 border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              rows={4}
+              placeholder="Describe your setup, why you chose these products, or any tips..."
               required
             />
           </div>
 
-          <div className="flex space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 btn-secondary"
-              disabled={uploading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 btn-primary flex items-center justify-center space-x-2"
-              disabled={uploading}
-            >
-              {uploading ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              ) : (
-                <>
-                  <Upload className="w-4 h-4" />
-                  <span>Upload</span>
-                </>
-              )}
-            </button>
-          </div>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={uploading}
+            className="w-full bg-[#15171a] text-white py-3 px-4 rounded-[24px] font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {uploading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Upload className="w-4 h-4" />
+                Upload Setup
+              </>
+            )}
+          </button>
         </form>
       </div>
     </div>
