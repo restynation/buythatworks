@@ -262,8 +262,9 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       sourceHandle: connection.sourceHandle,
       targetHandle: connection.targetHandle,
       style: { 
-        stroke: '#6b7280', 
+        stroke: '#6B7280', 
         strokeWidth: 2,
+        strokeDasharray: '4 4',
         cursor: 'pointer'
       },
       labelStyle: { 
@@ -289,19 +290,22 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   return (
     <div className="h-full w-full relative z-0">
-      {/* Global CSS for selected edge styling */}
+      {/* Global CSS for edge styling */}
       <style dangerouslySetInnerHTML={{
         __html: `
           .react-flow__edge.selected path {
-            stroke: #15171a !important;
+            stroke: #3b82f6 !important;
             stroke-width: 2px !important;
-          }
-          .react-flow__edge:hover path {
-            stroke: #374151 !important;
+            stroke-dasharray: none !important;
           }
           .react-flow__edge path {
             cursor: pointer !important;
-            stroke-width: 2px;
+            stroke: #6B7280 !important;
+            stroke-width: 2px !important;
+            stroke-dasharray: 4 4 !important;
+          }
+          .react-flow__edge:hover path {
+            stroke: #374151 !important;
           }
           .react-flow__edge {
             pointer-events: all !important;
@@ -326,7 +330,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 2 }}
         snapToGrid={false}
         snapGrid={[15, 15]}
-        deleteKeyCode="Delete"
+        deleteKeyCode={['Delete', 'Backspace']}
         elementsSelectable={true}
         nodesConnectable={true}
         nodesDraggable={true}
@@ -338,8 +342,9 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         defaultEdgeOptions={{
           type: 'default',
           style: { 
-            stroke: '#6b7280', 
+            stroke: '#6B7280', 
             strokeWidth: 2,
+            strokeDasharray: '4 4',
             cursor: 'pointer'
           },
           labelStyle: { 
