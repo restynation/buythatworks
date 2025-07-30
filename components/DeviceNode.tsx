@@ -138,19 +138,19 @@ export default function DeviceNode({ id, data }: Props) {
 
   return (
     <div className="relative group bg-white border border-[#e1e3e6] rounded-[24px] w-[180px] h-[180px] p-2">
-      {/* Connection Handles - Fixed with bidirectional support */}
+      {/* Connection Handles - Updated design */}
       <Handle 
         id="left"
         type="source" 
         position={Position.Left} 
-        className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !left-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        className="!w-3 !h-3 !bg-[#FFFFFF] !border !border-[#C4C7CC] !left-[-6px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!w-4 !h-4 !bg-transparent !border-0 !left-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
+        className="!w-3 !h-3 !bg-transparent !border-0 !left-[-6px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -158,14 +158,14 @@ export default function DeviceNode({ id, data }: Props) {
         id="right"
         type="source" 
         position={Position.Right} 
-        className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !right-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        className="!w-3 !h-3 !bg-[#FFFFFF] !border !border-[#C4C7CC] !right-[-6px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
         id="right-target"
         type="target" 
         position={Position.Right} 
-        className="!w-4 !h-4 !bg-transparent !border-0 !right-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
+        className="!w-3 !h-3 !bg-transparent !border-0 !right-[-6px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -173,14 +173,14 @@ export default function DeviceNode({ id, data }: Props) {
         id="top"
         type="source" 
         position={Position.Top} 
-        className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !top-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        className="!w-3 !h-3 !bg-[#FFFFFF] !border !border-[#C4C7CC] !top-[-6px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
         id="top-target"
         type="target" 
         position={Position.Top} 
-        className="!w-4 !h-4 !bg-transparent !border-0 !top-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
+        className="!w-3 !h-3 !bg-transparent !border-0 !top-[-6px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -188,14 +188,14 @@ export default function DeviceNode({ id, data }: Props) {
         id="bottom"
         type="source" 
         position={Position.Bottom} 
-        className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !bottom-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        className="!w-3 !h-3 !bg-[#FFFFFF] !border !border-[#C4C7CC] !bottom-[-6px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
         id="bottom-target"
         type="target" 
         position={Position.Bottom} 
-        className="!w-4 !h-4 !bg-transparent !border-0 !bottom-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
+        className="!w-3 !h-3 !bg-transparent !border-0 !bottom-[-6px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
 
