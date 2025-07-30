@@ -428,12 +428,7 @@ export default function CombinationsPage() {
 
              {/* 결과 그리드 */}
        <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(700px, 1fr))' }}>
-         {isLoading ? (
-           // 로딩 스켈레톤
-           Array.from({ length: 6 }).map((_, i) => (
-             <div key={i} className="h-80 bg-[#f9f9fa] rounded-[32px] animate-pulse" />
-           ))
-         ) : (
+                 {(
            filteredSetups.map((setup) => {
              // 제품별로 그룹화
              const productGroups = setup.setup_blocks?.reduce((groups: Record<string, any[]>, block) => {
