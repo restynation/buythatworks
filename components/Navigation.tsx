@@ -7,7 +7,9 @@ import { useState, useEffect, useRef } from 'react'
 export default function Navigation() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [showTooltip, setShowTooltip] = useState(false)
+  const [showUploadTooltip, setShowUploadTooltip] = useState(false)
+  const [showFinderTooltip, setShowFinderTooltip] = useState(false)
+  const [showDesktopFinderTooltip, setShowDesktopFinderTooltip] = useState(false)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
 
   const navItems = [
@@ -42,8 +44,18 @@ export default function Navigation() {
   }
 
   const handleUploadMyMobileClick = () => {
-    setShowTooltip(true)
-    setTimeout(() => setShowTooltip(false), 2000) // 2초 후 툴팁 숨김
+    setShowUploadTooltip(true)
+    setTimeout(() => setShowUploadTooltip(false), 2000) // 2초 후 툴팁 숨김
+  }
+
+  const handleFinderMobileClick = () => {
+    setShowFinderTooltip(true)
+    setTimeout(() => setShowFinderTooltip(false), 2000) // 2초 후 툴팁 숨김
+  }
+
+  const handleDesktopFinderClick = () => {
+    setShowDesktopFinderTooltip(true)
+    setTimeout(() => setShowDesktopFinderTooltip(false), 2000) // 2초 후 툴팁 숨김
   }
 
   return (
@@ -64,11 +76,22 @@ export default function Navigation() {
           
           {/* 네비게이션 메뉴들 */}
           {navItems.map((item) => (
-            <div key={item.href} className="shrink-0">
+            <div key={item.href} className="shrink-0 relative">
               {item.disabled ? (
-                <span className="text-[16px] font-normal text-gray-500 leading-[24px] whitespace-nowrap cursor-not-allowed">
-                  {item.label}
-                </span>
+                <div>
+                  <span 
+                    className="text-[16px] font-normal text-gray-500 leading-[24px] whitespace-nowrap cursor-pointer"
+                    onClick={handleDesktopFinderClick}
+                  >
+                    {item.label}
+                  </span>
+                  {item.href === '/finder' && showDesktopFinderTooltip && (
+                    <div className="absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-2">
+                      Coming soon
+                      <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <Link 
                   href={item.href}
@@ -144,13 +167,19 @@ export default function Navigation() {
                 <div key={item.href} className="relative">
                   {item.disabled || item.mobileDisabled ? (
                     <div 
-                      className="block px-3 py-3 text-[16px] font-normal text-gray-400 cursor-not-allowed relative"
-                      onClick={item.mobileDisabled ? handleUploadMyMobileClick : undefined}
+                      className="block px-3 py-3 text-[16px] font-normal text-gray-400 cursor-pointer relative"
+                      onClick={item.disabled ? handleFinderMobileClick : (item.mobileDisabled ? handleUploadMyMobileClick : undefined)}
                     >
                       {item.label}
-                      {item.mobileDisabled && showTooltip && (
-                        <div className="absolute top-full left-3 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-2">
+                      {item.mobileDisabled && showUploadTooltip && (
+                        <div className="absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-2">
                           Available on desktop only
+                          <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
+                        </div>
+                      )}
+                      {item.disabled && showFinderTooltip && (
+                        <div className="absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-2">
+                          Coming soon
                           <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
                       )}
