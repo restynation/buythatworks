@@ -138,33 +138,41 @@ export default function DeviceNode({ id, data }: Props) {
 
   return (
     <div className="relative group bg-white border border-[#e1e3e6] rounded-[24px] w-[180px] h-[180px] p-2">
-      {/* Connection Handles */}
+      {/* Connection Handles - Fixed with unique IDs and better positioning */}
       <Handle 
+        id="left"
         type="target" 
         position={Position.Left} 
-        className="!w-3 !h-3 !bg-gray-400 !border-2 !border-white !left-[-6px] !top-1/2 !transform !-translate-y-1/2" 
+        className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !left-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        style={{ pointerEvents: 'all' }}
       />
       <Handle 
+        id="right"
         type="source" 
         position={Position.Right} 
-        className="!w-3 !h-3 !bg-gray-400 !border-2 !border-white !right-[-6px] !top-1/2 !transform !-translate-y-1/2" 
+        className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !right-[-8px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        style={{ pointerEvents: 'all' }}
       />
       <Handle 
+        id="top"
         type="target" 
         position={Position.Top} 
-        className="!w-3 !h-3 !bg-gray-400 !border-2 !border-white !top-[-6px] !left-1/2 !transform !-translate-x-1/2" 
+        className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !top-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        style={{ pointerEvents: 'all' }}
       />
       <Handle 
+        id="bottom"
         type="source" 
         position={Position.Bottom} 
-        className="!w-3 !h-3 !bg-gray-400 !border-2 !border-white !bottom-[-6px] !left-1/2 !transform !-translate-x-1/2" 
+        className="!w-4 !h-4 !bg-gray-500 !border-2 !border-white !bottom-[-8px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-blue-500 hover:!scale-110 !transition-all !duration-200" 
+        style={{ pointerEvents: 'all' }}
       />
 
       {/* Delete button */}
       {data.canDelete && (
         <button
           onClick={() => data.onDelete(id)}
-          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white rounded-full p-1 shadow-md hover:shadow-lg z-10"
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white rounded-full p-1 shadow-md hover:shadow-lg z-20"
         >
           <Trash2 className="w-4 h-4 text-gray-500 hover:text-red-500" />
         </button>

@@ -233,21 +233,43 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }
 
   const onConnect = useCallback((connection: Connection) => {
-    // Add edge with default port type (TYPE_C)
+    console.log('Connection attempt:', connection)
+    
+    // Validate connection
+    if (!connection.source || !connection.target) {
+      console.log('Invalid connection: missing source or target')
+      return
+    }
+    
+    // Prevent self-connection
+    if (connection.source === connection.target) {
+      console.log('Invalid connection: cannot connect to self')
+      return
+    }
+    
+    // Add edge with handle information
     const defaultPortType = portTypes.find(pt => pt.code === 'TYPE_C')
-    if (!defaultPortType) return
+    if (!defaultPortType) {
+      console.log('No default port type found')
+      return
+    }
 
     const newEdge: Edge = {
       ...connection,
-      id: `${connection.source}-${connection.target}-${Date.now()}`,
+      id: `${connection.source}-${connection.sourceHandle || 'unknown'}-${connection.target}-${connection.targetHandle || 'unknown'}-${Date.now()}`,
       type: 'default',
       label: defaultPortType.code,
+      sourceHandle: connection.sourceHandle,
+      targetHandle: connection.targetHandle,
       data: {
         sourcePortType: defaultPortType,
-        targetPortType: defaultPortType
+        targetPortType: defaultPortType,
+        sourceHandle: connection.sourceHandle,
+        targetHandle: connection.targetHandle
       }
     } as Edge
 
+    console.log('Creating edge:', newEdge)
     setEdges((edges: Edge[]) => addEdge(newEdge, edges))
   }, [portTypes])
 
@@ -267,6 +289,10 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
         minZoom={0.3}
         maxZoom={2}
+        connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 2 }}
+        snapToGrid={false}
+        snapGrid={[15, 15]}
+        deleteKeyCode="Delete"
         style={{ backgroundColor: '#F9F9FA' }}
         proOptions={{ hideAttribution: true }}
       >
