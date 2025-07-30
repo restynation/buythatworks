@@ -18,7 +18,7 @@ interface Props {
 export default function UploadModal({ isOpen, onClose, setupName, builderName, nodes, edges }: Props) {
   const [formData, setFormData] = useState({
     password: '',
-    setupType: 'current' as 'current' | 'dream', // 기본값을 current로 (Figma와 일치)
+    setupType: 'dream' as 'current' | 'dream', // 기본값을 dream으로 변경
     comment: '',
   })
   const [image, setImage] = useState<File | null>(null)
@@ -277,7 +277,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                   </div>
                 </div>
               </div>
-              <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-lg" />
+              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-lg ${
+                formData.setupType === 'dream' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+              }`} />
             </div>
 
             {/* It's my current setup - 280x280px card (오른쪽) */}
@@ -375,7 +377,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
               <textarea
                 value={formData.comment}
                 onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
-                className="basis-0 font-['Pretendard'] font-normal grow h-full leading-[24px] min-h-px min-w-px not-italic relative shrink-0 text-[#c4c7cc] text-[16px] text-left bg-transparent border-none outline-none resize-none"
+                className={`basis-0 font-['Pretendard'] font-normal grow h-full leading-[24px] min-h-px min-w-px not-italic relative shrink-0 text-[16px] text-left bg-transparent border-none outline-none resize-none ${
+                  formData.comment ? 'text-[#15171a]' : 'text-[#c4c7cc]'
+                }`}
                 placeholder="MacBook is God"
                 required
               />
@@ -397,7 +401,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 pattern="[0-9]{4}"
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                className="basis-0 font-['Pretendard'] font-normal grow leading-[20px] min-h-px min-w-px not-italic relative shrink-0 text-[#c4c7cc] text-[14px] text-center bg-transparent border-none outline-none"
+                className={`basis-0 font-['Pretendard'] font-normal grow leading-[20px] min-h-px min-w-px not-italic relative shrink-0 text-[14px] text-center bg-transparent border-none outline-none ${
+                  formData.password ? 'text-[#15171a]' : 'text-[#c4c7cc]'
+                }`}
                 placeholder="****"
                 required
               />
