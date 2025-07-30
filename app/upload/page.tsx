@@ -28,7 +28,10 @@ export default function UploadPage() {
 
   return (
     <main className="p-4 bg-white min-h-screen">
-      <div className="relative h-[calc(100vh-8rem)] w-full bg-white rounded-3xl overflow-hidden">
+      {/* 헤더 공간 */}
+      <div className="h-16" />
+      
+      <div className="relative h-[calc(100vh-12rem)] w-full bg-white rounded-3xl overflow-hidden">
         {/* 상단 입력 영역 - 캔버스 내부에 위치 */}
         <div className="absolute top-2 left-2 right-2 z-10 p-2 bg-white/50 backdrop-blur-sm rounded-2xl">
           <div className="flex items-center justify-between">
