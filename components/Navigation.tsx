@@ -10,6 +10,9 @@ export default function Navigation() {
   const [showUploadTooltip, setShowUploadTooltip] = useState(false)
   const [showFinderTooltip, setShowFinderTooltip] = useState(false)
   const [showDesktopFinderTooltip, setShowDesktopFinderTooltip] = useState(false)
+  const [isClosingUploadTooltip, setIsClosingUploadTooltip] = useState(false)
+  const [isClosingFinderTooltip, setIsClosingFinderTooltip] = useState(false)
+  const [isClosingDesktopFinderTooltip, setIsClosingDesktopFinderTooltip] = useState(false)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
 
   const navItems = [
@@ -45,17 +48,38 @@ export default function Navigation() {
 
   const handleUploadMyMobileClick = () => {
     setShowUploadTooltip(true)
-    setTimeout(() => setShowUploadTooltip(false), 2000) // 2초 후 툴팁 숨김
+    setIsClosingUploadTooltip(false)
+    setTimeout(() => {
+      setIsClosingUploadTooltip(true)
+      setTimeout(() => {
+        setShowUploadTooltip(false)
+        setIsClosingUploadTooltip(false)
+      }, 200) // 애니메이션 시간
+    }, 2000) // 2초 후 사라지기 시작
   }
 
   const handleFinderMobileClick = () => {
     setShowFinderTooltip(true)
-    setTimeout(() => setShowFinderTooltip(false), 2000) // 2초 후 툴팁 숨김
+    setIsClosingFinderTooltip(false)
+    setTimeout(() => {
+      setIsClosingFinderTooltip(true)
+      setTimeout(() => {
+        setShowFinderTooltip(false)
+        setIsClosingFinderTooltip(false)
+      }, 200) // 애니메이션 시간
+    }, 2000) // 2초 후 사라지기 시작
   }
 
   const handleDesktopFinderClick = () => {
     setShowDesktopFinderTooltip(true)
-    setTimeout(() => setShowDesktopFinderTooltip(false), 2000) // 2초 후 툴팁 숨김
+    setIsClosingDesktopFinderTooltip(false)
+    setTimeout(() => {
+      setIsClosingDesktopFinderTooltip(true)
+      setTimeout(() => {
+        setShowDesktopFinderTooltip(false)
+        setIsClosingDesktopFinderTooltip(false)
+      }, 200) // 애니메이션 시간
+    }, 2000) // 2초 후 사라지기 시작
   }
 
   return (
@@ -86,7 +110,11 @@ export default function Navigation() {
                     {item.label}
                   </span>
                   {item.href === '/finder' && showDesktopFinderTooltip && (
-                    <div className="absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-2">
+                    <div className={`absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 ${
+                      isClosingDesktopFinderTooltip 
+                        ? 'animate-out fade-out slide-out-to-top-2' 
+                        : 'animate-in fade-in slide-in-from-top-2'
+                    }`}>
                       Coming soon
                       <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
                     </div>
@@ -172,13 +200,21 @@ export default function Navigation() {
                     >
                       {item.label}
                       {item.mobileDisabled && showUploadTooltip && (
-                        <div className="absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-2">
+                        <div className={`absolute top-full left-3 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 ${
+                          isClosingUploadTooltip 
+                            ? 'animate-out fade-out slide-out-to-top-2' 
+                            : 'animate-in fade-in slide-in-from-top-2'
+                        }`}>
                           Available on desktop only
                           <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
                       )}
                       {item.disabled && showFinderTooltip && (
-                        <div className="absolute top-full left-0 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-2">
+                        <div className={`absolute top-full left-3 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 ${
+                          isClosingFinderTooltip 
+                            ? 'animate-out fade-out slide-out-to-top-2' 
+                            : 'animate-in fade-in slide-in-from-top-2'
+                        }`}>
                           Coming soon
                           <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
