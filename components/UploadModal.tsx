@@ -24,6 +24,12 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
   const [image, setImage] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -82,9 +88,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
     setUploading(true)
 
     try {
-      // 📸 이미지 업로드
+      // 📸 이미지 업로드 (Current Setup일 때만)
       let imageUrl = null
-      if (image) {
+      if (image && formData.setupType === 'current') {
         console.log('📸 Uploading image...')
         const fileExt = image.name.split('.').pop()
         const fileName = `${Date.now()}.${fileExt}`
@@ -216,36 +222,113 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-[24px] p-8 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={handleBackdropClick}
+    >
+      <div className="bg-white rounded-[32px] p-8 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-medium text-[#15171a]" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
-            Upload Setup
+            Share your setup
           </h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Setup Info Preview */}
-          <div className="bg-[#f9f9fa] rounded-[16px] p-4">
-            <h3 className="font-medium text-[#15171a] mb-2">Setup Preview</h3>
-            <p className="text-sm text-gray-600 mb-1">
-              <span className="font-medium">Name:</span> {setupName || 'Untitled Setup'}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Builder:</span> {builderName || 'Anonymous'}
-            </p>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Setup Type */}
+          <div>
+            <div className="space-y-4">
+              <label className="flex items-start p-4 border border-gray-200 rounded-[16px] cursor-pointer hover:bg-gray-50 transition-colors">
+                <div className="flex items-center h-6">
+                  <input
+                    type="radio"
+                    name="setupType"
+                    value="current"
+                    checked={formData.setupType === 'current'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
+                    className="w-5 h-5 text-[#15171a] border-gray-300 focus:ring-[#15171a] focus:ring-2"
+                  />
+                </div>
+                <div className="ml-4">
+                  <div className="text-base font-medium text-[#15171a]">
+                    It's my current setup
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">
+                    I actually use this setup right now
+                  </div>
+                </div>
+              </label>
+              
+              <label className="flex items-start p-4 border border-gray-200 rounded-[16px] cursor-pointer hover:bg-gray-50 transition-colors">
+                <div className="flex items-center h-6">
+                  <input
+                    type="radio"
+                    name="setupType"
+                    value="dream"
+                    checked={formData.setupType === 'dream'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
+                    className="w-5 h-5 text-[#15171a] border-gray-300 focus:ring-[#15171a] focus:ring-2"
+                  />
+                </div>
+                <div className="ml-4">
+                  <div className="text-base font-medium text-[#15171a]">
+                    It's my dream setup
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">
+                    I wish I had this setup someday
+                  </div>
+                </div>
+              </label>
+            </div>
           </div>
+
+          {/* Photo Upload - Only show for current setup */}
+          {formData.setupType === 'current' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Photo (Optional)
+              </label>
+              <div className="border-2 border-dashed border-gray-300 rounded-[16px] p-6 hover:border-gray-400 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <label
+                  htmlFor="image-upload"
+                  className="flex flex-col items-center cursor-pointer"
+                >
+                  <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
+                  {image ? (
+                    <p className="text-sm text-green-600 font-medium">
+                      Selected: {image.name}
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-sm text-gray-700 font-medium mb-1">
+                        Upload a photo of your setup
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        JPG, PNG up to 5MB
+                      </p>
+                    </>
+                  )}
+                </label>
+              </div>
+            </div>
+          )}
 
           {/* 4-Digit Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              4-Digit Password *
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              4-Digit PIN
             </label>
             <input
               type="password"
@@ -253,86 +336,24 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
               pattern="[0-9]{4}"
               value={formData.password}
               onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-lg font-mono"
+              className="w-full px-4 py-4 border border-gray-300 rounded-[16px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-transparent text-center text-xl font-mono tracking-widest"
               placeholder="••••"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">Enter 4 digits only</p>
-          </div>
-
-          {/* Setup Type */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Setup Type *
-            </label>
-            <div className="space-y-2">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="setupType"
-                  value="current"
-                  checked={formData.setupType === 'current'}
-                  onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
-                  className="mr-3"
-                />
-                <span>Current Setup (I actually use this)</span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="setupType"
-                  value="dream"
-                  checked={formData.setupType === 'dream'}
-                  onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
-                  className="mr-3"
-                />
-                <span>Dream Setup (I wish I had this)</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Photo Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Photo (Optional)
-            </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-[12px] p-6">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-                id="image-upload"
-              />
-              <label
-                htmlFor="image-upload"
-                className="flex flex-col items-center cursor-pointer"
-              >
-                <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
-                {image ? (
-                  <p className="text-sm text-green-600">
-                    Selected: {image.name}
-                  </p>
-                ) : (
-                  <p className="text-sm text-gray-600">
-                    Click to upload an image
-                  </p>
-                )}
-              </label>
-            </div>
+            <p className="text-xs text-gray-500 mt-2">You'll need this PIN to edit or delete your setup</p>
           </div>
 
           {/* Comment */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Comment *
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Tell us about your setup
             </label>
             <textarea
               value={formData.comment}
               onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-4 py-4 border border-gray-300 rounded-[16px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-transparent resize-none"
               rows={4}
-              placeholder="Describe your setup, why you chose these products, or any tips..."
+              placeholder="What do you love about this setup? Any tips or advice for others?"
               required
             />
           </div>
@@ -341,17 +362,17 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           <button
             type="submit"
             disabled={uploading}
-            className="w-full bg-[#15171a] text-white py-3 px-4 rounded-[24px] font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-[#15171a] text-white py-4 px-6 rounded-[24px] font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
             {uploading ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Uploading...
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Sharing...
               </>
             ) : (
               <>
-                <Upload className="w-4 h-4" />
-                Upload Setup
+                <Upload className="w-5 h-5" />
+                Share setup
               </>
             )}
           </button>
