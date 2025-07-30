@@ -482,7 +482,7 @@ export default function CombinationsPage() {
                                </div>
                              )}
                            </div>
-                           <p className="text-[12px] leading-[16px] text-[#15171a] text-center overflow-ellipsis overflow-hidden text-nowrap w-full font-['Pretendard'] font-normal">
+                           <p className="text-[12px] leading-[16px] text-[#15171a] text-center overflow-ellipsis overflow-hidden text-nowrap w-full font-pretendard">
                              {product ? 
                                `${product.brand} ${product.model}` : 
                                'Unknown device'

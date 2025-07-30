@@ -274,7 +274,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                       )}
                     </div>
                   </div>
-                  <div className="font-['Pretendard'] font-normal leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
+                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
                     It's my dream setup
                   </div>
                 </div>
@@ -319,7 +319,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                       )}
                     </div>
                   </div>
-                  <div className="font-['Pretendard'] font-normal leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
+                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
                     It's my current setup
                   </div>
                 </div>
@@ -347,11 +347,11 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                           </svg>
                         </div>
                         {image ? (
-                          <div className="font-['Pretendard'] font-normal leading-[20px] not-italic relative shrink-0 text-[14px] text-center text-gray-500 text-nowrap">
+                          <div className="font-pretendard leading-[20px] not-italic relative shrink-0 text-[14px] text-center text-gray-500 text-nowrap">
                             Selected: {image.name}
                           </div>
                         ) : (
-                          <div className="font-['Pretendard'] font-normal leading-[20px] not-italic relative shrink-0 text-[14px] text-center text-gray-500 text-nowrap whitespace-pre">
+                          <div className="font-pretendard leading-[20px] not-italic relative shrink-0 text-[14px] text-center text-gray-500 text-nowrap whitespace-pre">
                             <p className="block mb-0">Show your image!</p>
                             <p className="block">(Optional)</p>
                           </div>
@@ -381,9 +381,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
                 onFocus={() => setCommentFocused(true)}
                 onBlur={() => setCommentFocused(false)}
-                className={`basis-0 font-['Pretendard'] font-normal grow h-full leading-[24px] min-h-px min-w-px not-italic relative shrink-0 text-[16px] text-left bg-transparent border-none outline-none resize-none ${
-                  formData.comment ? 'text-[#15171a]' : 'text-[#c4c7cc]'
-                }`}
+                            className={`basis-0 font-pretendard grow h-full leading-[24px] min-h-px min-w-px not-italic relative shrink-0 text-[16px] text-left bg-transparent border-none outline-none resize-none ${
+              formData.comment ? 'text-[#15171a]' : 'text-[#c4c7cc]'
+            }`}
                 placeholder="MacBook is God"
                 required
               />
@@ -409,9 +409,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                 onFocus={() => setPasswordFocused(true)}
                 onBlur={() => setPasswordFocused(false)}
-                className={`basis-0 font-['Pretendard'] font-normal grow leading-[20px] min-h-px min-w-px not-italic relative shrink-0 text-[14px] text-center bg-transparent border-none outline-none ${
-                  formData.password ? 'text-[#15171a]' : 'text-[#c4c7cc]'
-                }`}
+                            className={`basis-0 font-pretendard grow leading-[20px] min-h-px min-w-px not-italic relative shrink-0 text-[14px] text-center bg-transparent border-none outline-none ${
+              formData.password ? 'text-[#15171a]' : 'text-[#c4c7cc]'
+            }`}
                 placeholder="****"
                 required
               />
@@ -431,7 +431,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
             disabled={uploading}
             className="box-border content-stretch flex flex-row items-center justify-center px-3 py-0 relative shrink-0 z-10"
           >
-            <div className="font-['Pretendard'] font-normal leading-[28px] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+            <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
               {uploading ? 'Uploading...' : 'Finish'}
             </div>
           </button>
