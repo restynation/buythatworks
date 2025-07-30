@@ -91,14 +91,13 @@ export default function DeviceNode({ id, data }: Props) {
   }
 
   const handleProductSelect = (product: Product) => {
-    data.onUpdate(id, { product, customName: '' })
+    data.onUpdate(id, { product, customName: undefined })
     closeDropdown()
   }
 
-  const handleCustomNameSave = () => {
-    if (customName.trim()) {
-      data.onUpdate(id, { customName: customName.trim(), product: null })
-    }
+  const handleCustomNameChange = (value: string) => {
+    setCustomName(value)
+    data.onUpdate(id, { customName: value, product: undefined })
   }
 
   const getDisplayText = () => {
@@ -157,29 +156,31 @@ export default function DeviceNode({ id, data }: Props) {
               className="max-w-full max-h-full object-contain"
             />
           ) : (
-            <div className="text-gray-400 text-xs text-center">
-              No image
+            <div className="text-4xl">
+              {data.deviceType.name === 'computer' && '💻'}
+              {data.deviceType.name === 'monitor' && '🖥️'}
+              {data.deviceType.name === 'hub' && '🔌'}
+              {data.deviceType.name === 'mouse' && '🖱️'}
+              {data.deviceType.name === 'keyboard' && '⌨️'}
             </div>
           )}
         </div>
         
         {/* Input area */}
-        <div className="relative flex-1">
+        <div className="relative" data-dropdown>
           {isTextInput ? (
             <input
               type="text"
-              value={customName}
-              onChange={(e) => setCustomName(e.target.value)}
-              onBlur={handleCustomNameSave}
-              onKeyDown={(e) => e.key === 'Enter' && handleCustomNameSave()}
               placeholder={`Enter ${data.deviceType.name} name`}
-              className="w-full px-2 py-1 text-xs border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-[#15171a]"
+              value={customName}
+              onChange={(e) => handleCustomNameChange(e.target.value)}
+              className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] w-full border-none outline-none"
             />
           ) : (
             <>
               <button
                 onClick={toggleDropdown}
-                className="w-full px-2 py-1 text-xs border border-gray-200 rounded-[12px] bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
+                className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] flex items-center justify-between w-full"
               >
                 <span className="truncate text-left flex-1">
                   {getDisplayText()}
