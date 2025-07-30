@@ -423,7 +423,7 @@ export default function CombinationsPage() {
                  {isLoading ? (
           // 간단한 로딩 스켈레톤
           Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-80 bg-gray-200 rounded-[32px] animate-pulse"></div>
+            <div key={i} className="h-80 rounded-[32px] skeleton-shimmer"></div>
           ))
         ) : (
            filteredSetups.map((setup) => {
