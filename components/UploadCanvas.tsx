@@ -269,7 +269,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   const availableDeviceTypes = deviceTypes.filter(dt => dt.name !== 'computer')
 
   return (
-    <div className="h-full w-full relative">
+    <div className="h-full w-full relative z-0">
       {/* React Flow */}
       <ReactFlow
         nodes={nodes}
@@ -309,10 +309,10 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         <Background color="#F9F9FA" />
       </ReactFlow>
 
-            {/* Context Menu */}
+      {/* Context Menu */}
       {contextMenu && (
         <div 
-          className="context-menu absolute z-20 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2"
+          className="context-menu absolute z-30 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2"
           style={{ 
             left: contextMenu.x, 
             top: contextMenu.y 
