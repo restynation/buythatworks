@@ -113,7 +113,7 @@ export default function Navigation() {
           {/* 햄버거 메뉴 버튼 */}
           <button
             onClick={toggleMobileMenu}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors relative z-10"
+            className="p-2 rounded-md hover:bg-gray-100 transition-colors relative z-20"
             aria-label="Toggle menu"
           >
             <div className="w-6 h-6 relative flex flex-col justify-center items-center">
@@ -136,11 +136,9 @@ export default function Navigation() {
           </button>
         </div>
 
-        {/* 모바일 확장 메뉴 - 네비게이션 바 자체가 확장됨 */}
-        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
-        }`}>
-          <div className="border-t border-gray-100 bg-white">
+        {/* 모바일 확장 메뉴 - absolute positioning으로 변경 */}
+        {isMobileMenuOpen && (
+          <div className="absolute top-16 left-0 right-0 bg-white shadow-md z-10 animate-in fade-in slide-in-from-top-2">
             <div className="px-4 py-3 space-y-1">
               {navItems.map((item) => (
                 <div key={item.href} className="relative">
@@ -151,7 +149,7 @@ export default function Navigation() {
                     >
                       {item.label}
                       {item.mobileDisabled && showTooltip && (
-                        <div className="absolute top-full left-3 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-20 animate-in fade-in slide-in-from-top-2">
+                        <div className="absolute top-full left-3 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-30 animate-in fade-in slide-in-from-top-2">
                           Available on desktop only
                           <div className="absolute -top-1 left-4 w-2 h-2 bg-[#15171a] rotate-45"></div>
                         </div>
@@ -173,8 +171,8 @@ export default function Navigation() {
                 </div>
               ))}
               
-              {/* Contact us 버튼 (모바일) */}
-              <div className="pt-3 border-t border-gray-100 mt-3">
+              {/* Contact us 버튼 (모바일) - border 제거 */}
+              <div className="pt-3 mt-3">
                 <button className="w-full h-12 px-3 py-3 bg-[#f9f9fa] rounded-[12px] flex items-center justify-center">
                   <span className="text-[16px] font-normal text-[#15171a] leading-[20px]">
                     Contact us
@@ -183,8 +181,16 @@ export default function Navigation() {
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
+
+      {/* 모바일 메뉴 오버레이 */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-25 z-0 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
     </nav>
   )
 } 
