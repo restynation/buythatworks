@@ -44,9 +44,9 @@
 
   /* 스켈레톤 shimmer 애니메이션 */
   .skeleton-shimmer {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, #f9f9fa 25%, #f0f0f0 50%, #f9f9fa 75%);
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+    animation: shimmer 2.5s infinite;
   }
 }
 
