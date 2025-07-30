@@ -226,156 +226,144 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-[32px] p-8 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-medium text-[#15171a]" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
-            Share your setup
-          </h2>
+      <div className="bg-white rounded-lg p-4 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Setup Type */}
-          <div>
-            <div className="space-y-4">
-              <label className="flex items-start p-4 border border-gray-200 rounded-[16px] cursor-pointer hover:bg-gray-50 transition-colors">
-                <div className="flex items-center h-6">
-                  <input
-                    type="radio"
-                    name="setupType"
-                    value="current"
-                    checked={formData.setupType === 'current'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
-                    className="w-5 h-5 text-[#15171a] border-gray-300 focus:ring-[#15171a] focus:ring-2"
-                  />
-                </div>
-                <div className="ml-4">
-                  <div className="text-base font-medium text-[#15171a]">
-                    It's my current setup
+        <form onSubmit={handleSubmit} className="space-y-2">
+          {/* Select your combi's type */}
+          <div className="bg-white p-4 rounded-lg w-full">
+            <h2 className="text-[28px] font-medium text-[#15171a] mb-4" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
+              Select your combi's type
+            </h2>
+            <div className="flex gap-2">
+              {/* It's my current setup - 280x280px card */}
+              <div className="w-[280px] h-[280px] rounded-lg relative">
+                <div className="p-6 h-full flex flex-col gap-6">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="setupType"
+                      value="current"
+                      checked={formData.setupType === 'current'}
+                      onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
+                      className="w-6 h-6 text-[#15171a] border-gray-300 focus:ring-[#15171a] focus:ring-2"
+                    />
+                    <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                      It's my current setup
+                    </span>
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    I actually use this setup right now
+                  
+                  {/* Image Upload Area - Inside the card */}
+                  <div className="flex-1 bg-white rounded-sm border border-[#e1e3e6] flex flex-col items-center justify-center p-0">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label
+                      htmlFor="image-upload"
+                      className="flex flex-col items-center justify-center cursor-pointer w-full h-full p-4"
+                    >
+                      <div className="w-10 h-10 mb-1 flex items-center justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5 5V19H19V12H21V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H12V5H5ZM15 7V4H17V7H20V9H17V12H15V9H12V7H15Z" fill="#15171a"/>
+                        </svg>
+                      </div>
+                      {image ? (
+                        <p className="text-[14px] leading-[20px] text-center text-gray-500">
+                          Selected: {image.name}
+                        </p>
+                      ) : (
+                        <div className="text-[14px] leading-[20px] text-center text-gray-500">
+                          <p>Show your image!</p>
+                          <p>(Optional)</p>
+                        </div>
+                      )}
+                    </label>
                   </div>
                 </div>
-              </label>
-              
-              <label className="flex items-start p-4 border border-gray-200 rounded-[16px] cursor-pointer hover:bg-gray-50 transition-colors">
-                <div className="flex items-center h-6">
-                  <input
-                    type="radio"
-                    name="setupType"
-                    value="dream"
-                    checked={formData.setupType === 'dream'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
-                    className="w-5 h-5 text-[#15171a] border-gray-300 focus:ring-[#15171a] focus:ring-2"
-                  />
-                </div>
-                <div className="ml-4">
-                  <div className="text-base font-medium text-[#15171a]">
-                    It's my dream setup
-                  </div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    I wish I had this setup someday
-                  </div>
-                </div>
-              </label>
-            </div>
-          </div>
+                <div className="absolute border border-[#15171a] inset-0 pointer-events-none rounded-lg" />
+              </div>
 
-          {/* Photo Upload - Only show for current setup */}
-          {formData.setupType === 'current' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Photo (Optional)
-              </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-[16px] p-6 hover:border-gray-400 transition-colors">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="image-upload"
-                />
-                <label
-                  htmlFor="image-upload"
-                  className="flex flex-col items-center cursor-pointer"
-                >
-                  <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
-                  {image ? (
-                    <p className="text-sm text-green-600 font-medium">
-                      Selected: {image.name}
-                    </p>
-                  ) : (
-                    <>
-                      <p className="text-sm text-gray-700 font-medium mb-1">
-                        Upload a photo of your setup
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        JPG, PNG up to 5MB
-                      </p>
-                    </>
-                  )}
-                </label>
+              {/* It's my dream setup - 280x280px card */}
+              <div className="w-[280px] h-[280px] rounded-lg relative">
+                <div className="p-6 h-full flex flex-col gap-6">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="setupType"
+                      value="dream"
+                      checked={formData.setupType === 'dream'}
+                      onChange={(e) => setFormData(prev => ({ ...prev, setupType: e.target.value as 'current' | 'dream' }))}
+                      className="w-6 h-6 text-[#15171a] border-gray-300 focus:ring-[#15171a] focus:ring-2"
+                    />
+                    <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                      It's my dream setup
+                    </span>
+                  </div>
+                </div>
+                <div className="absolute border border-[#e1e3e6] inset-0 pointer-events-none rounded-lg" />
               </div>
             </div>
-          )}
-
-          {/* 4-Digit Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              4-Digit PIN
-            </label>
-            <input
-              type="password"
-              maxLength={4}
-              pattern="[0-9]{4}"
-              value={formData.password}
-              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-              className="w-full px-4 py-4 border border-gray-300 rounded-[16px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-transparent text-center text-xl font-mono tracking-widest"
-              placeholder="••••"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-2">You'll need this PIN to edit or delete your setup</p>
           </div>
 
-          {/* Comment */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Tell us about your setup
-            </label>
-            <textarea
-              value={formData.comment}
-              onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
-              className="w-full px-4 py-4 border border-gray-300 rounded-[16px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-transparent resize-none"
-              rows={4}
-              placeholder="What do you love about this setup? Any tips or advice for others?"
-              required
-            />
+          {/* Leave your short comment */}
+          <div className="bg-white p-4 rounded-lg w-full">
+            <h3 className="text-[28px] font-medium text-[#15171a] mb-4" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
+              Leave your short comment
+            </h3>
+            <div className="bg-white h-[120px] rounded-sm border border-[#e1e3e6] relative">
+              <textarea
+                value={formData.comment}
+                onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
+                className="w-full h-full px-4 py-3 border-none outline-none resize-none text-[16px] leading-[24px] text-[#c4c7cc]"
+                placeholder="MacBook is God"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                required
+              />
+            </div>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={uploading}
-            className="w-full bg-[#15171a] text-white py-4 px-6 rounded-[24px] font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-          >
-            {uploading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Sharing...
-              </>
-            ) : (
-              <>
-                <Upload className="w-5 h-5" />
-                Share setup
-              </>
-            )}
-          </button>
+          {/* 4-digit Password */}
+          <div className="bg-white p-4 rounded-lg w-full flex items-center justify-between">
+            <h3 className="text-[28px] font-medium text-[#15171a]" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
+              4-digit Password
+            </h3>
+            <div className="w-32">
+              <input
+                type="password"
+                maxLength={4}
+                pattern="[0-9]{4}"
+                value={formData.password}
+                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                className="w-full px-3 py-2 border border-[#e1e3e6] rounded text-[14px] leading-[20px] text-center text-[#c4c7cc]"
+                placeholder="****"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Finish Button */}
+          <div className="px-6 py-4 bg-black rounded-lg w-full flex items-center justify-center">
+            <button
+              type="submit"
+              disabled={uploading}
+              className="text-white text-[20px] leading-[28px] font-normal px-3"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              {uploading ? 'Uploading...' : 'Finish'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
