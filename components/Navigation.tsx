@@ -47,7 +47,7 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="bg-white shadow-sm relative z-50">
+    <nav className="bg-white relative z-50">
       {/* 데스크톱 네비게이션 */}
       <div className="hidden md:block">
         <div className="h-16 px-6 flex items-center justify-center gap-6">
@@ -136,9 +136,9 @@ export default function Navigation() {
           </button>
         </div>
 
-        {/* 모바일 확장 메뉴 - 위치 수정 */}
+        {/* 모바일 확장 메뉴 - 위치와 스타일 수정 */}
         {isMobileMenuOpen && (
-          <div className="absolute top-16 left-4 right-4 bg-white shadow-md z-30 animate-in fade-in slide-in-from-top-2 rounded-lg">
+          <div className="absolute top-16 left-0 right-0 bg-white z-30 animate-in fade-in slide-in-from-top-2">
             <div className="px-4 py-3 space-y-1">
               {navItems.map((item) => (
                 <div key={item.href} className="relative">
