@@ -22,19 +22,13 @@ const nodeTypes = {
   device: DeviceNode,
 }
 
-interface DeviceBlock {
-  id: string
-  deviceType: DeviceType
-  product?: Product
-  customName?: string
-  position: { x: number; y: number }
-}
-
 interface UploadCanvasProps {
   setupName: string
   builderName: string
-  deviceBlocks: DeviceBlock[]
-  setDeviceBlocks: React.Dispatch<React.SetStateAction<DeviceBlock[]>>
+  nodes: Node[]
+  edges: Edge[]
+  setNodes: React.Dispatch<React.SetStateAction<Node[]>>
+  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>
 }
 
 function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, setEdges }: UploadCanvasProps) {
@@ -95,8 +89,8 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }
 
   const handleNodeUpdate = (nodeId: string, data: any) => {
-    setNodes(nodes =>
-      nodes.map(node =>
+    setNodes((nodes: Node[]) =>
+      nodes.map((node: Node) =>
         node.id === nodeId
           ? { ...node, data: { ...node.data, ...data } }
           : node
@@ -105,8 +99,8 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }
 
   const handleNodeDelete = (nodeId: string) => {
-    setNodes(nodes => nodes.filter(n => n.id !== nodeId))
-    setEdges(edges => edges.filter(e => e.source !== nodeId && e.target !== nodeId))
+    setNodes((nodes: Node[]) => nodes.filter((n: Node) => n.id !== nodeId))
+    setEdges((edges: Edge[]) => edges.filter((e: Edge) => e.source !== nodeId && e.target !== nodeId))
   }
 
   const addNewDevice = (deviceType: DeviceType) => {
@@ -186,14 +180,16 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   )
 }
 
-export default function UploadCanvas({ setupName, builderName, deviceBlocks, setDeviceBlocks }: UploadCanvasProps) {
+export default function UploadCanvas({ setupName, builderName, nodes, edges, setNodes, setEdges }: UploadCanvasProps) {
   return (
     <ReactFlowProvider>
       <UploadCanvasInner 
         setupName={setupName} 
         builderName={builderName}
-        deviceBlocks={deviceBlocks}
-        setDeviceBlocks={setDeviceBlocks}
+        nodes={nodes}
+        edges={edges}
+        setNodes={setNodes}
+        setEdges={setEdges}
       />
     </ReactFlowProvider>
   )
