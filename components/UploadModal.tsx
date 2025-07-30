@@ -18,7 +18,7 @@ interface Props {
 export default function UploadModal({ isOpen, onClose, setupName, builderName, nodes, edges }: Props) {
   const [formData, setFormData] = useState({
     password: '',
-    setupType: 'current' as 'current' | 'dream',
+    setupType: 'current' as 'current' | 'dream', // 기본값을 current로 (Figma와 일치)
     comment: '',
   })
   const [image, setImage] = useState<File | null>(null)
@@ -230,178 +230,196 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-[24px] p-4 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit} className="space-y-2">
-          {/* Select your combi's type */}
-          <div className="bg-white p-4 rounded-lg w-full">
-            <h2 className="text-[28px] font-medium text-[#15171a] mb-4" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
-              Select your combi's type
-            </h2>
-            <div className="flex gap-2">
-              {/* It's my dream setup - 280x280px card (왼쪽) */}
-              <div 
-                className="w-[280px] h-[280px] rounded-[24px] relative cursor-pointer"
-                onClick={() => handleCardClick('dream')}
-              >
-                <div className="p-6 h-full flex flex-col gap-6">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <input
-                        type="radio"
-                        name="setupType"
-                        value="dream"
-                        checked={formData.setupType === 'dream'}
-                        onChange={() => {}} // 클릭은 카드에서 처리
-                        className="sr-only"
-                      />
-                      <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
-                        formData.setupType === 'dream'
-                          ? 'bg-black border-black' 
-                          : 'bg-white border-[#e1e3e6]'
-                      }`}>
-                        {formData.setupType === 'dream' && (
+      <div className="box-border content-stretch flex flex-col gap-2 items-center justify-center p-0 relative rounded-[32px] bg-white w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+        {/* Select your combi's type */}
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-center overflow-clip p-[16px] relative rounded-lg shrink-0 w-full">
+          <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
+            Select your combi's type
+          </div>
+          <div className="box-border content-stretch flex flex-row gap-2 items-start justify-start p-0 relative shrink-0">
+            {/* It's my dream setup - 280x280px card (왼쪽) */}
+            <div 
+              className="relative rounded-lg shrink-0 size-[280px] cursor-pointer"
+              onClick={() => handleCardClick('dream')}
+            >
+              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative size-[280px]">
+                <div className="box-border content-stretch flex flex-row gap-3 items-center justify-center p-0 relative shrink-0">
+                  <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
+                    <input
+                      type="radio"
+                      name="setupType"
+                      value="dream"
+                      checked={formData.setupType === 'dream'}
+                      onChange={() => {}}
+                      className="sr-only"
+                    />
+                    <div className={`relative rounded-sm shrink-0 size-6 ${
+                      formData.setupType === 'dream' 
+                        ? 'bg-[#000000]' 
+                        : ''
+                    }`}>
+                      <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
+                        {formData.setupType === 'dream' ? (
                           <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
+                        ) : (
+                          <div className="opacity-0 relative shrink-0 size-4" />
                         )}
                       </div>
+                      {formData.setupType !== 'dream' && (
+                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-sm" />
+                      )}
                     </div>
-                    <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-                      It's my dream setup
-                    </span>
+                  </div>
+                  <div className="font-['Pretendard'] font-normal leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
+                    It's my dream setup
                   </div>
                 </div>
-                <div className={`absolute inset-0 pointer-events-none rounded-[24px] border ${
-                  formData.setupType === 'dream' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
-                }`} />
               </div>
+              <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-lg" />
+            </div>
 
-              {/* It's my current setup - 280x280px card (오른쪽) */}
-              <div 
-                className="w-[280px] h-[280px] rounded-[24px] relative cursor-pointer"
-                onClick={() => handleCardClick('current')}
-              >
-                <div className="p-6 h-full flex flex-col gap-6">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <input
-                        type="radio"
-                        name="setupType"
-                        value="current"
-                        checked={formData.setupType === 'current'}
-                        onChange={() => {}} // 클릭은 카드에서 처리
-                        className="sr-only"
-                      />
-                      <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
-                        formData.setupType === 'current'
-                          ? 'bg-black border-black' 
-                          : 'bg-white border-[#e1e3e6]'
-                      }`}>
-                        {formData.setupType === 'current' && (
+            {/* It's my current setup - 280x280px card (오른쪽) */}
+            <div 
+              className="relative rounded-lg shrink-0 size-[280px] cursor-pointer"
+              onClick={() => handleCardClick('current')}
+            >
+              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative size-[280px]">
+                <div className="box-border content-stretch flex flex-row gap-3 items-center justify-center p-0 relative shrink-0">
+                  <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
+                    <input
+                      type="radio"
+                      name="setupType"
+                      value="current"
+                      checked={formData.setupType === 'current'}
+                      onChange={() => {}}
+                      className="sr-only"
+                    />
+                    <div className={`relative rounded-sm shrink-0 size-6 ${
+                      formData.setupType === 'current' 
+                        ? 'bg-[#000000]' 
+                        : ''
+                    }`}>
+                      <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
+                        {formData.setupType === 'current' ? (
                           <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
+                        ) : (
+                          <div className="opacity-0 relative shrink-0 size-4" />
                         )}
                       </div>
+                      {formData.setupType !== 'current' && (
+                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-sm" />
+                      )}
                     </div>
-                    <span className="text-[20px] leading-[28px] text-[#15171a]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-                      It's my current setup
-                    </span>
                   </div>
-                  
-                  {/* Image Upload Area - dream setup 선택 시 숨김 */}
-                  {formData.setupType === 'current' && (
-                    <div className="flex-1 bg-white rounded-[12px] border border-[#e1e3e6] flex flex-col items-center justify-center p-0">
+                  <div className="font-['Pretendard'] font-normal leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
+                    It's my current setup
+                  </div>
+                </div>
+                
+                {/* Image Upload Area - current setup일 때만 표시 */}
+                {formData.setupType === 'current' && (
+                  <div className="basis-0 bg-[#ffffff] grow min-h-px min-w-px relative rounded-sm shrink-0 w-full">
+                    <div className="box-border content-stretch flex flex-col gap-1 items-center justify-center overflow-clip p-0 relative size-full">
                       <input
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
                         className="hidden"
                         id="image-upload"
-                        onClick={(e) => e.stopPropagation()} // 파일 업로드 클릭 시 카드 선택 방지
+                        onClick={(e) => e.stopPropagation()}
                       />
                       <label
                         htmlFor="image-upload"
                         className="flex flex-col items-center justify-center cursor-pointer w-full h-full p-4"
-                        onClick={(e) => e.stopPropagation()} // 라벨 클릭 시 카드 선택 방지
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="w-10 h-10 mb-1 flex items-center justify-center">
+                        <div className="relative shrink-0 size-10">
                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M5 5V19H19V12H21V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H12V5H5ZM15 7V4H17V7H20V9H17V12H15V9H12V7H15Z" fill="#15171a"/>
                           </svg>
                         </div>
                         {image ? (
-                          <p className="text-[14px] leading-[20px] text-center text-gray-500">
+                          <div className="font-['Pretendard'] font-normal leading-[20px] not-italic relative shrink-0 text-[14px] text-center text-gray-500 text-nowrap">
                             Selected: {image.name}
-                          </p>
+                          </div>
                         ) : (
-                          <div className="text-[14px] leading-[20px] text-center text-gray-500">
-                            <p>Show your image!</p>
-                            <p>(Optional)</p>
+                          <div className="font-['Pretendard'] font-normal leading-[20px] not-italic relative shrink-0 text-[14px] text-center text-gray-500 text-nowrap whitespace-pre">
+                            <p className="block mb-0">Show your image!</p>
+                            <p className="block">(Optional)</p>
                           </div>
                         )}
                       </label>
                     </div>
-                  )}
-                </div>
-                <div className={`absolute inset-0 pointer-events-none rounded-[24px] border ${
-                  formData.setupType === 'current' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
-                }`} />
+                    <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-sm" />
+                  </div>
+                )}
               </div>
+              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-lg ${
+                formData.setupType === 'current' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+              }`} />
             </div>
           </div>
+        </div>
 
-          {/* Leave your short comment */}
-          <div className="bg-white p-4 rounded-lg w-full flex flex-col items-center">
-            <h3 className="text-[28px] font-medium text-[#15171a] mb-4 self-start" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
-              Leave your short comment
-            </h3>
-            <div className="bg-white h-[120px] rounded-[12px] border border-[#e1e3e6] relative w-[600px]">
+        {/* Leave your short comment */}
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-lg shrink-0 w-full">
+          <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
+            Leave your short comment
+          </div>
+          <div className="bg-[#ffffff] h-[120px] relative rounded-sm shrink-0 w-full">
+            <div className="box-border content-stretch flex flex-row h-[120px] items-center justify-start overflow-clip px-4 py-3 relative w-full">
               <textarea
                 value={formData.comment}
                 onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
-                className="w-full h-full px-4 py-3 border-none outline-none resize-none text-[16px] leading-[24px] text-[#c4c7cc] rounded-[12px]"
+                className="basis-0 font-['Pretendard'] font-normal grow h-full leading-[24px] min-h-px min-w-px not-italic relative shrink-0 text-[#c4c7cc] text-[16px] text-left bg-transparent border-none outline-none resize-none"
                 placeholder="MacBook is God"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
                 required
               />
             </div>
+            <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded-sm" />
           </div>
+        </div>
 
-          {/* 4-digit Password */}
-          <div className="bg-white p-4 rounded-lg w-full flex items-center justify-between">
-            <h3 className="text-[28px] font-medium text-[#15171a]" style={{ fontFamily: "'Alpha Lyrae', sans-serif" }}>
-              4-digit Password
-            </h3>
-            <div className="w-32">
+        {/* 4-digit Password */}
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-row items-start justify-between overflow-clip p-[16px] relative rounded-lg shrink-0 w-full">
+          <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
+            4-digit Password
+          </div>
+          <div className="bg-[#ffffff] relative rounded shrink-0 w-32">
+            <div className="box-border content-stretch flex flex-row items-center justify-start overflow-clip px-3 py-2 relative size-full">
               <input
                 type="password"
                 maxLength={4}
                 pattern="[0-9]{4}"
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                className="w-full px-3 py-2 border border-[#e1e3e6] rounded-[24px] text-[14px] leading-[20px] text-center text-[#c4c7cc]"
+                className="basis-0 font-['Pretendard'] font-normal grow leading-[20px] min-h-px min-w-px not-italic relative shrink-0 text-[#c4c7cc] text-[14px] text-center bg-transparent border-none outline-none"
                 placeholder="****"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
                 required
               />
             </div>
+            <div className="absolute border border-[#e1e3e6] border-solid inset-0 pointer-events-none rounded" />
           </div>
+        </div>
 
-          {/* Finish Button */}
-          <div className="w-full flex justify-center">
-            <div className="w-[600px] px-6 py-4 bg-black rounded-[32px] flex items-center justify-center">
-              <button
-                type="submit"
-                disabled={uploading}
-                className="text-white text-[20px] leading-[28px] font-normal px-3"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
-              >
-                {uploading ? 'Uploading...' : 'Finish'}
-              </button>
+        {/* Finish Button */}
+        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-lg shrink-0 w-full">
+          <div className="absolute bg-[#000000] inset-0 rounded-lg" />
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={uploading}
+            className="box-border content-stretch flex flex-row items-center justify-center px-3 py-0 relative shrink-0 z-10"
+          >
+            <div className="font-['Pretendard'] font-normal leading-[28px] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+              {uploading ? 'Uploading...' : 'Finish'}
             </div>
-          </div>
-        </form>
+          </button>
+        </div>
       </div>
     </div>
   )
