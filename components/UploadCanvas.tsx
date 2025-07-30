@@ -50,10 +50,10 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   // deviceTypes가 로드된 후에 컴퓨터 초기화
   useEffect(() => {
-    if (deviceTypes.length > 0 && nodes.length === 0) {
+    if (deviceTypes.length > 0 && (!nodes || nodes.length === 0)) {
       initializeWithComputer()
     }
-  }, [deviceTypes, nodes.length])
+  }, [deviceTypes, nodes?.length])
 
   const loadReferenceData = async () => {
     try {
