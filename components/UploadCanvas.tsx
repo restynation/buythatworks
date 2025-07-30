@@ -263,7 +263,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       targetHandle: connection.targetHandle,
       style: { 
         stroke: '#6B7280', 
-        strokeWidth: 2,
+        strokeWidth: 1,
         strokeDasharray: '4 4',
         cursor: 'pointer'
       },
@@ -301,7 +301,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
           .react-flow__edge path {
             cursor: pointer !important;
             stroke: #6B7280 !important;
-            stroke-width: 2px !important;
+            stroke-width: 1px !important;
             stroke-dasharray: 4 4 !important;
           }
           .react-flow__edge:hover path {
@@ -343,7 +343,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
           type: 'default',
           style: { 
             stroke: '#6B7280', 
-            strokeWidth: 2,
+            strokeWidth: 1,
             strokeDasharray: '4 4',
             cursor: 'pointer'
           },
