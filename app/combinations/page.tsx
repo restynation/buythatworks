@@ -203,8 +203,10 @@ export default function CombinationsPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-white h-[calc(100vh-4rem)] p-4 overflow-y-auto">
-        <SkeletonLoader />
+      <div className="bg-white h-[calc(100vh-4rem)] px-4 py-4 overflow-y-auto">
+        <div className="flex items-center justify-center h-full">
+          <div className="text-lg text-gray-600">Loading...</div>
+        </div>
       </div>
     )
   }
@@ -307,7 +309,7 @@ export default function CombinationsPage() {
                            ))
                          ) : (
                            <div className="px-3 py-2 text-sm text-gray-500 rounded-b-[24px]">
-                             {searchTerm ? '검색 결과가 없습니다' : '선택할 제품이 없습니다'}
+                             {searchTerm ? 'No results found' : 'No products available'}
                            </div>
                          )}
                        </div>
@@ -386,7 +388,7 @@ export default function CombinationsPage() {
                          ))
                        ) : (
                          <div className="px-3 py-2 text-sm text-gray-500 rounded-b-[24px]">
-                           {searchTerm ? '검색 결과가 없습니다' : '모든 제품이 선택되었습니다'}
+                           {searchTerm ? 'No results found' : 'All products selected'}
                          </div>
                        )}
                      </div>
@@ -426,7 +428,39 @@ export default function CombinationsPage() {
 
              {/* 결과 그리드 */}
        <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(700px, 1fr))' }}>
-                                     {filteredSetups.map((setup) => {
+                 {isLoading ? (
+          // 로딩 스켈레톤
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 animate-pulse">
+              <div className="h-full flex flex-col gap-20">
+                {/* 헤더 스켈레톤 */}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="h-7 bg-gray-200 rounded-md mb-2 w-48"></div>
+                    <div className="h-4 bg-gray-200 rounded-md w-32"></div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 bg-gray-200 rounded-md w-6"></div>
+                    <div className="h-5 bg-gray-200 rounded-md w-16"></div>
+                  </div>
+                </div>
+
+                {/* 제품 블록들 스켈레톤 */}
+                <div className="flex gap-2 flex-wrap">
+                  {Array.from({ length: 4 }).map((_, idx) => (
+                    <div key={idx} className="w-[140px] h-[140px] bg-gray-200 rounded-[24px] p-2">
+                      <div className="w-[124px] h-[108px] bg-gray-300 rounded-[12px] p-3 mb-2">
+                        <div className="w-full h-full bg-gray-400 rounded-md"></div>
+                      </div>
+                      <div className="h-4 bg-gray-300 rounded-md w-20 mx-auto"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+           filteredSetups.map((setup) => {
              // 제품별로 그룹화
              const productGroups = setup.setup_blocks?.reduce((groups: Record<string, any[]>, block) => {
                const productId = block.product_id?.toString() || 'unknown'
@@ -503,8 +537,8 @@ export default function CombinationsPage() {
                  {filteredSetups.length === 0 && !isLoading && (
            <div className="col-span-full flex items-center justify-center py-12">
              <div className="text-center">
-               <p className="text-gray-500 text-lg mb-2">검색 결과가 없습니다</p>
-               <p className="text-gray-400 text-sm">다른 필터를 시도해보세요</p>
+               <p className="text-gray-500 text-lg mb-2">No results found</p>
+               <p className="text-gray-400 text-sm">Try different filters</p>
              </div>
            </div>
          )}
