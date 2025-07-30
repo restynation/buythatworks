@@ -497,16 +497,17 @@ export default function CombinationsPage() {
             )
           })
         )}
-
-                 {filteredSetups.length === 0 && !isLoading && (
-           <div className="col-span-full flex items-center justify-center py-12">
-             <div className="text-center">
-               <p className="text-gray-500 text-lg mb-2">No results found</p>
-               <p className="text-gray-400 text-sm">Try different filters</p>
-             </div>
-           </div>
-         )}
       </div>
+
+      {/* 검색 결과 없음 화면 - 별도 컨테이너로 분리 */}
+      {filteredSetups.length === 0 && !isLoading && (
+        <div className="h-[calc(100vh-24rem)] flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-500 text-lg mb-2">No results found</p>
+            <p className="text-gray-400 text-sm">Try different filters</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 
