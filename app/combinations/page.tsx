@@ -203,10 +203,8 @@ export default function CombinationsPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-white h-[calc(100vh-4rem)] px-4 py-4 overflow-y-auto">
-        <div className="flex items-center justify-center h-full">
-          <div className="text-lg text-gray-600">Loading...</div>
-        </div>
+      <div className="bg-white h-[calc(100vh-4rem)] p-4 overflow-y-auto">
+        <SkeletonLoader />
       </div>
     )
   }
@@ -428,8 +426,7 @@ export default function CombinationsPage() {
 
              {/* 결과 그리드 */}
        <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(700px, 1fr))' }}>
-                 {(
-           filteredSetups.map((setup) => {
+                           {filteredSetups.map((setup) => {
              // 제품별로 그룹화
              const productGroups = setup.setup_blocks?.reduce((groups: Record<string, any[]>, block) => {
                const productId = block.product_id?.toString() || 'unknown'
