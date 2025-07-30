@@ -426,7 +426,7 @@ export default function CombinationsPage() {
 
              {/* 결과 그리드 */}
        <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(700px, 1fr))' }}>
-                           {filteredSetups.map((setup) => {
+                                     {filteredSetups.map((setup) => {
              // 제품별로 그룹화
              const productGroups = setup.setup_blocks?.reduce((groups: Record<string, any[]>, block) => {
                const productId = block.product_id?.toString() || 'unknown'
