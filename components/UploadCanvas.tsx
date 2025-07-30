@@ -38,6 +38,23 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   const [products, setProducts] = useState<Product[]>([])
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; flowPosition: { x: number; y: number } } | null>(null)
   const { screenToFlowPosition } = useReactFlow()
+  const contextMenuRef = useRef<HTMLDivElement>(null)
+
+  // Outside click detection for context menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(event.target as Element)) {
+        setContextMenu(null)
+      }
+    }
+
+    if (contextMenu) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }
+  }, [contextMenu])
 
   // React Flow 이벤트 핸들러
   const onNodesChange = useCallback((changes: any) => {
@@ -172,6 +189,11 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   }
 
   const handlePaneClick = (event: React.MouseEvent) => {
+    // Check if a dropdown is being closed
+    if (document.body.hasAttribute('data-dropdown-closing')) {
+      return
+    }
+    
     // 기존 메뉴가 있으면 먼저 닫기
     if (contextMenu) {
       setContextMenu(null)
@@ -240,6 +262,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
             top: contextMenu.y 
           }}
           onClick={(e) => e.stopPropagation()}
+          ref={contextMenuRef}
         >
           <div className="p-1">
             {availableDeviceTypes.map(deviceType => (

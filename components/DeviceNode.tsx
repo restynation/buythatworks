@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Handle, Position } from 'reactflow'
 import { DeviceType, Product } from '@/lib/types'
 import { Trash2 } from 'lucide-react'
@@ -25,9 +25,43 @@ export default function DeviceNode({ id, data }: Props) {
   const [closingDropdown, setClosingDropdown] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [customName, setCustomName] = useState(data.customName || '')
+  const dropdownRef = useRef<HTMLDivElement>(null)
   
   const isTextInput = ['mouse', 'keyboard', 'hub'].includes(data.deviceType.name)
   
+  // Outside click detection
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Element)) {
+        // Check if the click is on a React Flow node/element that should not close the dropdown
+        const target = event.target as HTMLElement
+        
+        // Don't close if clicking on React Flow handles or other nodes
+        if (target.closest('.react-flow__node') && !target.closest(`[data-id="${id}"]`)) {
+          return
+        }
+        
+        // Don't close if clicking on React Flow background or edges
+        if (target.closest('.react-flow__pane') || target.closest('.react-flow__edge')) {
+          // Add a data attribute to indicate dropdown should not trigger context menu
+          document.body.setAttribute('data-dropdown-closing', 'true')
+          setTimeout(() => {
+            document.body.removeAttribute('data-dropdown-closing')
+          }, 100)
+        }
+        
+        closeDropdown()
+      }
+    }
+
+    if (openDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }
+  }, [openDropdown, id])
+
   const getFilteredProducts = () => {
     return data.products.filter(p => 
       searchTerm === '' || 
@@ -48,22 +82,23 @@ export default function DeviceNode({ id, data }: Props) {
   const closeDropdown = () => {
     if (openDropdown) {
       setClosingDropdown(true)
-      setOpenDropdown(false)
       setTimeout(() => {
+        setOpenDropdown(false)
         setClosingDropdown(false)
-      }, 200)
+        setSearchTerm('')
+      }, 200) // Match animation duration
     }
   }
 
   const handleProductSelect = (product: Product) => {
-    data.onUpdate(id, { product, customName: undefined })
+    data.onUpdate(id, { product, customName: '' })
     closeDropdown()
-    setSearchTerm('')
   }
 
-  const handleCustomNameChange = (value: string) => {
-    setCustomName(value)
-    data.onUpdate(id, { customName: value, product: undefined })
+  const handleCustomNameSave = () => {
+    if (customName.trim()) {
+      data.onUpdate(id, { customName: customName.trim(), product: null })
+    }
   }
 
   const getDisplayText = () => {
@@ -122,31 +157,29 @@ export default function DeviceNode({ id, data }: Props) {
               className="max-w-full max-h-full object-contain"
             />
           ) : (
-            <div className="text-4xl">
-              {data.deviceType.name === 'computer' && '💻'}
-              {data.deviceType.name === 'monitor' && '🖥️'}
-              {data.deviceType.name === 'hub' && '🔌'}
-              {data.deviceType.name === 'mouse' && '🖱️'}
-              {data.deviceType.name === 'keyboard' && '⌨️'}
+            <div className="text-gray-400 text-xs text-center">
+              No image
             </div>
           )}
         </div>
-
+        
         {/* Input area */}
-        <div className="relative" data-dropdown>
+        <div className="relative flex-1">
           {isTextInput ? (
             <input
               type="text"
-              placeholder={`Enter ${data.deviceType.name} name`}
               value={customName}
-              onChange={(e) => handleCustomNameChange(e.target.value)}
-              className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] w-full border-none outline-none"
+              onChange={(e) => setCustomName(e.target.value)}
+              onBlur={handleCustomNameSave}
+              onKeyDown={(e) => e.key === 'Enter' && handleCustomNameSave()}
+              placeholder={`Enter ${data.deviceType.name} name`}
+              className="w-full px-2 py-1 text-xs border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-[#15171a]"
             />
           ) : (
             <>
               <button
                 onClick={toggleDropdown}
-                className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] flex items-center justify-between w-full"
+                className="w-full px-2 py-1 text-xs border border-gray-200 rounded-[12px] bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
               >
                 <span className="truncate text-left flex-1">
                   {getDisplayText()}
@@ -164,9 +197,12 @@ export default function DeviceNode({ id, data }: Props) {
               </button>
               
               {(openDropdown || closingDropdown) && (
-                <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[180px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-20 duration-200 ${
-                  closingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
-                }`}>
+                <div 
+                  ref={dropdownRef}
+                  className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[180px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-20 duration-200 ${
+                    closingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
+                  }`}
+                >
                   {/* Search input */}
                   <div className="p-3 border-b border-gray-100">
                     <input
