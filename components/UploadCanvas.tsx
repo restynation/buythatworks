@@ -200,7 +200,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         </button>
 
         {isMenuOpen && (
-          <div className="absolute top-full left-12 mt-2 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2">
+          <div className="absolute top-full left-20 mt-2 w-48 bg-white rounded-[12px] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2">
             <div className="p-1">
               {availableDeviceTypes.map(deviceType => (
                 <button
