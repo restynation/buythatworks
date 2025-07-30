@@ -318,7 +318,7 @@ export default function CombinationsPage() {
                              <div className="w-[164px] h-[124px] p-4 flex items-center justify-center">
                 <div className="w-16 h-16 flex items-center justify-center">
                   <svg 
-                    className="w-16 h-16"
+                    className="w-9 h-9"
                     viewBox="0 0 18 18" 
                     fill="none" 
                     xmlns="http://www.w3.org/2000/svg"
