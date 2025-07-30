@@ -199,7 +199,7 @@ export default function Navigation() {
                     >
                       {item.label}
                       {item.mobileDisabled && showUploadTooltip && (
-                        <div className={`absolute top-full left-8 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
+                        <div className={`absolute top-full left-26 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
                           isClosingUploadTooltip 
                             ? 'animate-out fade-out slide-out-to-top-2' 
                             : 'animate-in fade-in slide-in-from-top-2'
@@ -208,7 +208,7 @@ export default function Navigation() {
                         </div>
                       )}
                       {item.disabled && showFinderTooltip && (
-                        <div className={`absolute top-full left-8 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
+                        <div className={`absolute top-full left-17 mt-1 bg-[#15171a] text-white text-sm px-3 py-2 rounded-md whitespace-nowrap z-50 text-left ${
                           isClosingFinderTooltip 
                             ? 'animate-out fade-out slide-out-to-top-2' 
                             : 'animate-in fade-in slide-in-from-top-2'
