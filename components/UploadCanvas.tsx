@@ -192,6 +192,12 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     console.log('UploadCanvas: Pane clicked, target:', (event.target as HTMLElement).className)
     console.log('UploadCanvas: dropdown-closing flag present:', document.body.hasAttribute('data-dropdown-closing'))
     
+    // Extract values before setTimeout to avoid SyntheticEvent pooling issues
+    const rect = event.currentTarget.getBoundingClientRect()
+    const clientX = event.clientX - rect.left
+    const clientY = event.clientY - rect.top
+    const flowPosition = screenToFlowPosition({ x: clientX, y: clientY })
+    
     // Prevent default to ensure we control the behavior
     event.preventDefault()
     event.stopPropagation()
@@ -215,11 +221,6 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         console.log('UploadCanvas: Dropdown closing detected after delay, preventing context menu')
         return
       }
-      
-      const rect = event.currentTarget.getBoundingClientRect()
-      const clientX = event.clientX - rect.left
-      const clientY = event.clientY - rect.top
-      const flowPosition = screenToFlowPosition({ x: clientX, y: clientY })
       
       console.log('UploadCanvas: Opening context menu at:', { clientX, clientY, flowPosition })
       

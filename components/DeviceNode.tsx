@@ -32,43 +32,59 @@ export default function DeviceNode({ id, data }: Props) {
   // Outside click detection
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Element)) {
-        const target = event.target as HTMLElement
-        
-        console.log('DeviceNode: Outside click detected, target:', target.className)
-        
-        // If clicking on React Flow background, edges, or pane elements, prevent context menu from opening
-        const isReactFlowElement = target.closest('.react-flow__pane') || 
-                                 target.closest('.react-flow__edge') ||
-                                 target.classList.contains('react-flow__pane') ||
-                                 target.closest('.react-flow') ||
-                                 target.closest('[data-testid="rf__wrapper"]')
-        
-        if (isReactFlowElement) {
-          console.log('DeviceNode: React Flow element clicked, setting dropdown-closing flag')
-          // Add a data attribute to indicate dropdown should not trigger context menu
-          document.body.setAttribute('data-dropdown-closing', 'true')
-          setTimeout(() => {
-            document.body.removeAttribute('data-dropdown-closing')
-            console.log('DeviceNode: dropdown-closing flag removed')
-          }, 200)
-        }
-        
-        // Always close dropdown when clicking outside
-        console.log('DeviceNode: Closing dropdown')
-        closeDropdown()
+      console.log('DeviceNode: handleClickOutside triggered')
+      
+      if (!dropdownRef.current) {
+        console.log('DeviceNode: No dropdown ref, returning')
+        return
       }
+      
+      const target = event.target as Element
+      if (!target) {
+        console.log('DeviceNode: No target, returning')
+        return
+      }
+      
+      // Check if click is inside dropdown
+      if (dropdownRef.current.contains(target)) {
+        console.log('DeviceNode: Click is inside dropdown, not closing')
+        return
+      }
+      
+      console.log('DeviceNode: Outside click detected, target:', target.className)
+      
+      // Set flag to prevent context menu for any React Flow related clicks
+      const targetElement = target as HTMLElement
+      const isReactFlowRelated = targetElement.closest('.react-flow') ||
+                               targetElement.closest('.react-flow__pane') ||
+                               targetElement.closest('.react-flow__edge') ||
+                               targetElement.classList.contains('react-flow__pane') ||
+                               targetElement.closest('[data-testid="rf__wrapper"]')
+      
+      if (isReactFlowRelated) {
+        console.log('DeviceNode: React Flow related click, setting prevention flag')
+        document.body.setAttribute('data-dropdown-closing', 'true')
+        setTimeout(() => {
+          document.body.removeAttribute('data-dropdown-closing')
+          console.log('DeviceNode: Prevention flag removed')
+        }, 200)
+      }
+      
+      // Always close dropdown on outside click
+      console.log('DeviceNode: Closing dropdown')
+      closeDropdown()
     }
 
     if (openDropdown) {
-      console.log('DeviceNode: Adding outside click listener')
-      document.addEventListener('mousedown', handleClickOutside)
+      console.log('DeviceNode: Adding outside click listener for dropdown')
+      // Use capture phase to ensure we catch the event early
+      document.addEventListener('mousedown', handleClickOutside, true)
       return () => {
         console.log('DeviceNode: Removing outside click listener')
-        document.removeEventListener('mousedown', handleClickOutside)
+        document.removeEventListener('mousedown', handleClickOutside, true)
       }
     }
-  }, [openDropdown, id])
+  }, [openDropdown])
 
   const getFilteredProducts = () => {
     return data.products.filter(p => 
