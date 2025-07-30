@@ -3,13 +3,13 @@
 import React, { useState } from 'react'
 import { Handle, Position } from 'reactflow'
 import { DeviceType, Product } from '@/lib/types'
-import { useUploadStore } from '@/lib/stores/uploadStore'
-import { Monitor, Cpu, HardDrive, Mouse, Keyboard, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 
 interface DeviceNodeData {
   deviceType: DeviceType
   product?: Product
   customName?: string
+  products: Product[]
   onUpdate: (nodeId: string, data: any) => void
   onDelete: (nodeId: string) => void
   canDelete: boolean
@@ -20,41 +20,53 @@ interface Props {
   data: DeviceNodeData
 }
 
-const deviceIcons = {
-  computer: Cpu,
-  monitor: Monitor,
-  hub: HardDrive,
-  mouse: Mouse,
-  keyboard: Keyboard,
-}
-
 export default function DeviceNode({ id, data }: Props) {
-  const [isEditing, setIsEditing] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState(false)
+  const [closingDropdown, setClosingDropdown] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
   const [customName, setCustomName] = useState(data.customName || '')
-  const { products } = useUploadStore()
   
-  const Icon = deviceIcons[data.deviceType.name] || HardDrive
+  const isTextInput = ['mouse', 'keyboard', 'hub'].includes(data.deviceType.name)
   
-  const deviceProducts = products.filter(p => 
-    p.device_type_id === data.deviceType.id
-  )
-
-  const needsProduct = ['computer', 'monitor'].includes(data.deviceType.name)
-  const needsCustomName = !needsProduct
-
-  const handleProductSelect = (productId: number) => {
-    const product = products.find(p => p.id === productId)
-    data.onUpdate(id, { product })
+  const getFilteredProducts = () => {
+    return data.products.filter(p => 
+      searchTerm === '' || 
+      p.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.model.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   }
 
-  const handleCustomNameSave = () => {
-    if (customName.trim()) {
-      data.onUpdate(id, { customName: customName.trim() })
-      setIsEditing(false)
+  const toggleDropdown = () => {
+    if (openDropdown) {
+      closeDropdown()
+    } else {
+      setOpenDropdown(true)
+      setClosingDropdown(false)
     }
   }
 
-  const getDisplayName = () => {
+  const closeDropdown = () => {
+    if (openDropdown) {
+      setClosingDropdown(true)
+      setOpenDropdown(false)
+      setTimeout(() => {
+        setClosingDropdown(false)
+      }, 200)
+    }
+  }
+
+  const handleProductSelect = (product: Product) => {
+    data.onUpdate(id, { product, customName: undefined })
+    closeDropdown()
+    setSearchTerm('')
+  }
+
+  const handleCustomNameChange = (value: string) => {
+    setCustomName(value)
+    data.onUpdate(id, { customName: value, product: undefined })
+  }
+
+  const getDisplayText = () => {
     if (data.product) {
       return `${data.product.brand} ${data.product.model}`
     }
@@ -64,117 +76,133 @@ export default function DeviceNode({ id, data }: Props) {
     return `Select ${data.deviceType.name}`
   }
 
-  const isConfigured = needsProduct ? !!data.product : !!data.customName
+  const filteredProducts = getFilteredProducts()
 
   return (
-    <div className={`bg-white border-2 rounded-lg p-4 min-w-[180px] ${
-      isConfigured ? 'border-green-300' : 'border-red-300'
-    }`}>
-      {/* Handles for connections */}
+    <div className="relative group bg-white border border-[#e1e3e6] rounded-[24px] w-[180px] h-[180px] p-2">
+      {/* Connection Handles */}
       <Handle 
         type="target" 
         position={Position.Left} 
-        className="w-3 h-3 bg-blue-500" 
+        className="!w-3 !h-3 !bg-gray-400 !border-2 !border-white !left-[-6px] !top-1/2 !transform !-translate-y-1/2" 
       />
       <Handle 
         type="source" 
         position={Position.Right} 
-        className="w-3 h-3 bg-blue-500" 
+        className="!w-3 !h-3 !bg-gray-400 !border-2 !border-white !right-[-6px] !top-1/2 !transform !-translate-y-1/2" 
       />
       <Handle 
         type="target" 
         position={Position.Top} 
-        className="w-3 h-3 bg-blue-500" 
+        className="!w-3 !h-3 !bg-gray-400 !border-2 !border-white !top-[-6px] !left-1/2 !transform !-translate-x-1/2" 
       />
       <Handle 
         type="source" 
         position={Position.Bottom} 
-        className="w-3 h-3 bg-blue-500" 
+        className="!w-3 !h-3 !bg-gray-400 !border-2 !border-white !bottom-[-6px] !left-1/2 !transform !-translate-x-1/2" 
       />
 
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center space-x-2">
-          <Icon className="w-5 h-5 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700 capitalize">
-            {data.deviceType.name}
-          </span>
-        </div>
-        
-        {data.canDelete && (
-          <button
-            onClick={() => data.onDelete(id)}
-            className="text-red-500 hover:text-red-700 p-1"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-
-      {needsProduct && (
-        <div className="space-y-2">
-          <select
-            value={data.product?.id || ''}
-            onChange={(e) => handleProductSelect(Number(e.target.value))}
-            className="w-full text-xs p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="">Select {data.deviceType.name}</option>
-            {deviceProducts.map(product => (
-              <option key={product.id} value={product.id}>
-                {product.brand} {product.model}
-              </option>
-            ))}
-          </select>
-        </div>
+      {/* Delete button */}
+      {data.canDelete && (
+        <button
+          onClick={() => data.onDelete(id)}
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white rounded-full p-1 shadow-md hover:shadow-lg z-10"
+        >
+          <Trash2 className="w-4 h-4 text-gray-500 hover:text-red-500" />
+        </button>
       )}
 
-      {needsCustomName && (
-        <div className="space-y-2">
-          {isEditing ? (
-            <div className="space-y-2">
-              <input
-                type="text"
-                value={customName}
-                onChange={(e) => setCustomName(e.target.value)}
-                placeholder={`Enter ${data.deviceType.name} name`}
-                className="w-full text-xs p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCustomNameSave()
-                  }
-                }}
-                autoFocus
-              />
-              <div className="flex space-x-1">
-                <button
-                  onClick={handleCustomNameSave}
-                  className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => {
-                    setIsEditing(false)
-                    setCustomName(data.customName || '')
-                  }}
-                  className="text-xs bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
+      <div className="flex flex-col h-full">
+        {/* Image area */}
+        <div className="w-[164px] h-[124px] p-4 flex items-center justify-center">
+          {data.product?.image_url ? (
+            <img 
+              src={data.product.image_url} 
+              alt={`${data.product.brand} ${data.product.model}`}
+              className="max-w-full max-h-full object-contain"
+            />
           ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="w-full text-xs p-2 border border-gray-300 rounded hover:bg-gray-50 text-left"
-            >
-              {data.customName || `Click to name ${data.deviceType.name}`}
-            </button>
+            <div className="text-4xl">
+              {data.deviceType.name === 'computer' && '💻'}
+              {data.deviceType.name === 'monitor' && '🖥️'}
+              {data.deviceType.name === 'hub' && '🔌'}
+              {data.deviceType.name === 'mouse' && '🖱️'}
+              {data.deviceType.name === 'keyboard' && '⌨️'}
+            </div>
           )}
         </div>
-      )}
 
-      <div className="mt-2 text-xs text-gray-500 truncate">
-        {getDisplayName()}
+        {/* Input area */}
+        <div className="relative" data-dropdown>
+          {isTextInput ? (
+            <input
+              type="text"
+              placeholder={`Enter ${data.deviceType.name} name`}
+              value={customName}
+              onChange={(e) => handleCustomNameChange(e.target.value)}
+              className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] w-full border-none outline-none"
+            />
+          ) : (
+            <>
+              <button
+                onClick={toggleDropdown}
+                className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] flex items-center justify-between w-full"
+              >
+                <span className="truncate text-left flex-1">
+                  {getDisplayText()}
+                </span>
+                <svg 
+                  className={`w-4 h-4 ml-2 transition-transform duration-200 flex-shrink-0 ${
+                    openDropdown ? 'rotate-180' : ''
+                  }`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {(openDropdown || closingDropdown) && (
+                <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[180px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-20 duration-200 ${
+                  closingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
+                }`}>
+                  {/* Search input */}
+                  <div className="p-3 border-b border-gray-100">
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      autoFocus
+                    />
+                  </div>
+                  
+                  {/* Product list */}
+                  <div className="max-h-80 overflow-y-auto scrollbar-hide">
+                    {filteredProducts.length > 0 ? (
+                      filteredProducts.map((product) => (
+                        <button
+                          key={product.id}
+                          onClick={() => handleProductSelect(product)}
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                        >
+                          <div className="font-medium">{product.brand}</div>
+                          <div className="text-gray-500 text-xs">{product.model}</div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-sm text-gray-500">
+                        {searchTerm ? 'No results found' : 'No products available'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

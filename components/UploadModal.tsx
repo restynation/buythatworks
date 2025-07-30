@@ -1,27 +1,21 @@
 'use client'
 
 import React, { useState } from 'react'
+import { Node, Edge } from 'reactflow'
 import { supabase } from '@/lib/supabase'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
 import bcrypt from 'bcryptjs'
-
-interface DeviceBlock {
-  id: string
-  deviceType: { id: number; name: string }
-  product?: { id: number; brand: string; model: string }
-  customName?: string
-  position: { x: number; y: number }
-}
 
 interface Props {
   isOpen: boolean
   onClose: () => void
   setupName: string
   builderName: string
-  deviceBlocks: DeviceBlock[]
+  nodes: Node[]
+  edges: Edge[]
 }
 
-export default function UploadModal({ isOpen, onClose, setupName, builderName, deviceBlocks }: Props) {
+export default function UploadModal({ isOpen, onClose, setupName, builderName, nodes, edges }: Props) {
   const [formData, setFormData] = useState({
     password: '',
     setupType: 'current' as 'current' | 'dream',
@@ -53,22 +47,33 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, d
       return
     }
 
-    // 블록 검증
-    const computerBlocks = deviceBlocks.filter(b => b.deviceType.name === 'computer')
-    if (computerBlocks.length !== 1) {
+    // Validation for React Flow nodes
+    const computerNodes = nodes.filter(n => n.data.deviceType.name === 'computer')
+    if (computerNodes.length !== 1) {
       alert('Setup must have exactly one computer')
       return
     }
 
-    for (const block of deviceBlocks) {
-      if (['computer', 'monitor'].includes(block.deviceType.name)) {
-        if (!block.product) {
-          alert(`${block.deviceType.name} must have a product selected`)
+    // V-02: Each block has ≥1 edge
+    for (const node of nodes) {
+      const nodeEdges = edges.filter(e => e.source === node.id || e.target === node.id)
+      if (nodeEdges.length === 0) {
+        alert(`Device "${node.data.product?.model || node.data.customName}" must be connected`)
+        return
+      }
+    }
+
+    // V-03: Computer/monitor blocks require product_id, others require custom_name
+    for (const node of nodes) {
+      const deviceType = node.data.deviceType.name
+      if (['computer', 'monitor'].includes(deviceType)) {
+        if (!node.data.product) {
+          alert(`${deviceType} must have a product selected`)
           return
         }
       } else {
-        if (!block.customName?.trim()) {
-          alert(`${block.deviceType.name} must have a name`)
+        if (!node.data.customName?.trim()) {
+          alert(`${deviceType} must have a name`)
           return
         }
       }
@@ -105,31 +110,44 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, d
       // 🔐 비밀번호 해시화
       const passwordHash = await bcrypt.hash(formData.password, 10)
 
+      // Check for daisy chain (monitor-to-monitor connections)
+      const hasDaisyChain = edges.some(edge => {
+        const sourceNode = nodes.find(n => n.id === edge.source)
+        const targetNode = nodes.find(n => n.id === edge.target)
+        return sourceNode?.data.deviceType?.name === 'monitor' && 
+               targetNode?.data.deviceType?.name === 'monitor'
+      })
+
       // 🏗️ Setup 생성
       const setupPayload = {
-        name: setupName,
-        user_name: builderName,
-        password_hash: passwordHash,
-        is_current: formData.setupType === 'current',
-        comment: formData.comment,
-        image_url: imageUrl,
-        daisy_chain: false
+        setup: {
+          name: setupName,
+          user_name: builderName,
+          password_hash: passwordHash,
+          is_current: formData.setupType === 'current',
+          comment: formData.comment,
+          image_url: imageUrl,
+          daisy_chain: hasDaisyChain
+        },
+        blocks: nodes.map(node => ({
+          node_id: node.id, // React Flow node ID 추가
+          product_id: node.data.product?.id || null,
+          custom_name: node.data.customName || null,
+          device_type_id: node.data.deviceType.id,
+          position_x: node.position.x,
+          position_y: node.position.y
+        })),
+        edges: edges.map(edge => ({
+          source_block_id: edge.source,
+          target_block_id: edge.target,
+          source_port_type_id: edge.data?.sourcePortType?.id || 1,
+          target_port_type_id: edge.data?.targetPortType?.id || 1
+        }))
       }
 
       // Edge Function 호출
       const { data, error } = await supabase.functions.invoke('create-setup', {
-        body: {
-          setup: setupPayload,
-          blocks: deviceBlocks.map(block => ({
-            id: crypto.randomUUID(),
-            product_id: block.product?.id || null,
-            custom_name: block.customName || null,
-            device_type_id: block.deviceType.id,
-            position_x: block.position.x,
-            position_y: block.position.y
-          })),
-          edges: [] // 새 디자인에서는 연결선이 없음
-        }
+        body: setupPayload
       })
 
       if (error) {
@@ -144,26 +162,41 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, d
           errorMessage = 'Comment is required'
         }
         
+        // Edge Function에서 반환된 에러 확인
+        if (data && data.error) {
+          errorMessage += `: ${data.error}`
+        }
+        
         alert(errorMessage)
         setUploading(false)
         return
       }
 
-      console.log('✅ Setup created successfully:', data)
+      if (!data || !data.setupId) {
+        console.error('Invalid response from Edge Function:', data)
+        alert('Setup created but received invalid response')
+        setUploading(false)
+        return
+      }
+
+      console.log('✅ Setup created successfully:', data.setupId)
       alert('Setup uploaded successfully!')
-      onClose()
-      
-      // 폼 초기화
-      setFormData({
-        password: '',
-        setupType: 'current',
-        comment: '',
-      })
-      setImage(null)
+      window.location.href = `/combinations/${data.setupId}`
       
     } catch (error) {
       console.error('Upload error:', error)
-      alert('Failed to upload setup. Please try again.')
+      
+      let errorMessage = 'Failed to upload setup'
+      
+      if (error instanceof Error) {
+        errorMessage += `: ${error.message}`
+      } else if (typeof error === 'string') {
+        errorMessage += `: ${error}`
+      } else {
+        errorMessage += ': Unknown error occurred'
+      }
+      
+      alert(errorMessage)
     } finally {
       setUploading(false)
     }

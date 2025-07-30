@@ -1,22 +1,16 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { Node, Edge } from 'reactflow'
 import UploadCanvas from '@/components/UploadCanvas'
 import UploadModal from '@/components/UploadModal'
-
-interface DeviceBlock {
-  id: string
-  deviceType: { id: number; name: string }
-  product?: { id: number; brand: string; model: string }
-  customName?: string
-  position: { x: number; y: number }
-}
 
 export default function UploadPage() {
   const [setupName, setSetupName] = useState('')
   const [builderName, setBuilderName] = useState('')
   const [showUploadModal, setShowUploadModal] = useState(false)
-  const [deviceBlocks, setDeviceBlocks] = useState<DeviceBlock[]>([])
+  const [nodes, setNodes] = useState<Node[]>([])
+  const [edges, setEdges] = useState<Edge[]>([])
 
   useEffect(() => {
     // 스크롤 차단
@@ -76,8 +70,10 @@ export default function UploadPage() {
         <UploadCanvas 
           setupName={setupName} 
           builderName={builderName}
-          deviceBlocks={deviceBlocks}
-          setDeviceBlocks={setDeviceBlocks}
+          nodes={nodes}
+          edges={edges}
+          setNodes={setNodes}
+          setEdges={setEdges}
         />
       </div>
 
@@ -88,7 +84,8 @@ export default function UploadPage() {
           onClose={() => setShowUploadModal(false)}
           setupName={setupName}
           builderName={builderName}
-          deviceBlocks={deviceBlocks}
+          nodes={nodes}
+          edges={edges}
         />
       )}
     </div>
