@@ -6,7 +6,8 @@ INSERT INTO device_types (name) VALUES
   ('mouse'),
   ('keyboard');
 
--- Insert port types
+-- Clear and insert port types to avoid duplicates
+DELETE FROM port_types;
 INSERT INTO port_types (code) VALUES
   ('HDMI'),
   ('DP'),
