@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Setup, SetupBlock, SetupEdge } from '@/lib/types'
-import { Share2, Trash2, Calendar, User } from 'lucide-react'
+import { Setup, SetupBlock, SetupEdge, FlowNode, FlowEdge, Product, DeviceType, PortType } from '@/lib/types'
+import { Share2, Trash2, Calendar, User, ArrowUpRight } from 'lucide-react'
 import ReactFlow, { 
   Node, 
   Edge, 
@@ -12,6 +12,16 @@ import ReactFlow, {
   ReactFlowProvider 
 } from 'reactflow'
 import 'reactflow/dist/style.css'
+import DeviceNode from './DeviceNode'
+import CustomEdge from './CustomEdge'
+
+const nodeTypes = {
+  device: DeviceNode,
+}
+
+const edgeTypes = {
+  custom: CustomEdge,
+}
 
 interface Props {
   setupId: string
@@ -24,6 +34,8 @@ export default function CombinationDetail({ setupId }: Props) {
   const [loading, setLoading] = useState(true)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deletePin, setDeletePin] = useState('')
+  const [flowNodes, setFlowNodes] = useState<Node[]>([])
+  const [flowEdges, setFlowEdges] = useState<Edge[]>([])
 
   useEffect(() => {
     loadSetupDetail()
@@ -91,6 +103,9 @@ export default function CombinationDetail({ setupId }: Props) {
       }
 
       setEdges(edgesData || [])
+
+      // Convert to React Flow format
+      convertToFlowFormat(blocksData || [], edgesData || [])
     } catch (err) {
       console.error('Failed to load setup detail:', err)
     } finally {
@@ -98,10 +113,50 @@ export default function CombinationDetail({ setupId }: Props) {
     }
   }
 
+  const convertToFlowFormat = (blocks: SetupBlock[], edges: SetupEdge[]) => {
+    // Convert blocks to FlowNodes
+    const nodes: Node[] = blocks.map(block => ({
+      id: block.id,
+      type: 'device',
+      position: { x: block.position_x, y: block.position_y },
+      data: {
+        blockId: block.id,
+        deviceType: block.device_type!,
+        product: block.product,
+        customName: block.custom_name,
+        products: [], // Empty for viewer mode
+        onUpdate: () => {}, // No-op for viewer mode
+        onDelete: () => {}, // No-op for viewer mode
+        canDelete: false, // Disable delete in viewer mode
+        isViewerMode: true // Disable editing
+      },
+      draggable: false,
+      selectable: false
+    }))
+
+    // Convert edges to FlowEdges
+    const flowEdges: Edge[] = edges.map(edge => ({
+      id: edge.id,
+      source: edge.source_block_id,
+      target: edge.target_block_id,
+      type: 'custom',
+      data: {
+        edgeId: edge.id,
+        sourcePortType: edge.source_port_type!,
+        targetPortType: edge.target_port_type!,
+        isViewerMode: true // Disable editing
+      },
+      deletable: false,
+      selectable: false
+    }))
+
+    setFlowNodes(nodes)
+    setFlowEdges(flowEdges)
+  }
+
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href)
-      // Could add a toast notification here
       alert('Link copied to clipboard!')
     } catch (err) {
       console.error('Failed to copy link:', err)
@@ -115,7 +170,6 @@ export default function CombinationDetail({ setupId }: Props) {
     }
 
     try {
-      // This would call a Supabase Edge Function to verify PIN and soft-delete
       const { data, error } = await supabase.functions.invoke('delete-setup', {
         body: { setupId, pin: deletePin }
       })
@@ -133,36 +187,17 @@ export default function CombinationDetail({ setupId }: Props) {
     }
   }
 
-  const convertToFlowNodes = (): Node[] => {
-    return blocks.map(block => ({
-      id: block.id,
-      type: 'default',
-      position: { x: block.position_x, y: block.position_y },
-      data: {
-        label: block.product ? 
-          `${block.product.brand} ${block.product.model}` : 
-          block.custom_name || 'Unknown Device'
-      },
-      draggable: false
-    }))
-  }
-
-  const convertToFlowEdges = (): Edge[] => {
-    return edges.map(edge => ({
-      id: edge.id,
-      source: edge.source_block_id,
-      target: edge.target_block_id,
-      label: edge.source_port_type?.code || 'Unknown',
-      type: 'default'
-    }))
-  }
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     })
+  }
+
+  const handleSeePrice = (product: Product) => {
+    // TODO: Implement price lookup functionality
+    console.log('See price for:', product)
   }
 
   if (loading) {
@@ -184,99 +219,111 @@ export default function CombinationDetail({ setupId }: Props) {
   return (
     <div className="h-[calc(100vh-4rem)] flex overflow-hidden">
       {/* Left sidebar */}
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {setup.name}
-          </h1>
-          
-          <div className="space-y-2 text-sm text-gray-600">
-            <div className="flex items-center space-x-2">
-              <User className="w-4 h-4" />
-              <span>{setup.user_name}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4" />
-              <span>{formatDate(setup.created_at)}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2 mt-4">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              setup.is_current 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-blue-100 text-blue-800'
-            }`}>
-              {setup.is_current ? 'Real Setup' : 'Dream Setup'}
-            </span>
-            
-            {setup.daisy_chain && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                Daisy Chain
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900 mb-2">Comment</h3>
-          <p className="text-gray-600 text-sm">
-            {setup.comment || 'No comment provided'}
-          </p>
-        </div>
-
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900 mb-3">Devices</h3>
-          <div className="space-y-2">
-            {blocks.map(block => (
-              <div key={block.id} className="text-sm">
-                <div className="font-medium">
+      <div className="w-80 bg-[#f9f9fa] flex flex-col p-4">
+        <div className="flex flex-col gap-6">
+          {blocks.map(block => (
+            <div key={block.id} className="flex flex-col gap-2 items-center p-2 rounded-2xl">
+              <div className="flex flex-col h-[88px] items-start justify-start w-full">
+                <div className="flex flex-col gap-2 grow items-center justify-center p-3 w-full">
+                  <div className="aspect-[234/146] bg-[50.3%_50%] bg-no-repeat bg-size-[171.17%_126.03%] w-full rounded-lg bg-gray-200 flex items-center justify-center">
+                    {block.product?.image_url ? (
+                      <img 
+                        src={block.product.image_url} 
+                        alt={block.product.model}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="text-gray-400 text-xs text-center">
+                        {block.device_type?.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="text-[12px] text-center text-[#15171a] leading-[16px] w-full truncate">
                   {block.product ? 
                     `${block.product.brand} ${block.product.model}` : 
                     block.custom_name
                   }
                 </div>
-                <div className="text-gray-500 capitalize">
-                  {block.device_type?.name}
-                </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="p-6 mt-auto">
-          <div className="space-y-2">
-            <button
-              onClick={handleShare}
-              className="w-full btn-secondary flex items-center justify-center space-x-2"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>Share</span>
-            </button>
-            
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span>Delete</span>
-            </button>
-          </div>
+              <button
+                onClick={() => block.product && handleSeePrice(block.product)}
+                className="flex flex-row h-9 items-center justify-center px-3 py-2 rounded-xl w-full bg-white text-[14px] text-gray-500 hover:bg-gray-50 transition-colors"
+              >
+                <span className="leading-[20px]">See price</span>
+                <ArrowUpRight className="w-4 h-4 ml-1" />
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Right graph area */}
-      <div className="flex-1">
+      <div className="flex-1 bg-[#f9f9fa] rounded-[32px] overflow-hidden relative">
+        {/* Top bar - Display only */}
+        <div className="absolute top-2 left-2 right-2 z-50 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-[32px] border border-gray-200 shadow-sm">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <div className="text-2xl font-medium text-[#15171a] font-alpha-lyrae">
+                {setup.name}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-base">
+              <span className="text-gray-500">by</span>
+              <span className="text-[#15171a] font-medium">{setup.user_name}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar - User info and actions */}
+        <div className="absolute bottom-2 left-2 right-2 z-50 px-4 py-4 bg-white/90 backdrop-blur-sm rounded-[24px] border border-gray-200 shadow-sm">
+          <div className="flex items-end justify-between">
+            <div className="flex flex-col">
+              <div className="text-[16px] text-gray-500 font-medium leading-[24px]">
+                {setup.user_name}
+              </div>
+              <div className="text-[18px] text-[#15171a] leading-[28px]">
+                {setup.comment || 'No comment provided'}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleShare}
+                className="w-12 h-12 bg-[#f9f9fa] rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors"
+              >
+                <Share2 className="w-6 h-6 text-gray-500" />
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="w-12 h-12 bg-[#f9f9fa] rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors"
+              >
+                <Trash2 className="w-6 h-6 text-gray-500" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* React Flow Canvas */}
         <ReactFlowProvider>
           <ReactFlow
-            nodes={convertToFlowNodes()}
-            edges={convertToFlowEdges()}
+            nodes={flowNodes}
+            edges={flowEdges}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             fitView
             nodesDraggable={false}
             nodesConnectable={false}
             elementsSelectable={false}
+            panOnDrag={true}
+            zoomOnDoubleClick={false}
+            deleteKeyCode={[]} // Disable delete
+            defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
+            minZoom={0.3}
+            maxZoom={2}
+            style={{ backgroundColor: '#F9F9FA' }}
+            proOptions={{ hideAttribution: true }}
           >
-            <Background />
+            <Background color="#F9F9FA" />
             <Controls />
           </ReactFlow>
         </ReactFlowProvider>

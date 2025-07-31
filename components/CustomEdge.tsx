@@ -24,6 +24,7 @@ interface CustomEdgeProps {
     portTypes?: Array<{ id: number; code: string }>
     isInputMode?: boolean
     isCompleted?: boolean
+    isViewerMode?: boolean
   }
   selected?: boolean
 }
@@ -159,8 +160,8 @@ export default function CustomEdge({
     }
   }
 
-  // Input mode - show dropdowns for port selection
-  if (data?.isInputMode && !data?.isCompleted) {
+  // Input mode - show dropdowns for port selection (only if not in viewer mode)
+  if (data?.isInputMode && !data?.isCompleted && !data?.isViewerMode) {
     return (
       <>
         <BaseEdge path={edgePath} />
@@ -215,12 +216,14 @@ export default function CustomEdge({
               </div>
 
               {/* Delete Button */}
-              <button
-                onClick={handleDelete}
-                className="flex items-center justify-center w-6 h-6 bg-red-50 hover:bg-red-100 rounded-full transition-colors"
-              >
-                <Trash2 className="w-3 h-3 text-red-500" />
-              </button>
+              {!data?.isViewerMode && (
+                <button
+                  onClick={handleDelete}
+                  className="flex items-center justify-center w-6 h-6 bg-red-50 hover:bg-red-100 rounded-full transition-colors"
+                >
+                  <Trash2 className="w-3 h-3 text-red-500" />
+                </button>
+              )}
 
               {/* Right Port Dropdown */}
               <div className="relative" ref={rightDropdownRef}>
