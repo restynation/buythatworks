@@ -101,10 +101,12 @@ ALTER TABLE device_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE port_types ENABLE ROW LEVEL SECURITY;
 
 -- Update port types: Change TYPE_B to TYPE_A and add new port types
-UPDATE port_types SET code = 'TYPE_A' WHERE code = 'TYPE_B';
+UPDATE port_types SET code = 'Type-A' WHERE code = 'TYPE_B';
+UPDATE port_types SET code = 'Type-C' WHERE code = 'TYPE_C';
+UPDATE port_types SET code = 'Mini DP' WHERE code = 'MINIDP';
 INSERT INTO port_types (code) VALUES 
-  ('TYPE_A (Dongle)'),
-  ('TYPE_C (Dongle)'),
+  ('Type-A (Dongle)'),
+  ('Type-C (Dongle)'),
   ('Wireless')
 ON CONFLICT (code) DO NOTHING;
 

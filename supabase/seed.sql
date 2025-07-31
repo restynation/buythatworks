@@ -8,14 +8,14 @@ INSERT INTO device_types (name) VALUES
 
 -- Insert port types
 INSERT INTO port_types (code) VALUES
-  ('TYPE_C'),
-  ('TYPE_A'),
-  ('TYPE_A (Dongle)'),
-  ('TYPE_C (Dongle)'),
-  ('Wireless'),
   ('HDMI'),
   ('DP'),
-  ('MINIDP');
+  ('Mini DP'),
+  ('Type-C'),
+  ('Type-C (Dongle)'),
+  ('Type-A'),
+  ('Type-A (Dongle)'),
+  ('Wireless');
 
 -- Insert sample Mac products
 INSERT INTO products (device_type_id, brand, model, image_url, is_builtin_display) VALUES
