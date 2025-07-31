@@ -491,7 +491,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         </div>
 
         {/* Finish Button */}
-        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-[24px] shrink-0 w-[600px]">
+        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-[24px] shrink-0 w-[600px] h-[60px]">
           <div className="absolute bg-[#000000] inset-0 rounded-[24px]" />
           <button
             type="submit"
