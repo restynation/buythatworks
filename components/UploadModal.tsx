@@ -497,7 +497,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
             type="submit"
             onClick={handleSubmit}
             disabled={uploading}
-            className="box-border content-stretch flex flex-row items-center justify-center px-3 py-0 relative shrink-0 z-10"
+            className="absolute inset-0 flex items-center justify-center z-10"
           >
             <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
               {uploading ? 'Uploading...' : 'Finish'}
