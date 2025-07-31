@@ -557,7 +557,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
-        defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
+        defaultViewport={{ x: 0, y: 0, zoom: 1.25 }}
         minZoom={0.3}
         maxZoom={2}
         connectionRadius={25}

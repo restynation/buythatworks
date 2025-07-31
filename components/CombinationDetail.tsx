@@ -382,7 +382,7 @@ export default function CombinationDetail({ setupId }: Props) {
             panOnDrag={true}
             zoomOnDoubleClick={false}
             deleteKeyCode={[]} // Disable delete
-            defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
+            defaultViewport={{ x: 0, y: 0, zoom: 1.25 }}
             minZoom={0.3}
             maxZoom={2}
             style={{ backgroundColor: '#F9F9FA' }}
