@@ -341,6 +341,21 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
           .react-flow__edge {
             pointer-events: all !important;
           }
+          
+          /* Ensure edge dropdowns are always on top */
+          .react-flow__edge .nodrag.nopan {
+            z-index: 9999 !important;
+          }
+          
+          /* Override ReactFlow's z-index for edge labels */
+          .react-flow__edge .react-flow__edge-label {
+            z-index: 9999 !important;
+          }
+          
+          /* Ensure dropdowns are above all ReactFlow elements */
+          .react-flow__edge [style*="z-index"] {
+            z-index: 9999 !important;
+          }
         `
       }} />
       

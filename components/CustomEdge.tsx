@@ -138,6 +138,7 @@ export default function CustomEdge({
               transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
               fontSize: 12,
               pointerEvents: 'all',
+              zIndex: 9999,
             }}
             className="nodrag nopan"
           >
@@ -230,6 +231,7 @@ export default function CustomEdge({
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             fontSize: 12,
             pointerEvents: 'all',
+            zIndex: 9999,
           }}
           className="nodrag nopan"
         >
