@@ -379,14 +379,14 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             Selection Type
           </div>
-          <div className="flex flex-row gap-4 w-full">
+          <div className="flex flex-row gap-6 w-full">
             {/* Option 1 */}
             <div 
-              className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer"
+              className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[160px]"
               onClick={() => handleSelectionClick('option1')}
             >
               <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
-                <div className="box-border content-stretch flex flex-row gap-3 items-center justify-center p-0 relative shrink-0">
+                <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0">
                   <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
                     <input
                       type="radio"
@@ -415,8 +415,8 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                       )}
                     </div>
                   </div>
-                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
-                    Option 1
+                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left">
+                    Yes, built-in and external displays work together.
                   </div>
                 </div>
               </div>
@@ -427,11 +427,11 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
             {/* Option 2 (기본값) */}
             <div 
-              className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer"
+              className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[160px]"
               onClick={() => handleSelectionClick('option2')}
             >
               <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
-                <div className="box-border content-stretch flex flex-row gap-3 items-center justify-center p-0 relative shrink-0">
+                <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0">
                   <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
                     <input
                       type="radio"
@@ -460,8 +460,8 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                       )}
                     </div>
                   </div>
-                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
-                    Option 2
+                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left">
+                    No, built-in display must be turned off for this combination to work.
                   </div>
                 </div>
               </div>
