@@ -68,22 +68,6 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
       return
     }
 
-    // Validation for React Flow nodes
-    const computerNodes = nodes.filter(n => n.data.deviceType.name === 'computer')
-    if (computerNodes.length !== 1) {
-      alert('Setup must have exactly one computer')
-      return
-    }
-
-    // V-02: Each block has ≥1 edge
-    for (const node of nodes) {
-      const nodeEdges = edges.filter(e => e.source === node.id || e.target === node.id)
-      if (nodeEdges.length === 0) {
-        alert(`Device "${node.data.product?.model || node.data.customName}" must be connected`)
-        return
-      }
-    }
-
     // V-03: Computer/monitor blocks require product_id, others require custom_name
     for (const node of nodes) {
       const deviceType = node.data.deviceType.name

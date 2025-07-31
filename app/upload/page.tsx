@@ -23,6 +23,30 @@ export default function UploadPage() {
   }, [])
 
   const handleUpload = () => {
+    // Validation for React Flow nodes before opening modal
+    const computerNodes = nodes.filter(n => n.data.deviceType.name === 'computer')
+    if (computerNodes.length !== 1) {
+      alert('Setup must have exactly one computer')
+      return
+    }
+
+    // V-02: Each block has ≥1 edge
+    for (const node of nodes) {
+      const nodeEdges = edges.filter(e => e.source === node.id || e.target === node.id)
+      if (nodeEdges.length === 0) {
+        alert(`Device "${node.data.product?.model || node.data.customName}" must be connected`)
+        return
+      }
+    }
+
+    // V-03: Check for incomplete edge port information
+    for (const edge of edges) {
+      if (!edge.data?.sourcePortType || !edge.data?.targetPortType) {
+        alert('All connections must have both source and target ports selected')
+        return
+      }
+    }
+
     setShowUploadModal(true)
   }
 
