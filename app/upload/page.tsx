@@ -47,6 +47,34 @@ export default function UploadPage() {
       }
     }
 
+    // Check setup name
+    if (!setupName.trim()) {
+      alert('Setup name is required')
+      return
+    }
+
+    // Check builder name
+    if (!builderName.trim()) {
+      alert('Builder name is required')
+      return
+    }
+
+    // V-03: Computer/monitor blocks require product_id, others require custom_name
+    for (const node of nodes) {
+      const deviceType = node.data.deviceType.name
+      if (['computer', 'monitor'].includes(deviceType)) {
+        if (!node.data.product) {
+          alert(`${deviceType} must have a product selected`)
+          return
+        }
+      } else {
+        if (!node.data.customName?.trim()) {
+          alert(`${deviceType} must have a name`)
+          return
+        }
+      }
+    }
+
     setShowUploadModal(true)
   }
 
