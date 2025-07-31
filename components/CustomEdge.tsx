@@ -142,7 +142,7 @@ export default function CustomEdge({
                   }`} />
                 </button>
                 {(leftDropdownOpen || leftClosingDropdown) && (
-                  <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[120px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-50 duration-200 ${
+                  <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[120px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-50 duration-200 flex flex-col ${
                     leftClosingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
                   }`}>
                     {data?.portTypes?.map((portType) => (
@@ -180,7 +180,7 @@ export default function CustomEdge({
                   }`} />
                 </button>
                 {(rightDropdownOpen || rightClosingDropdown) && (
-                  <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[120px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-50 duration-200 ${
+                  <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[120px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-50 duration-200 flex flex-col ${
                     rightClosingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
                   }`}>
                     {data?.portTypes?.map((portType) => (
