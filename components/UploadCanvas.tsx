@@ -46,7 +46,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; flowPosition: { x: number; y: number } } | null>(null)
   const [isConnecting, setIsConnecting] = useState(false)
   const [justFinishedConnection, setJustFinishedConnection] = useState(false)
-  const { screenToFlowPosition } = useReactFlow()
+  const { screenToFlowPosition, getNodes, getEdges } = useReactFlow()
   const contextMenuRef = useRef<HTMLDivElement>(null)
 
   // Outside click detection for context menu
@@ -214,6 +214,18 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     event.preventDefault()
     event.stopPropagation()
     
+    // Check if any nodes or edges are selected
+    const currentNodes = getNodes()
+    const currentEdges = getEdges()
+    const hasSelectedNodes = currentNodes.some(node => node.selected)
+    const hasSelectedEdges = currentEdges.some(edge => edge.selected)
+    
+    // Prevent context menu if any elements are selected (user is deselecting)
+    if (hasSelectedNodes || hasSelectedEdges) {
+      console.log('UploadCanvas: Elements are selected, preventing context menu (deselection in progress)')
+      return
+    }
+    
     // Prevent context menu if we're in the middle of a connection or just finished one
     if (isConnecting || justFinishedConnection) {
       console.log('UploadCanvas: Currently connecting or just finished, preventing context menu')
@@ -235,6 +247,17 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     
     // Double-check after a small delay
     setTimeout(() => {
+      // Re-check selected elements after delay
+      const delayedNodes = getNodes()
+      const delayedEdges = getEdges()
+      const hasDelayedSelectedNodes = delayedNodes.some(node => node.selected)
+      const hasDelayedSelectedEdges = delayedEdges.some(edge => edge.selected)
+      
+      if (hasDelayedSelectedNodes || hasDelayedSelectedEdges) {
+        console.log('UploadCanvas: Elements still selected after delay, preventing context menu')
+        return
+      }
+      
       if (document.body.hasAttribute('data-dropdown-closing') || isConnecting || justFinishedConnection) {
         console.log('UploadCanvas: Preventing context menu after delay check')
         return
