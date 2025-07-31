@@ -240,6 +240,13 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         return
       }
       
+      // Additional check for any active dropdowns
+      const activeDropdowns = document.querySelectorAll('[data-dropdown-closing], .dropdown-open, .dropdown-closing')
+      if (activeDropdowns.length > 0) {
+        console.log('UploadCanvas: Active dropdowns detected, preventing context menu')
+        return
+      }
+      
       console.log('UploadCanvas: Opening context menu at:', { clientX, clientY, flowPosition })
       
       setContextMenu({

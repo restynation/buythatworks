@@ -64,9 +64,19 @@ export default function CustomEdge({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (leftDropdownRef.current && !leftDropdownRef.current.contains(event.target as Node)) {
+        // Set flag to prevent context menu
+        document.body.setAttribute('data-dropdown-closing', 'true')
+        setTimeout(() => {
+          document.body.removeAttribute('data-dropdown-closing')
+        }, 200)
         closeLeftDropdown()
       }
       if (rightDropdownRef.current && !rightDropdownRef.current.contains(event.target as Node)) {
+        // Set flag to prevent context menu
+        document.body.setAttribute('data-dropdown-closing', 'true')
+        setTimeout(() => {
+          document.body.removeAttribute('data-dropdown-closing')
+        }, 200)
         closeRightDropdown()
       }
     }
@@ -113,6 +123,13 @@ export default function CustomEdge({
 
       data.onUpdate(id, updateData)
     }
+    
+    // Set flag to prevent context menu when closing dropdown
+    document.body.setAttribute('data-dropdown-closing', 'true')
+    setTimeout(() => {
+      document.body.removeAttribute('data-dropdown-closing')
+    }, 200)
+    
     if (isLeft) {
       closeLeftDropdown()
     } else {
