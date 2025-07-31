@@ -22,6 +22,8 @@ interface CustomEdgeProps {
     onUpdate?: (edgeId: string, data: any) => void
     onDelete?: (edgeId: string) => void
     portTypes?: Array<{ id: number; code: string }>
+    isInputMode?: boolean
+    isCompleted?: boolean
   }
   selected?: boolean
 }
@@ -57,8 +59,6 @@ export default function CustomEdge({
   const isSourceLeft = sourceX < targetX
   const leftPort = isSourceLeft ? data?.sourcePortType : data?.targetPortType
   const rightPort = isSourceLeft ? data?.targetPortType : data?.sourcePortType
-  const leftNodeId = isSourceLeft ? data?.sourceNodeId : data?.targetNodeId
-  const rightNodeId = isSourceLeft ? data?.targetNodeId : data?.sourceNodeId
 
   // Outside click detection for dropdowns
   useEffect(() => {
@@ -95,9 +95,22 @@ export default function CustomEdge({
 
   const handlePortSelect = (portType: { id: number; code: string }, isLeft: boolean) => {
     if (data?.onUpdate) {
-      const updateData = isLeft 
-        ? { sourcePortType: portType }
-        : { targetPortType: portType }
+      // Determine which port to update based on node positions
+      const isSourceLeft = sourceX < targetX
+      let updateData: any
+
+      if (isSourceLeft) {
+        // Source is left, Target is right
+        updateData = isLeft 
+          ? { sourcePortType: portType }
+          : { targetPortType: portType }
+      } else {
+        // Source is right, Target is left
+        updateData = isLeft 
+          ? { targetPortType: portType }
+          : { sourcePortType: portType }
+      }
+
       data.onUpdate(id, updateData)
     }
     if (isLeft) {
@@ -113,7 +126,8 @@ export default function CustomEdge({
     }
   }
 
-  if (selected) {
+  // Input mode - show dropdowns for port selection
+  if (data?.isInputMode && !data?.isCompleted) {
     return (
       <>
         <BaseEdge path={edgePath} />
@@ -202,7 +216,7 @@ export default function CustomEdge({
     )
   }
 
-  // Non-selected state - show port information
+  // Completed state - show port information (non-editable)
   const sourcePortCode = data?.sourcePortType?.code || '?'
   const targetPortCode = data?.targetPortType?.code || '?'
 

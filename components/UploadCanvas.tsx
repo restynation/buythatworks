@@ -160,11 +160,20 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
 
   const handleEdgeUpdate = (edgeId: string, data: any) => {
     setEdges((edges: Edge[]) =>
-      edges.map((edge: Edge) =>
-        edge.id === edgeId
-          ? { ...edge, data: { ...edge.data, ...data } }
-          : edge
-      )
+      edges.map((edge: Edge) => {
+        if (edge.id === edgeId) {
+          const updatedData = { ...edge.data, ...data }
+          
+          // Check if both ports are selected to mark as completed
+          if (updatedData.sourcePortType && updatedData.targetPortType) {
+            updatedData.isCompleted = true
+            updatedData.isInputMode = false
+          }
+          
+          return { ...edge, data: updatedData }
+        }
+        return edge
+      })
     )
   }
 
@@ -298,7 +307,9 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         targetNodeId: connection.target,
         onUpdate: handleEdgeUpdate,
         onDelete: handleEdgeDelete,
-        portTypes: portTypes
+        portTypes: portTypes,
+        isInputMode: true, // Automatically enter input mode
+        isCompleted: false
       }
     } as Edge
 
