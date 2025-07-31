@@ -149,14 +149,14 @@ export default function DeviceNode({ id, data, selected }: Props) {
         id="left"
         type="source" 
         position={Position.Left} 
-        className="!w-[9px] !h-[9px] !bg-[#FFFFFF] !border !border-[#C4C7CC] !left-[-12px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-[#15171a] hover:!scale-110 !transition-all !duration-200" 
+        className="!w-[9px] !h-[9px] !bg-[#FFFFFF] !border !border-[#C4C7CC] !left-[-16px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-[#15171a] hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!w-6 !h-6 !bg-transparent !border-0 !left-[-18px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
+        className="!w-6 !h-6 !bg-transparent !border-0 !left-[-22px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -164,14 +164,14 @@ export default function DeviceNode({ id, data, selected }: Props) {
         id="right"
         type="source" 
         position={Position.Right} 
-        className="!w-[9px] !h-[9px] !bg-[#FFFFFF] !border !border-[#C4C7CC] !right-[-12px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-[#15171a] hover:!scale-110 !transition-all !duration-200" 
+        className="!w-[9px] !h-[9px] !bg-[#FFFFFF] !border !border-[#C4C7CC] !right-[-16px] !top-1/2 !transform !-translate-y-1/2 !z-10 !cursor-crosshair hover:!bg-[#15171a] hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
         id="right-target"
         type="target" 
         position={Position.Right} 
-        className="!w-6 !h-6 !bg-transparent !border-0 !right-[-18px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
+        className="!w-6 !h-6 !bg-transparent !border-0 !right-[-22px] !top-1/2 !transform !-translate-y-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -179,14 +179,14 @@ export default function DeviceNode({ id, data, selected }: Props) {
         id="top"
         type="source" 
         position={Position.Top} 
-        className="!w-[9px] !h-[9px] !bg-[#FFFFFF] !border !border-[#C4C7CC] !top-[-12px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-[#15171a] hover:!scale-110 !transition-all !duration-200" 
+        className="!w-[9px] !h-[9px] !bg-[#FFFFFF] !border !border-[#C4C7CC] !top-[-16px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-[#15171a] hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
         id="top-target"
         type="target" 
         position={Position.Top} 
-        className="!w-6 !h-6 !bg-transparent !border-0 !top-[-18px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
+        className="!w-6 !h-6 !bg-transparent !border-0 !top-[-22px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
       
@@ -194,14 +194,14 @@ export default function DeviceNode({ id, data, selected }: Props) {
         id="bottom"
         type="source" 
         position={Position.Bottom} 
-        className="!w-[9px] !h-[9px] !bg-[#FFFFFF] !border !border-[#C4C7CC] !bottom-[-12px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-[#15171a] hover:!scale-110 !transition-all !duration-200" 
+        className="!w-[9px] !h-[9px] !bg-[#FFFFFF] !border !border-[#C4C7CC] !bottom-[-16px] !left-1/2 !transform !-translate-x-1/2 !z-10 !cursor-crosshair hover:!bg-[#15171a] hover:!scale-110 !transition-all !duration-200" 
         style={{ pointerEvents: 'all' }}
       />
       <Handle 
         id="bottom-target"
         type="target" 
         position={Position.Bottom} 
-        className="!w-6 !h-6 !bg-transparent !border-0 !bottom-[-18px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
+        className="!w-6 !h-6 !bg-transparent !border-0 !bottom-[-22px] !left-1/2 !transform !-translate-x-1/2 !z-9" 
         style={{ pointerEvents: 'all' }}
       />
 
