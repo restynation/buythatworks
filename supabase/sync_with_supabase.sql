@@ -112,9 +112,19 @@ CREATE INDEX IF NOT EXISTS idx_products_brand_model ON products(brand, model);
 -- 6. 제약조건 추가
 
 -- 설정당 컴퓨터는 하나만 허용
-CREATE UNIQUE INDEX IF NOT EXISTS idx_one_computer_per_setup 
-ON setup_blocks (setup_id) 
-WHERE device_type_id = (SELECT id FROM device_types WHERE name = 'computer');
+-- 먼저 computer 디바이스 타입의 ID를 찾아서 사용
+DO $$
+DECLARE
+    computer_device_type_id INTEGER;
+BEGIN
+    SELECT id INTO computer_device_type_id FROM device_types WHERE name = 'computer';
+    
+    IF computer_device_type_id IS NOT NULL THEN
+        EXECUTE format('CREATE UNIQUE INDEX IF NOT EXISTS idx_one_computer_per_setup 
+                       ON setup_blocks (setup_id) 
+                       WHERE device_type_id = %s', computer_device_type_id);
+    END IF;
+END $$;
 
 -- 7. 뷰 생성
 
