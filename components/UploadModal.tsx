@@ -19,6 +19,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
   const [formData, setFormData] = useState({
     password: '',
     setupType: 'dream' as 'current' | 'dream', // 기본값을 dream으로 변경
+    selectionType: 'option2' as 'option1' | 'option2', // 새로운 선택지 추가
     comment: '',
   })
   const [image, setImage] = useState<File | null>(null)
@@ -34,6 +35,10 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
   const handleCardClick = (type: 'current' | 'dream') => {
     setFormData(prev => ({ ...prev, setupType: type }))
+  }
+
+  const handleSelectionClick = (type: 'option1' | 'option2') => {
+    setFormData(prev => ({ ...prev, selectionType: type }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -364,6 +369,104 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
               </div>
               <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
                 formData.setupType === 'current' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+              }`} />
+            </div>
+          </div>
+        </div>
+
+        {/* New Selection Area - 600x247px */}
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[600px] h-[247px]">
+          <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
+            Selection Type
+          </div>
+          <div className="flex flex-row gap-4 w-full">
+            {/* Option 1 */}
+            <div 
+              className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer"
+              onClick={() => handleSelectionClick('option1')}
+            >
+              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
+                <div className="box-border content-stretch flex flex-row gap-3 items-center justify-center p-0 relative shrink-0">
+                  <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
+                    <input
+                      type="radio"
+                      name="selectionType"
+                      value="option1"
+                      checked={formData.selectionType === 'option1'}
+                      onChange={() => {}}
+                      className="sr-only"
+                    />
+                    <div className={`relative rounded-[16px] shrink-0 size-6 ${
+                      formData.selectionType === 'option1' 
+                        ? 'bg-[#000000]' 
+                        : ''
+                    }`}>
+                      <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
+                        {formData.selectionType === 'option1' ? (
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <div className="opacity-0 relative shrink-0 size-4" />
+                        )}
+                      </div>
+                      {formData.selectionType !== 'option1' && (
+                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
+                    Option 1
+                  </div>
+                </div>
+              </div>
+              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
+                formData.selectionType === 'option1' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+              }`} />
+            </div>
+
+            {/* Option 2 (기본값) */}
+            <div 
+              className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer"
+              onClick={() => handleSelectionClick('option2')}
+            >
+              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
+                <div className="box-border content-stretch flex flex-row gap-3 items-center justify-center p-0 relative shrink-0">
+                  <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
+                    <input
+                      type="radio"
+                      name="selectionType"
+                      value="option2"
+                      checked={formData.selectionType === 'option2'}
+                      onChange={() => {}}
+                      className="sr-only"
+                    />
+                    <div className={`relative rounded-[16px] shrink-0 size-6 ${
+                      formData.selectionType === 'option2' 
+                        ? 'bg-[#000000]' 
+                        : ''
+                    }`}>
+                      <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
+                        {formData.selectionType === 'option2' ? (
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <div className="opacity-0 relative shrink-0 size-4" />
+                        )}
+                      </div>
+                      {formData.selectionType !== 'option2' && (
+                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left text-nowrap">
+                    Option 2
+                  </div>
+                </div>
+              </div>
+              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
+                formData.selectionType === 'option2' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
               }`} />
             </div>
           </div>
