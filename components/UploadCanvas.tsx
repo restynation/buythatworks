@@ -19,10 +19,15 @@ import 'reactflow/dist/style.css'
 import { supabase } from '@/lib/supabase'
 import { DeviceType, PortType, Product } from '@/lib/types'
 import DeviceNode from './DeviceNode'
+import CustomEdge from './CustomEdge'
 import { Plus } from 'lucide-react'
 
 const nodeTypes = {
   device: DeviceNode,
+}
+
+const edgeTypes = {
+  custom: CustomEdge,
 }
 
 interface UploadCanvasProps {
@@ -264,8 +269,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     const newEdge: Edge = {
       ...connection,
       id: `${connection.source}-${connection.sourceHandle || 'unknown'}-${connection.target}-${connection.targetHandle || 'unknown'}-${Date.now()}`,
-      type: 'default',
-      label: defaultPortType.code,
+      type: 'custom',
       sourceHandle: connection.sourceHandle,
       targetHandle: connection.targetHandle,
       style: { 
@@ -273,10 +277,6 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         strokeWidth: 1,
         strokeDasharray: '4 4',
         cursor: 'pointer'
-      },
-      labelStyle: { 
-        fontSize: 10, 
-        fontWeight: 500 
       },
       focusable: true,
       deletable: true,
@@ -331,6 +331,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         onConnectEnd={onConnectEnd}
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
         minZoom={0.3}
         maxZoom={2}
@@ -348,16 +349,12 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
         panOnDrag={true}
         zoomOnDoubleClick={false}
         defaultEdgeOptions={{
-          type: 'default',
+          type: 'custom',
           style: { 
             stroke: '#6B7280', 
             strokeWidth: 1,
             strokeDasharray: '4 4',
             cursor: 'pointer'
-          },
-          labelStyle: { 
-            fontSize: 10, 
-            fontWeight: 500 
           },
           focusable: true,
           deletable: true
