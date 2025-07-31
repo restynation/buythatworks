@@ -6,17 +6,17 @@ INSERT INTO device_types (name) VALUES
   ('mouse'),
   ('keyboard');
 
--- Clear and insert port types to avoid duplicates
-DELETE FROM port_types;
+-- Update existing port types and add new ones
+UPDATE port_types SET code = 'Type-A' WHERE code = 'TYPE_B';
+UPDATE port_types SET code = 'Type-C' WHERE code = 'TYPE_C';
+UPDATE port_types SET code = 'Mini DP' WHERE code = 'MINIDP';
+
+-- Add new port types only if they don't exist
 INSERT INTO port_types (code) VALUES
-  ('HDMI'),
-  ('DP'),
-  ('Mini DP'),
-  ('Type-C'),
-  ('Type-C (Dongle)'),
-  ('Type-A'),
   ('Type-A (Dongle)'),
-  ('Wireless');
+  ('Type-C (Dongle)'),
+  ('Wireless')
+ON CONFLICT (code) DO NOTHING;
 
 -- Insert sample Mac products
 INSERT INTO products (device_type_id, brand, model, image_url, is_builtin_display) VALUES

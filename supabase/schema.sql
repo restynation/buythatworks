@@ -100,20 +100,18 @@ ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE device_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE port_types ENABLE ROW LEVEL SECURITY;
 
--- Update port types: Change TYPE_B to TYPE_A and add new port types
--- First, delete all existing port types to avoid duplicates
-DELETE FROM port_types;
+-- Update port types: Change existing types and add new ones
+-- Update existing port types to new names
+UPDATE port_types SET code = 'Type-A' WHERE code = 'TYPE_B';
+UPDATE port_types SET code = 'Type-C' WHERE code = 'TYPE_C';
+UPDATE port_types SET code = 'Mini DP' WHERE code = 'MINIDP';
 
--- Then insert all port types in the correct order
+-- Add new port types only if they don't exist
 INSERT INTO port_types (code) VALUES 
-  ('HDMI'),
-  ('DP'),
-  ('Mini DP'),
-  ('Type-C'),
-  ('Type-C (Dongle)'),
-  ('Type-A'),
   ('Type-A (Dongle)'),
-  ('Wireless');
+  ('Type-C (Dongle)'),
+  ('Wireless')
+ON CONFLICT (code) DO NOTHING;
 
 -- RLS Policies for anonymous read access
 CREATE POLICY "Allow anonymous read on setups" ON setups
