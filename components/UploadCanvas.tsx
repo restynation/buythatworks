@@ -312,13 +312,83 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       return
     }
     
-    // Add edge with handle information
+    // Find the closest handles between the two nodes
+    const sourceNode = getNodes().find(n => n.id === connection.source)
+    const targetNode = getNodes().find(n => n.id === connection.target)
+    
+    if (!sourceNode || !targetNode) {
+      console.log('Invalid connection: nodes not found')
+      return
+    }
+    
+    // Calculate handle positions and find the closest pair
+    const handlePositions = {
+      source: {
+        left: { x: sourceNode.position.x - 90, y: sourceNode.position.y },
+        right: { x: sourceNode.position.x + 90, y: sourceNode.position.y },
+        top: { x: sourceNode.position.x, y: sourceNode.position.y - 90 },
+        bottom: { x: sourceNode.position.x, y: sourceNode.position.y + 90 }
+      },
+      target: {
+        left: { x: targetNode.position.x - 90, y: targetNode.position.y },
+        right: { x: targetNode.position.x + 90, y: targetNode.position.y },
+        top: { x: targetNode.position.x, y: targetNode.position.y - 90 },
+        bottom: { x: targetNode.position.x, y: targetNode.position.y + 90 }
+      }
+    }
+    
+    // Find the closest handle pair
+    let minDistance = Infinity
+    let closestSourceHandle = 'left'
+    let closestTargetHandle = 'left-target'
+    
+    const sourceHandles = ['left', 'right', 'top', 'bottom']
+    const targetHandles = ['left-target', 'right-target', 'top-target', 'bottom-target']
+    
+    for (const sourceHandle of sourceHandles) {
+      for (const targetHandle of targetHandles) {
+        const sourcePos = handlePositions.source[sourceHandle as keyof typeof handlePositions.source]
+        const targetPos = handlePositions.target[targetHandle.replace('-target', '') as keyof typeof handlePositions.target]
+        
+        const distance = Math.sqrt(
+          Math.pow(sourcePos.x - targetPos.x, 2) + 
+          Math.pow(sourcePos.y - targetPos.y, 2)
+        )
+        
+        if (distance < minDistance) {
+          minDistance = distance
+          closestSourceHandle = sourceHandle
+          closestTargetHandle = targetHandle
+        }
+      }
+    }
+    
+    console.log('Closest handles found:', {
+      sourceHandle: closestSourceHandle,
+      targetHandle: closestTargetHandle,
+      distance: minDistance
+    })
+    
+    // Check if connection already exists
+    const existingConnection = edges.find(edge => 
+      edge.source === connection.source && 
+      edge.target === connection.target &&
+      edge.sourceHandle === closestSourceHandle &&
+      edge.targetHandle === closestTargetHandle
+    )
+    
+    if (existingConnection) {
+      console.log('Connection already exists:', existingConnection)
+      return
+    }
+    
+    // Add edge with closest handle information
     const newEdge: Edge = {
       ...connection,
-      id: `${connection.source}-${connection.sourceHandle || 'unknown'}-${connection.target}-${connection.targetHandle || 'unknown'}-${Date.now()}`,
+      id: `${connection.source}-${closestSourceHandle}-${connection.target}-${closestTargetHandle}-${Date.now()}`,
       type: 'custom',
-      sourceHandle: connection.sourceHandle,
-      targetHandle: connection.targetHandle,
+      sourceHandle: closestSourceHandle,
+      targetHandle: closestTargetHandle,
       style: { 
         stroke: '#6B7280', 
         strokeWidth: 1,
@@ -331,8 +401,8 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       data: {
         sourcePortType: null, // No default selection
         targetPortType: null, // No default selection
-        sourceHandle: connection.sourceHandle,
-        targetHandle: connection.targetHandle,
+        sourceHandle: closestSourceHandle,
+        targetHandle: closestTargetHandle,
         sourceNodeId: connection.source,
         targetNodeId: connection.target,
         onUpdate: handleEdgeUpdate,
@@ -343,7 +413,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       }
     } as Edge
 
-    console.log('Creating edge:', newEdge)
+    console.log('Creating edge with closest handles:', newEdge)
     setEdges((edges: Edge[]) => addEdge(newEdge, edges))
   }, [portTypes])
 
