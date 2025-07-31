@@ -34,6 +34,7 @@ CREATE TABLE setups (
   comment TEXT,
   image_url TEXT,
   daisy_chain BOOLEAN DEFAULT FALSE,
+  builtin_display_usage BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ NULL

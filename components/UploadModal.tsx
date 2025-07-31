@@ -148,7 +148,8 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           is_current: formData.setupType === 'current',
           comment: formData.comment,
           image_url: imageUrl,
-          daisy_chain: hasDaisyChain
+          daisy_chain: hasDaisyChain,
+          builtin_display_usage: hasBuiltinDisplay ? formData.selectionType === 'option1' : null
         },
         blocks: nodes.map(node => ({
           node_id: node.id, // React Flow node ID 추가
