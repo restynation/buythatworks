@@ -27,6 +27,10 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
   const [commentFocused, setCommentFocused] = useState(false)
   const [passwordFocused, setPasswordFocused] = useState(false)
 
+  // 컴퓨터 노드의 is_builtin_display 속성 확인
+  const computerNode = nodes.find(n => n.data.deviceType.name === 'computer')
+  const hasBuiltinDisplay = computerNode?.data.product?.is_builtin_display === true
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose()
@@ -244,12 +248,12 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
             Select your combi's type
           </div>
           <div className="box-border content-stretch flex flex-row gap-2 items-start justify-start p-0 relative shrink-0">
-            {/* It's my dream setup - 280x280px card (왼쪽) */}
+            {/* It's my dream setup - 280x200px card (왼쪽) */}
             <div 
-              className="relative rounded-[24px] shrink-0 size-[280px] cursor-pointer"
+              className="relative rounded-[24px] shrink-0 w-[280px] h-[200px] cursor-pointer"
               onClick={() => handleCardClick('dream')}
             >
-              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative size-[280px]">
+              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative w-full h-full">
                 <div className="box-border content-stretch flex flex-row gap-3 items-center justify-center p-0 relative shrink-0">
                   <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
                     <input
@@ -289,12 +293,12 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
               }`} />
             </div>
 
-            {/* It's my current setup - 280x280px card (오른쪽) */}
+            {/* It's my current setup - 280x200px card (오른쪽) */}
             <div 
-              className="relative rounded-[24px] shrink-0 size-[280px] cursor-pointer"
+              className="relative rounded-[24px] shrink-0 w-[280px] h-[200px] cursor-pointer"
               onClick={() => handleCardClick('current')}
             >
-              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative size-[280px]">
+              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative w-full h-full">
                 <div className="box-border content-stretch flex flex-row gap-3 items-center justify-center p-0 relative shrink-0">
                   <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
                     <input
@@ -331,7 +335,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                 
                 {/* Image Upload Area - current setup일 때만 표시 */}
                 {formData.setupType === 'current' && (
-                  <div className="basis-0 bg-[#ffffff] grow min-h-px min-w-px relative rounded-[12px] shrink-0 w-full">
+                  <div className="basis-0 bg-[#ffffff] grow min-h-px min-w-px relative rounded-[12px] shrink-0 w-full h-[100px]">
                     <div className="box-border content-stretch flex flex-col gap-1 items-center justify-center overflow-clip p-0 relative size-full">
                       <input
                         type="file"
@@ -374,103 +378,105 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           </div>
         </div>
 
-        {/* New Selection Area - 600x247px */}
-        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[600px] h-[247px]">
-          <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
-            Selection Type
-          </div>
-          <div className="flex flex-row gap-2 w-full">
-            {/* Option 1 */}
-            <div 
-              className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[160px]"
-              onClick={() => handleSelectionClick('option1')}
-            >
-              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
-                <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0 w-full">
-                  <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
-                    <input
-                      type="radio"
-                      name="selectionType"
-                      value="option1"
-                      checked={formData.selectionType === 'option1'}
-                      onChange={() => {}}
-                      className="sr-only"
-                    />
-                    <div className={`relative rounded-[16px] shrink-0 size-6 ${
-                      formData.selectionType === 'option1' 
-                        ? 'bg-[#000000]' 
-                        : ''
-                    }`}>
-                      <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
-                        {formData.selectionType === 'option1' ? (
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        ) : (
-                          <div className="opacity-0 relative shrink-0 size-4" />
+        {/* New Selection Area - 600x247px - Only show when computer has built-in display */}
+        {hasBuiltinDisplay && (
+          <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[600px] h-[247px]">
+            <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
+              Is the built-in display usable?
+            </div>
+            <div className="flex flex-row gap-2 w-full">
+              {/* Option 1 */}
+              <div 
+                className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[160px]"
+                onClick={() => handleSelectionClick('option1')}
+              >
+                <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
+                  <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0 w-full">
+                    <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
+                      <input
+                        type="radio"
+                        name="selectionType"
+                        value="option1"
+                        checked={formData.selectionType === 'option1'}
+                        onChange={() => {}}
+                        className="sr-only"
+                      />
+                      <div className={`relative rounded-[16px] shrink-0 size-6 ${
+                        formData.selectionType === 'option1' 
+                          ? 'bg-[#000000]' 
+                          : ''
+                      }`}>
+                        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
+                          {formData.selectionType === 'option1' ? (
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          ) : (
+                            <div className="opacity-0 relative shrink-0 size-4" />
+                          )}
+                        </div>
+                        {formData.selectionType !== 'option1' && (
+                          <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
                         )}
                       </div>
-                      {formData.selectionType !== 'option1' && (
-                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
-                      )}
+                    </div>
+                    <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
+                      Yes, built-in and external displays work together.
                     </div>
                   </div>
-                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
-                    Yes, built-in and external displays work together.
-                  </div>
                 </div>
+                <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
+                  formData.selectionType === 'option1' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+                }`} />
               </div>
-              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
-                formData.selectionType === 'option1' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
-              }`} />
-            </div>
 
-            {/* Option 2 (기본값) */}
-            <div 
-              className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[160px]"
-              onClick={() => handleSelectionClick('option2')}
-            >
-              <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
-                <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0 w-full">
-                  <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
-                    <input
-                      type="radio"
-                      name="selectionType"
-                      value="option2"
-                      checked={formData.selectionType === 'option2'}
-                      onChange={() => {}}
-                      className="sr-only"
-                    />
-                    <div className={`relative rounded-[16px] shrink-0 size-6 ${
-                      formData.selectionType === 'option2' 
-                        ? 'bg-[#000000]' 
-                        : ''
-                    }`}>
-                      <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
-                        {formData.selectionType === 'option2' ? (
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        ) : (
-                          <div className="opacity-0 relative shrink-0 size-4" />
+              {/* Option 2 (기본값) */}
+              <div 
+                className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[160px]"
+                onClick={() => handleSelectionClick('option2')}
+              >
+                <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
+                  <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0 w-full">
+                    <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
+                      <input
+                        type="radio"
+                        name="selectionType"
+                        value="option2"
+                        checked={formData.selectionType === 'option2'}
+                        onChange={() => {}}
+                        className="sr-only"
+                      />
+                      <div className={`relative rounded-[16px] shrink-0 size-6 ${
+                        formData.selectionType === 'option2' 
+                          ? 'bg-[#000000]' 
+                          : ''
+                      }`}>
+                        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
+                          {formData.selectionType === 'option2' ? (
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          ) : (
+                            <div className="opacity-0 relative shrink-0 size-4" />
+                          )}
+                        </div>
+                        {formData.selectionType !== 'option2' && (
+                          <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
                         )}
                       </div>
-                      {formData.selectionType !== 'option2' && (
-                        <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
-                      )}
+                    </div>
+                    <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
+                      No, built-in display must be turned off for this combination to work.
                     </div>
                   </div>
-                  <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
-                    No, built-in display must be turned off for this combination to work.
-                  </div>
                 </div>
+                <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
+                  formData.selectionType === 'option2' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+                }`} />
               </div>
-              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
-                formData.selectionType === 'option2' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
-              }`} />
             </div>
           </div>
-        </div>
+        )}
 
         {/* Leave your short comment */}
         <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[600px]">
