@@ -68,8 +68,98 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
   // React Flow 이벤트 핸들러 - Fixed to prevent nodes disappearing
   const onNodesChange = useCallback((changes: any) => {
     console.log('Nodes change:', changes)
+    
+    // Apply node changes first
     setNodes((nds: Node[]) => applyNodeChanges(changes, nds))
-  }, [setNodes])
+    
+    // Check if any nodes were moved (position changes)
+    const movedNodes = changes.filter((change: any) => 
+      change.type === 'position' && change.dragging === false
+    )
+    
+    if (movedNodes.length > 0) {
+      console.log('Nodes moved, recalculating edge handles:', movedNodes)
+      
+      // Update edges with closest handles after a short delay to ensure nodes are updated
+      setTimeout(() => {
+        setEdges((currentEdges: Edge[]) => {
+          const updatedEdges = currentEdges.map((edge: Edge) => {
+            const sourceNode = getNodes().find(n => n.id === edge.source)
+            const targetNode = getNodes().find(n => n.id === edge.target)
+            
+            if (!sourceNode || !targetNode) {
+              return edge
+            }
+            
+            // Calculate handle positions and find the closest pair
+            const handlePositions = {
+              source: {
+                left: { x: sourceNode.position.x - 90, y: sourceNode.position.y },
+                right: { x: sourceNode.position.x + 90, y: sourceNode.position.y },
+                top: { x: sourceNode.position.x, y: sourceNode.position.y - 90 },
+                bottom: { x: sourceNode.position.x, y: sourceNode.position.y + 90 }
+              },
+              target: {
+                left: { x: targetNode.position.x - 90, y: targetNode.position.y },
+                right: { x: targetNode.position.x + 90, y: targetNode.position.y },
+                top: { x: targetNode.position.x, y: targetNode.position.y - 90 },
+                bottom: { x: targetNode.position.x, y: targetNode.position.y + 90 }
+              }
+            }
+            
+            // Find the closest handle pair
+            let minDistance = Infinity
+            let closestSourceHandle = 'left'
+            let closestTargetHandle = 'left-target'
+            
+            const sourceHandles = ['left', 'right', 'top', 'bottom']
+            const targetHandles = ['left-target', 'right-target', 'top-target', 'bottom-target']
+            
+            for (const sourceHandle of sourceHandles) {
+              for (const targetHandle of targetHandles) {
+                const sourcePos = handlePositions.source[sourceHandle as keyof typeof handlePositions.source]
+                const targetPos = handlePositions.target[targetHandle.replace('-target', '') as keyof typeof handlePositions.target]
+                
+                const distance = Math.sqrt(
+                  Math.pow(sourcePos.x - targetPos.x, 2) + 
+                  Math.pow(sourcePos.y - targetPos.y, 2)
+                )
+                
+                if (distance < minDistance) {
+                  minDistance = distance
+                  closestSourceHandle = sourceHandle
+                  closestTargetHandle = targetHandle
+                }
+              }
+            }
+            
+            console.log('Recalculated handles for edge:', {
+              edgeId: edge.id,
+              oldSourceHandle: edge.sourceHandle,
+              oldTargetHandle: edge.targetHandle,
+              newSourceHandle: closestSourceHandle,
+              newTargetHandle: closestTargetHandle,
+              distance: minDistance
+            })
+            
+            // Update edge with new closest handles
+            return {
+              ...edge,
+              sourceHandle: closestSourceHandle,
+              targetHandle: closestTargetHandle,
+              data: {
+                ...edge.data,
+                sourceHandle: closestSourceHandle,
+                targetHandle: closestTargetHandle
+              }
+            }
+          })
+          
+          return updatedEdges
+        })
+      }, 100) // Small delay to ensure nodes are updated
+    }
+  }, [setNodes, setEdges])
 
   const onEdgesChange = useCallback((changes: any) => {
     console.log('Edges change:', changes)
