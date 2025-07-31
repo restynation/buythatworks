@@ -9,7 +9,10 @@ INSERT INTO device_types (name) VALUES
 -- Insert port types
 INSERT INTO port_types (code) VALUES
   ('TYPE_C'),
-  ('TYPE_B'),
+  ('TYPE_A'),
+  ('TYPE_A (Dongle)'),
+  ('TYPE_C (Dongle)'),
+  ('Wireless'),
   ('HDMI'),
   ('DP'),
   ('MINIDP');

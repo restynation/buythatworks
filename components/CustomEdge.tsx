@@ -121,6 +121,22 @@ export default function CustomEdge({
           : { sourcePortType: portType }
       }
 
+      // If a Dongle port type is selected, automatically set the opposite side to Wireless
+      if (portType.code === 'TYPE_A (Dongle)' || portType.code === 'TYPE_C (Dongle)') {
+        const wirelessPortType = data?.portTypes?.find(pt => pt.code === 'Wireless')
+        if (wirelessPortType) {
+          if (isSourceLeft) {
+            updateData = isLeft 
+              ? { sourcePortType: portType, targetPortType: wirelessPortType }
+              : { targetPortType: portType, sourcePortType: wirelessPortType }
+          } else {
+            updateData = isLeft 
+              ? { targetPortType: portType, sourcePortType: wirelessPortType }
+              : { sourcePortType: portType, targetPortType: wirelessPortType }
+          }
+        }
+      }
+
       data.onUpdate(id, updateData)
     }
     
@@ -177,7 +193,7 @@ export default function CustomEdge({
                   <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[120px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-[9999] duration-200 flex flex-col ${
                     leftClosingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
                   }`}>
-                    {data?.portTypes?.map((portType) => (
+                    {data?.portTypes?.filter(portType => portType.code !== 'Wireless').map((portType) => (
                       <button
                         key={portType.id}
                         onClick={() => handlePortSelect(portType, true)}
@@ -215,7 +231,7 @@ export default function CustomEdge({
                   <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[120px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-[9999] duration-200 flex flex-col ${
                     rightClosingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
                   }`}>
-                    {data?.portTypes?.map((portType) => (
+                    {data?.portTypes?.filter(portType => portType.code !== 'Wireless').map((portType) => (
                       <button
                         key={portType.id}
                         onClick={() => handlePortSelect(portType, false)}

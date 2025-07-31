@@ -100,6 +100,14 @@ ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE device_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE port_types ENABLE ROW LEVEL SECURITY;
 
+-- Update port types: Change TYPE_B to TYPE_A and add new port types
+UPDATE port_types SET code = 'TYPE_A' WHERE code = 'TYPE_B';
+INSERT INTO port_types (code) VALUES 
+  ('TYPE_A (Dongle)'),
+  ('TYPE_C (Dongle)'),
+  ('Wireless')
+ON CONFLICT (code) DO NOTHING;
+
 -- RLS Policies for anonymous read access
 CREATE POLICY "Allow anonymous read on setups" ON setups
   FOR SELECT TO anon
