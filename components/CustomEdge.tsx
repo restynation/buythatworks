@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { BaseEdge, EdgeLabelRenderer, getBezierPath } from 'reactflow'
-import { ArrowRight, Trash2, ChevronDown } from 'lucide-react'
+import { ArrowRight, Trash2, ChevronDown, ArrowLeftRight } from 'lucide-react'
 
 interface CustomEdgeProps {
   id: string
@@ -237,7 +237,7 @@ export default function CustomEdge({
             <span className="text-[#6B7280] text-xs font-medium">
               {leftPort?.code || '?'}
             </span>
-            <ArrowRight className="w-3 h-3 text-[#6B7280]" />
+            <ArrowLeftRight className="w-3 h-3 text-[#6B7280]" />
             <span className="text-[#6B7280] text-xs font-medium">
               {rightPort?.code || '?'}
             </span>
