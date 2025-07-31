@@ -52,8 +52,6 @@ export interface SetupEdge {
   target_block_id: string
   source_port_type_id: number
   target_port_type_id: number
-  source_handle?: string
-  target_handle?: string
   source_port_type?: PortType
   target_port_type?: PortType
 }

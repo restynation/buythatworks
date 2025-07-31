@@ -55,7 +55,7 @@ CREATE TABLE setup_blocks (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Create setup_edges table with handle columns
+-- Create setup_edges table (without handle columns since handles are calculated automatically)
 CREATE TABLE setup_edges (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   setup_id UUID NOT NULL REFERENCES setups(id) ON DELETE CASCADE,
@@ -63,14 +63,8 @@ CREATE TABLE setup_edges (
   target_block_id UUID NOT NULL REFERENCES setup_blocks(id) ON DELETE CASCADE,
   source_port_type_id INTEGER NOT NULL REFERENCES port_types(id),
   target_port_type_id INTEGER NOT NULL REFERENCES port_types(id),
-  source_handle VARCHAR(20) NOT NULL,
-  target_handle VARCHAR(20) NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
--- Add comments to document the purpose of handle columns
-COMMENT ON COLUMN setup_edges.source_handle IS 'The handle position (left, right, top, bottom) on the source block';
-COMMENT ON COLUMN setup_edges.target_handle IS 'The handle position (left-target, right-target, top-target, bottom-target) on the target block';
 
 -- Create setup_filters materialized view for fast filtering
 CREATE MATERIALIZED VIEW setup_filters AS
@@ -90,8 +84,6 @@ CREATE INDEX idx_setup_blocks_setup_id ON setup_blocks(setup_id);
 CREATE INDEX idx_setup_blocks_product_id ON setup_blocks(product_id);
 CREATE INDEX idx_setup_blocks_device_type_id ON setup_blocks(device_type_id);
 CREATE INDEX idx_setup_edges_setup_id ON setup_edges(setup_id);
-CREATE INDEX idx_setup_edges_source_handle ON setup_edges(source_handle);
-CREATE INDEX idx_setup_edges_target_handle ON setup_edges(target_handle);
 CREATE INDEX idx_products_device_type_id ON products(device_type_id);
 CREATE INDEX idx_products_brand_model ON products(brand, model);
 
@@ -102,15 +94,6 @@ CREATE INDEX idx_setup_filters_product_ids ON setup_filters USING GIN (product_i
 CREATE UNIQUE INDEX idx_one_computer_per_setup 
 ON setup_blocks (setup_id) 
 WHERE device_type_id = (SELECT id FROM device_types WHERE name = 'computer');
-
--- Add check constraints to ensure valid handle values
-ALTER TABLE setup_edges 
-ADD CONSTRAINT chk_source_handle 
-CHECK (source_handle IN ('left', 'right', 'top', 'bottom'));
-
-ALTER TABLE setup_edges 
-ADD CONSTRAINT chk_target_handle 
-CHECK (target_handle IN ('left-target', 'right-target', 'top-target', 'bottom-target'));
 
 -- Enable Row Level Security
 ALTER TABLE setups ENABLE ROW LEVEL SECURITY;

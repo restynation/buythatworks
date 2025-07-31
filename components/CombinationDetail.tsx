@@ -138,77 +138,71 @@ export default function CombinationDetail({ setupId }: Props) {
     const flowEdges: Edge[] = edges.map(edge => {
       console.log('Processing edge:', edge) // Debug log
       
-      // Find the closest handles for this edge
+      // Calculate closest handles for this edge
       const sourceBlock = blocks.find(b => b.id === edge.source_block_id)
       const targetBlock = blocks.find(b => b.id === edge.target_block_id)
       
-      let sourceHandle = edge.source_handle
-      let targetHandle = edge.target_handle
+      let sourceHandle = 'left'
+      let targetHandle = 'left-target'
       
-      // If handle information is missing, calculate closest handles
-      if (!sourceHandle || !targetHandle) {
-        if (sourceBlock && targetBlock) {
-          const handlePositions = {
-            source: {
-              left: { x: sourceBlock.position_x - 90, y: sourceBlock.position_y },
-              right: { x: sourceBlock.position_x + 90, y: sourceBlock.position_y },
-              top: { x: sourceBlock.position_x, y: sourceBlock.position_y - 90 },
-              bottom: { x: sourceBlock.position_x, y: sourceBlock.position_y + 90 }
-            },
-            target: {
-              left: { x: targetBlock.position_x - 90, y: targetBlock.position_y },
-              right: { x: targetBlock.position_x + 90, y: targetBlock.position_y },
-              top: { x: targetBlock.position_x, y: targetBlock.position_y - 90 },
-              bottom: { x: targetBlock.position_x, y: targetBlock.position_y + 90 }
-            }
+      if (sourceBlock && targetBlock) {
+        const handlePositions = {
+          source: {
+            left: { x: sourceBlock.position_x - 90, y: sourceBlock.position_y },
+            right: { x: sourceBlock.position_x + 90, y: sourceBlock.position_y },
+            top: { x: sourceBlock.position_x, y: sourceBlock.position_y - 90 },
+            bottom: { x: sourceBlock.position_x, y: sourceBlock.position_y + 90 }
+          },
+          target: {
+            left: { x: targetBlock.position_x - 90, y: targetBlock.position_y },
+            right: { x: targetBlock.position_x + 90, y: targetBlock.position_y },
+            top: { x: targetBlock.position_x, y: targetBlock.position_y - 90 },
+            bottom: { x: targetBlock.position_x, y: targetBlock.position_y + 90 }
           }
-          
-          // Find the closest handle pair
-          let minDistance = Infinity
-          let closestSourceHandle = 'left'
-          let closestTargetHandle = 'left-target'
-          
-          const sourceHandles = ['left', 'right', 'top', 'bottom']
-          const targetHandles = ['left-target', 'right-target', 'top-target', 'bottom-target']
-          
-          for (const sh of sourceHandles) {
-            for (const th of targetHandles) {
-              const sourcePos = handlePositions.source[sh as keyof typeof handlePositions.source]
-              const targetPos = handlePositions.target[th.replace('-target', '') as keyof typeof handlePositions.target]
-              
-              const distance = Math.sqrt(
-                Math.pow(sourcePos.x - targetPos.x, 2) + 
-                Math.pow(sourcePos.y - targetPos.y, 2)
-              )
-              
-              if (distance < minDistance) {
-                minDistance = distance
-                closestSourceHandle = sh
-                closestTargetHandle = th
-              }
-            }
-          }
-          
-          // Use calculated handles if original handles are missing
-          if (!sourceHandle) sourceHandle = closestSourceHandle
-          if (!targetHandle) targetHandle = closestTargetHandle
-          
-          console.log('Calculated closest handles:', {
-            originalSource: edge.source_handle,
-            originalTarget: edge.target_handle,
-            calculatedSource: closestSourceHandle,
-            calculatedTarget: closestTargetHandle,
-            distance: minDistance
-          })
         }
+        
+        // Find the closest handle pair
+        let minDistance = Infinity
+        let closestSourceHandle = 'left'
+        let closestTargetHandle = 'left-target'
+        
+        const sourceHandles = ['left', 'right', 'top', 'bottom']
+        const targetHandles = ['left-target', 'right-target', 'top-target', 'bottom-target']
+        
+        for (const sh of sourceHandles) {
+          for (const th of targetHandles) {
+            const sourcePos = handlePositions.source[sh as keyof typeof handlePositions.source]
+            const targetPos = handlePositions.target[th.replace('-target', '') as keyof typeof handlePositions.target]
+            
+            const distance = Math.sqrt(
+              Math.pow(sourcePos.x - targetPos.x, 2) + 
+              Math.pow(sourcePos.y - targetPos.y, 2)
+            )
+            
+            if (distance < minDistance) {
+              minDistance = distance
+              closestSourceHandle = sh
+              closestTargetHandle = th
+            }
+          }
+        }
+        
+        sourceHandle = closestSourceHandle
+        targetHandle = closestTargetHandle
+        
+        console.log('Calculated closest handles:', {
+          calculatedSource: closestSourceHandle,
+          calculatedTarget: closestTargetHandle,
+          distance: minDistance
+        })
       }
       
       return {
         id: edge.id,
         source: edge.source_block_id,
         target: edge.target_block_id,
-        sourceHandle: sourceHandle || undefined,
-        targetHandle: targetHandle || undefined,
+        sourceHandle: sourceHandle,
+        targetHandle: targetHandle,
         type: 'custom',
         data: {
           edgeId: edge.id,

@@ -148,9 +148,7 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
               sourceHandle: closestSourceHandle,
               targetHandle: closestTargetHandle,
               data: {
-                ...edge.data,
-                sourceHandle: closestSourceHandle,
-                targetHandle: closestTargetHandle
+                ...edge.data
               }
             }
           })
@@ -491,8 +489,6 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       data: {
         sourcePortType: null, // No default selection
         targetPortType: null, // No default selection
-        sourceHandle: closestSourceHandle,
-        targetHandle: closestTargetHandle,
         sourceNodeId: connection.source,
         targetNodeId: connection.target,
         onUpdate: handleEdgeUpdate,
