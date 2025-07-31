@@ -93,7 +93,8 @@ export default function UploadPage() {
                 placeholder="Name your combination"
                 value={setupName}
                 onChange={(e) => setSetupName(e.target.value)}
-                className="w-full bg-transparent border-none outline-none text-2xl font-medium text-[#15171a] placeholder-gray-400 font-alpha-lyrae"
+                className="w-full bg-transparent border-none outline-none !text-2xl font-medium text-[#15171a] placeholder-gray-400 font-alpha-lyrae"
+                style={{ fontSize: '24px' }}
               />
             </div>
             <input
