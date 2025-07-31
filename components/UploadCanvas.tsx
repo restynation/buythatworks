@@ -158,6 +158,20 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     setEdges((edges: Edge[]) => edges.filter((e: Edge) => e.source !== nodeId && e.target !== nodeId))
   }
 
+  const handleEdgeUpdate = (edgeId: string, data: any) => {
+    setEdges((edges: Edge[]) =>
+      edges.map((edge: Edge) =>
+        edge.id === edgeId
+          ? { ...edge, data: { ...edge.data, ...data } }
+          : edge
+      )
+    )
+  }
+
+  const handleEdgeDelete = (edgeId: string) => {
+    setEdges((edges: Edge[]) => edges.filter((e: Edge) => e.id !== edgeId))
+  }
+
   const addNewDevice = (deviceType: DeviceType, position: { x: number; y: number }) => {
     console.log('Adding new device:', deviceType.name, 'at position:', position)
     const newNode: Node = {
@@ -260,12 +274,6 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
     }
     
     // Add edge with handle information
-    const defaultPortType = portTypes.find(pt => pt.code === 'TYPE_C')
-    if (!defaultPortType) {
-      console.log('No default port type found')
-      return
-    }
-
     const newEdge: Edge = {
       ...connection,
       id: `${connection.source}-${connection.sourceHandle || 'unknown'}-${connection.target}-${connection.targetHandle || 'unknown'}-${Date.now()}`,
@@ -282,10 +290,15 @@ function UploadCanvasInner({ setupName, builderName, nodes, edges, setNodes, set
       deletable: true,
       selectable: true,
       data: {
-        sourcePortType: defaultPortType,
-        targetPortType: defaultPortType,
+        sourcePortType: null, // No default selection
+        targetPortType: null, // No default selection
         sourceHandle: connection.sourceHandle,
-        targetHandle: connection.targetHandle
+        targetHandle: connection.targetHandle,
+        sourceNodeId: connection.source,
+        targetNodeId: connection.target,
+        onUpdate: handleEdgeUpdate,
+        onDelete: handleEdgeDelete,
+        portTypes: portTypes
       }
     } as Edge
 
