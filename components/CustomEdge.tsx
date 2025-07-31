@@ -48,6 +48,8 @@ export default function CustomEdge({
 
   const [leftDropdownOpen, setLeftDropdownOpen] = useState(false)
   const [rightDropdownOpen, setRightDropdownOpen] = useState(false)
+  const [leftClosingDropdown, setLeftClosingDropdown] = useState(false)
+  const [rightClosingDropdown, setRightClosingDropdown] = useState(false)
   const leftDropdownRef = useRef<HTMLDivElement>(null)
   const rightDropdownRef = useRef<HTMLDivElement>(null)
 
@@ -62,10 +64,10 @@ export default function CustomEdge({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (leftDropdownRef.current && !leftDropdownRef.current.contains(event.target as Node)) {
-        setLeftDropdownOpen(false)
+        closeLeftDropdown()
       }
       if (rightDropdownRef.current && !rightDropdownRef.current.contains(event.target as Node)) {
-        setRightDropdownOpen(false)
+        closeRightDropdown()
       }
     }
 
@@ -75,6 +77,22 @@ export default function CustomEdge({
     }
   }, [leftDropdownOpen, rightDropdownOpen])
 
+  const closeLeftDropdown = () => {
+    setLeftClosingDropdown(true)
+    setTimeout(() => {
+      setLeftDropdownOpen(false)
+      setLeftClosingDropdown(false)
+    }, 200)
+  }
+
+  const closeRightDropdown = () => {
+    setRightClosingDropdown(true)
+    setTimeout(() => {
+      setRightDropdownOpen(false)
+      setRightClosingDropdown(false)
+    }, 200)
+  }
+
   const handlePortSelect = (portType: { id: number; code: string }, isLeft: boolean) => {
     if (data?.onUpdate) {
       const updateData = isLeft 
@@ -83,9 +101,9 @@ export default function CustomEdge({
       data.onUpdate(id, updateData)
     }
     if (isLeft) {
-      setLeftDropdownOpen(false)
+      closeLeftDropdown()
     } else {
-      setRightDropdownOpen(false)
+      closeRightDropdown()
     }
   }
 
@@ -119,15 +137,19 @@ export default function CustomEdge({
                   <span className="text-[#6B7280] text-xs font-medium">
                     {leftPort?.code || 'Select'}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-[#6B7280]" />
+                  <ChevronDown className={`w-3 h-3 text-[#6B7280] transition-transform duration-200 ${
+                    leftDropdownOpen ? 'rotate-180' : ''
+                  }`} />
                 </button>
-                {leftDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[120px]">
+                {(leftDropdownOpen || leftClosingDropdown) && (
+                  <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[120px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-50 duration-200 ${
+                    leftClosingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
+                  }`}>
                     {data?.portTypes?.map((portType) => (
                       <button
                         key={portType.id}
                         onClick={() => handlePortSelect(portType, true)}
-                        className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                        className="w-full px-3 py-2 text-left text-xs hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0 first:rounded-t-[24px] last:rounded-b-[24px]"
                       >
                         {portType.code}
                       </button>
@@ -153,15 +175,19 @@ export default function CustomEdge({
                   <span className="text-[#6B7280] text-xs font-medium">
                     {rightPort?.code || 'Select'}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-[#6B7280]" />
+                  <ChevronDown className={`w-3 h-3 text-[#6B7280] transition-transform duration-200 ${
+                    rightDropdownOpen ? 'rotate-180' : ''
+                  }`} />
                 </button>
-                {rightDropdownOpen && (
-                  <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[120px]">
+                {(rightDropdownOpen || rightClosingDropdown) && (
+                  <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[120px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-50 duration-200 ${
+                    rightClosingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
+                  }`}>
                     {data?.portTypes?.map((portType) => (
                       <button
                         key={portType.id}
                         onClick={() => handlePortSelect(portType, false)}
-                        className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                        className="w-full px-3 py-2 text-left text-xs hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0 first:rounded-t-[24px] last:rounded-b-[24px]"
                       >
                         {portType.code}
                       </button>
@@ -177,8 +203,8 @@ export default function CustomEdge({
   }
 
   // Non-selected state - show port information
-  const sourcePortCode = data?.sourcePortType?.code || 'TYPE_C'
-  const targetPortCode = data?.targetPortType?.code || 'TYPE_C'
+  const sourcePortCode = data?.sourcePortType?.code || '?'
+  const targetPortCode = data?.targetPortType?.code || '?'
 
   return (
     <>
@@ -195,11 +221,11 @@ export default function CustomEdge({
         >
           <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-[24px] px-2 py-1 whitespace-nowrap">
             <span className="text-[#6B7280] text-xs font-medium">
-              {leftPort?.code || sourcePortCode}
+              {leftPort?.code || '?'}
             </span>
             <ArrowRight className="w-3 h-3 text-[#6B7280]" />
             <span className="text-[#6B7280] text-xs font-medium">
-              {rightPort?.code || targetPortCode}
+              {rightPort?.code || '?'}
             </span>
           </div>
         </div>
