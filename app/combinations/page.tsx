@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Setup, Product, SetupBlock } from '@/lib/types'
 import Link from 'next/link'
@@ -12,7 +12,7 @@ interface SetupWithBlocks extends Setup {
   })[]
 }
 
-export default function CombinationsPage() {
+function CombinationsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -542,5 +542,13 @@ export default function CombinationsPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function CombinationsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CombinationsPageContent />
+    </Suspense>
   )
 } 
