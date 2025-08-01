@@ -18,6 +18,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
+    console.log('🔍 Debug: Supabase URL:', Deno.env.get('SUPABASE_URL'))
+    console.log('🔍 Debug: Service role key exists:', !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'))
+
     const { setup, blocks, edges } = await req.json()
 
     // Validate input
@@ -86,7 +89,11 @@ serve(async (req) => {
     if (setupError) {
       console.error('Setup creation error:', setupError)
       return new Response(
-        JSON.stringify({ error: 'Failed to create setup' }),
+        JSON.stringify({ 
+          error: 'Failed to create setup',
+          details: setupError.message,
+          code: setupError.code
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -109,7 +116,11 @@ serve(async (req) => {
       // Clean up setup
       await supabase.from('setups').delete().eq('id', setupId)
       return new Response(
-        JSON.stringify({ error: 'Failed to create setup blocks' }),
+        JSON.stringify({ 
+          error: 'Failed to create setup blocks',
+          details: blocksError.message,
+          code: blocksError.code
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -143,8 +154,16 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error:', error)
+    console.error('Error details:', {
+      message: (error as any).message,
+      stack: (error as any).stack,
+      name: (error as any).name
+    })
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ 
+        error: 'Internal server error',
+        details: (error as any).message 
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

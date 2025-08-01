@@ -99,16 +99,16 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       }
     }
     
-    // V-03: Computer/monitor blocks require product_id, others require custom_name
+    // V-03: Computer blocks require product_id, others can have either product_id or custom_name
     for (const node of nodes) {
       const deviceType = node.data.deviceType.name
-      if (['computer', 'monitor'].includes(deviceType)) {
+      if (deviceType === 'computer') {
         if (!node.data.product) {
           errors.push(`${deviceType} must have a product selected`)
         }
       } else {
-        if (!node.data.customName?.trim()) {
-          errors.push(`${deviceType} must have a name`)
+        if (!node.data.product && !node.data.customName?.trim()) {
+          errors.push(`${deviceType} must have either a product selected or a custom name`)
         }
       }
     }

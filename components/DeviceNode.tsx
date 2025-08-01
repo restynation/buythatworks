@@ -339,16 +339,18 @@ export default function DeviceNode({ id, data, selected }: Props) {
                       </div>
                       
                       {/* Add manually button */}
-                      <button
-                        onClick={() => {
-                          setIsTextInput(true);
-                          setCustomName('');
-                          closeDropdown();
-                        }}
-                        className="w-full px-3 py-2 text-left text-sm text-[#6B7280] hover:bg-gray-50 transition-colors border-t border-gray-100"
-                      >
-                        Add manually
-                      </button>
+                      {data.deviceType.name !== 'computer' && (
+                        <button
+                          onClick={() => {
+                            setIsTextInput(true);
+                            setCustomName('');
+                            closeDropdown();
+                          }}
+                          className="w-full px-3 py-2 text-left text-sm text-[#6B7280] hover:bg-gray-50 transition-colors border-t border-gray-100"
+                        >
+                          Add manually
+                        </button>
+                      )}
                     </div>
                   )}
                 </>

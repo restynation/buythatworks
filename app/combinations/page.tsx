@@ -461,7 +461,7 @@ function CombinationsPageContent() {
                      onClick={() => toggleDropdown(product.id)}
                      className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] flex items-center justify-between w-full"
                    >
-                     <span className="truncate">{product.brand} {product.model}</span>
+                     <span className="truncate">{product.model}</span>
                      <svg 
                        className={`w-4 h-4 ml-2 transition-transform duration-200 ${
                          openDropdownId === product.id ? 'rotate-180' : ''
@@ -504,7 +504,7 @@ function CombinationsPageContent() {
                                  index === getAvailableProducts(product.id).length - 1 ? 'rounded-b-[24px]' : ''
                                }`}
                              >
-                               {availableProduct.brand} {availableProduct.model}
+                               {availableProduct.model}
                              </button>
                            ))
                          ) : (
@@ -583,7 +583,7 @@ function CombinationsPageContent() {
                                index === getAvailableProducts().length - 1 ? 'rounded-b-[24px]' : ''
                              }`}
                            >
-                             {product.brand} {product.model}
+                             {product.model}
                            </button>
                          ))
                        ) : (
@@ -675,13 +675,13 @@ function CombinationsPageContent() {
 
                                          {/* 디바이스 목록 */}
                      <div className="flex gap-2 flex-wrap">
-                       {uniqueProducts.slice(0, 5).map((product, index) => (
+                       {uniqueProducts.slice(0, 5).map((product: any, index: number) => (
                          <div key={product?.id || index} className="flex flex-col p-2 w-[140px] h-[140px]">
                            <div className="w-[124px] h-[108px] p-3 flex items-center justify-center">
                              {product?.image_url ? (
                                <img 
                                  src={product.image_url} 
-                                 alt={`${product.brand} ${product.model}`}
+                                 alt={`${product.model}`}
                                  className="max-w-full max-h-full object-contain"
                                />
                              ) : (
@@ -692,7 +692,7 @@ function CombinationsPageContent() {
                            </div>
                            <p className="text-[12px] leading-[16px] text-[#15171a] text-center overflow-ellipsis overflow-hidden text-nowrap w-full font-pretendard">
                              {product ? 
-                               `${product.brand} ${product.model}` : 
+                               product.model : 
                                'Unknown device'
                              }
                            </p>

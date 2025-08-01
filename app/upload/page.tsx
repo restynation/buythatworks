@@ -59,17 +59,17 @@ export default function UploadPage() {
       return
     }
 
-    // V-03: Computer/monitor blocks require product_id, others require custom_name
+    // V-03: Computer blocks require product_id, others can have either product_id or custom_name
     for (const node of nodes) {
       const deviceType = node.data.deviceType.name
-      if (['computer', 'monitor'].includes(deviceType)) {
+      if (deviceType === 'computer') {
         if (!node.data.product) {
           alert(`${deviceType} must have a product selected`)
           return
         }
       } else {
-        if (!node.data.customName?.trim()) {
-          alert(`${deviceType} must have a name`)
+        if (!node.data.product && !node.data.customName?.trim()) {
+          alert(`${deviceType} must have either a product selected or a custom name`)
           return
         }
       }

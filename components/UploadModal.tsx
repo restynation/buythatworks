@@ -126,12 +126,15 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
       }
 
       // Edge Function 호출
+      console.log('🔍 Debug: Sending payload to Edge Function:', JSON.stringify(setupPayload, null, 2))
+      
       const { data, error } = await supabase.functions.invoke('create-setup', {
         body: setupPayload
       })
 
       if (error) {
         console.error('Setup creation failed:', error)
+        console.error('Error response data:', data)
         let errorMessage = 'Failed to create setup'
         
         if (error.message?.includes('duplicate key')) {
@@ -145,6 +148,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         // Edge Function에서 반환된 에러 확인
         if (data && data.error) {
           errorMessage += `: ${data.error}`
+          if (data.details) {
+            errorMessage += ` (${data.details})`
+          }
         }
         
         alert(errorMessage)

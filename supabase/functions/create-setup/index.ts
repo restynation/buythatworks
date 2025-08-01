@@ -18,6 +18,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
+    console.log('🔍 Debug: Supabase URL:', Deno.env.get('SUPABASE_URL'))
+    console.log('🔍 Debug: Service role key exists:', !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'))
+
     const { setup, blocks, edges } = await req.json()
 
     // Validate input
@@ -86,17 +89,25 @@ serve(async (req) => {
     if (setupError) {
       console.error('Setup creation error:', setupError)
       return new Response(
-        JSON.stringify({ error: 'Failed to create setup' }),
+        JSON.stringify({ 
+          error: 'Failed to create setup',
+          details: setupError.message,
+          code: setupError.code
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
     const setupId = setupData.id
 
-    // Create blocks with setup_id
+    // Create blocks with setup_id (node_id 포함)
     const blocksWithSetupId = blocks.map((block: any) => ({
-      ...block,
-      setup_id: setupId
+      setup_id: setupId,
+      product_id: block.product_id,
+      custom_name: block.custom_name,
+      device_type_id: block.device_type_id,
+      position_x: block.position_x,
+      position_y: block.position_y
     }))
 
     const { data: blocksData, error: blocksError } = await supabase
@@ -109,17 +120,45 @@ serve(async (req) => {
       // Clean up setup
       await supabase.from('setups').delete().eq('id', setupId)
       return new Response(
-        JSON.stringify({ error: 'Failed to create setup blocks' }),
+        JSON.stringify({ 
+          error: 'Failed to create setup blocks',
+          details: blocksError.message,
+          code: blocksError.code
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
+    // Create node ID to block ID mapping
+    const nodeIdToBlockIdMap = new Map()
+    blocks.forEach((block: any, index: number) => {
+      if (blocksData && blocksData[index]) {
+        nodeIdToBlockIdMap.set(block.node_id, blocksData[index].id)
+      }
+    })
+
+    console.log('🔍 Debug: Node ID to Block ID mapping:', Object.fromEntries(nodeIdToBlockIdMap))
+
     // Create edges if provided
     if (edges && edges.length > 0) {
-      const edgesWithSetupId = edges.map((edge: any) => ({
-        ...edge,
-        setup_id: setupId
-      }))
+      const edgesWithSetupId = edges.map((edge: any) => {
+        const sourceBlockId = nodeIdToBlockIdMap.get(edge.source_block_id)
+        const targetBlockId = nodeIdToBlockIdMap.get(edge.target_block_id)
+        
+        console.log(`🔍 Debug: Mapping edge ${edge.source_block_id} -> ${edge.target_block_id} to ${sourceBlockId} -> ${targetBlockId}`)
+        
+        if (!sourceBlockId || !targetBlockId) {
+          throw new Error(`Could not find block IDs for edge: ${edge.source_block_id} -> ${edge.target_block_id}`)
+        }
+        
+        return {
+          setup_id: setupId,
+          source_block_id: sourceBlockId,
+          target_block_id: targetBlockId,
+          source_port_type_id: edge.source_port_type_id,
+          target_port_type_id: edge.target_port_type_id
+        }
+      })
 
       const { error: edgesError } = await supabase
         .from('setup_edges')
@@ -130,7 +169,11 @@ serve(async (req) => {
         // Clean up setup and blocks
         await supabase.from('setups').delete().eq('id', setupId)
         return new Response(
-          JSON.stringify({ error: 'Failed to create setup edges' }),
+          JSON.stringify({ 
+            error: 'Failed to create setup edges',
+            details: edgesError.message,
+            code: edgesError.code
+          }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
@@ -143,9 +186,17 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error:', error)
+    console.error('Error details:', {
+      message: (error as any).message,
+      stack: (error as any).stack,
+      name: (error as any).name
+    })
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ 
+        error: 'Internal server error',
+        details: (error as any).message 
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
-}) 
+})
