@@ -129,7 +129,7 @@ export default function DeviceNode({ id, data, selected }: Props) {
 
   const getDisplayText = () => {
     if (data.product) {
-      return `${data.product.brand} ${data.product.model}`
+      return data.product.model
     }
     if (data.customName) {
       return data.customName
