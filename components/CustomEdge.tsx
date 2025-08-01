@@ -164,7 +164,14 @@ export default function CustomEdge({
   if (data?.isInputMode && !data?.isCompleted && !data?.isViewerMode) {
     return (
       <>
-        <BaseEdge path={edgePath} />
+        <BaseEdge 
+          path={edgePath} 
+          style={{
+            stroke: '#6B7280',
+            strokeWidth: 2,
+            strokeDasharray: '5,5'
+          }}
+        />
         <EdgeLabelRenderer>
           <div
             style={{
@@ -275,7 +282,14 @@ export default function CustomEdge({
 
   return (
     <>
-      <BaseEdge path={edgePath} />
+      <BaseEdge 
+        path={edgePath} 
+        style={{
+          stroke: '#6B7280',
+          strokeWidth: 2,
+          strokeDasharray: '5,5'
+        }}
+      />
       <EdgeLabelRenderer>
         <div
           style={{
