@@ -286,9 +286,9 @@ export default function CombinationDetail({ setupId }: Props) {
       {/* 헤더 공간 */}
       <div className="h-16" />
       
-      <div className="h-[calc(100vh-10rem)] flex overflow-hidden bg-[#FFFFFF]">
+      <div className="h-[calc(100vh-10rem)] flex gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
-      <div className="w-80 bg-[#f9f9fa] flex flex-col p-4">
+      <div className="w-80 bg-[#f9f9fa] flex flex-col p-4 rounded-[32px]">
         <div className="flex flex-col gap-6">
           {blocks.map(block => (
             <div key={block.id} className="flex flex-col gap-2 items-center p-2 rounded-2xl">
