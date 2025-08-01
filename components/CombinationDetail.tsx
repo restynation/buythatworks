@@ -42,8 +42,8 @@ export default function CombinationDetail({ setupId }: Props) {
   const [flowEdges, setFlowEdges] = useState<Edge[]>([])
 
   const handleBackToList = () => {
-    // localStorage에 저장된 필터 상태가 자동으로 복원되므로 단순히 뒤로가기
-    window.history.back()
+    // 명확히 combinations 페이지로 이동
+    router.push('/combinations')
   }
 
   useEffect(() => {
