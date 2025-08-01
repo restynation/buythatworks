@@ -12,6 +12,24 @@ interface SetupWithBlocks extends Setup {
   })[]
 }
 
+// Device type에 따른 아이콘 반환 함수
+const getDeviceIcon = (deviceTypeName: string) => {
+  switch (deviceTypeName.toLowerCase()) {
+    case 'computer':
+      return '💻'
+    case 'monitor':
+      return '🖥️'
+    case 'hub':
+      return '🔌'
+    case 'mouse':
+      return '🖱️'
+    case 'keyboard':
+      return '⌨️'
+    default:
+      return '📱'
+  }
+}
+
 function CombinationsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -307,6 +325,19 @@ function CombinationsPageContent() {
 
       console.log('제품 데이터 로드 완료:', productsData?.length || 0, '개')
 
+      // Device types 로드
+      console.log('디바이스 타입 데이터 로드 시작...')
+      const { data: deviceTypesData, error: deviceTypesError } = await supabase
+        .from('device_types')
+        .select('*')
+
+      if (deviceTypesError) {
+        console.error('디바이스 타입 로드 오류:', deviceTypesError)
+        throw new Error(`디바이스 타입 데이터 로드 실패: ${deviceTypesError.message} (코드: ${deviceTypesError.code})`)
+      }
+
+      console.log('디바이스 타입 데이터 로드 완료:', deviceTypesData?.length || 0, '개')
+
       // 셋업들 로드 
       console.log('셋업 데이터 로드 시작...')
       const { data: setupsData, error: setupsError } = await supabase
@@ -316,6 +347,8 @@ function CombinationsPageContent() {
           setup_blocks (
             id,
             product_id,
+            custom_name,
+            device_type_id,
             products (*)
           )
         `)
@@ -329,8 +362,18 @@ function CombinationsPageContent() {
 
       console.log('셋업 데이터 로드 완료:', setupsData?.length || 0, '개')
 
+      // Device type 정보를 setup_blocks에 추가
+      const deviceTypeMap = new Map(deviceTypesData?.map(dt => [dt.id, dt]) || [])
+      const setupsWithDeviceTypes = setupsData?.map(setup => ({
+        ...setup,
+        setup_blocks: setup.setup_blocks?.map((block: any) => ({
+          ...block,
+          device_type: deviceTypeMap.get(block.device_type_id)
+        }))
+      })) || []
+
       setProducts(productsData || [])
-      setSetups(setupsData || [])
+      setSetups(setupsWithDeviceTypes)
       
       // 데이터 로딩 완료 후 초기 데이터 로드
       if (isClient) {
@@ -647,62 +690,107 @@ function CombinationsPageContent() {
 
              const uniqueProducts = Object.values(productGroups).map(blocks => blocks[0]?.products).filter(Boolean)
 
-             return (
-               <Link key={setup.id} href={`/combinations/${setup.id}`}>
-                 <div className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group">
-                  <div className="h-full flex flex-col gap-20">
-                    {/* 헤더 */}
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 
-                          className="text-2xl font-medium text-[#15171a] mb-1 leading-normal font-alpha-lyrae"
-                        >
-                          {setup.name}
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          {setup.is_current ? "Real user's setup" : "Dream setup"}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-500">
-                        <span className="text-base">by</span>
-                        <span 
-                          className="text-lg text-[#15171a] leading-normal font-alpha-lyrae"
-                        >
-                          {setup.user_name}
-                        </span>
-                      </div>
+                        return (
+             <Link key={setup.id} href={`/combinations/${setup.id}`}>
+               <div className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group">
+                <div className="h-full flex flex-col gap-20">
+                  {/* 헤더 */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 
+                        className="text-2xl font-medium text-[#15171a] mb-1 leading-normal font-alpha-lyrae"
+                      >
+                        {setup.name}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {setup.is_current ? "Real user's setup" : "Dream setup"}
+                      </p>
                     </div>
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <span className="text-base">by</span>
+                      <span 
+                        className="text-lg text-[#15171a] leading-normal font-alpha-lyrae"
+                      >
+                        {setup.user_name}
+                      </span>
+                    </div>
+                  </div>
 
-                                         {/* 디바이스 목록 */}
-                     <div className="flex gap-2 flex-wrap">
-                       {uniqueProducts.slice(0, 5).map((product: any, index: number) => (
-                         <div key={product?.id || index} className="flex flex-col p-2 w-[140px] h-[140px]">
-                           <div className="w-[124px] h-[108px] p-3 flex items-center justify-center">
-                             {product?.image_url ? (
-                               <img 
-                                 src={product.image_url} 
-                                 alt={`${product.model}`}
-                                 className="max-w-full max-h-full object-contain"
-                               />
-                             ) : (
-                               <div className="text-4xl flex items-center justify-center">
-                                 📱
-                               </div>
-                             )}
-                           </div>
-                           <p className="text-[12px] leading-[16px] text-[#15171a] text-center overflow-ellipsis overflow-hidden text-nowrap w-full font-pretendard">
-                             {product ? 
-                               product.model : 
-                               'Unknown device'
-                             }
-                           </p>
-                         </div>
-                       ))}
-                     </div>
+                  {/* 디바이스 목록 */}
+                  <div className="flex gap-2 flex-wrap">
+                    {setup.setup_blocks
+                      ?.sort((a: any, b: any) => {
+                        // Device type별 정렬: computer, monitor, hub, mouse, keyboard
+                        const deviceTypeOrder: Record<number, number> = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }
+                        const orderA = deviceTypeOrder[Number(a.device_type_id)] ?? 999
+                        const orderB = deviceTypeOrder[Number(b.device_type_id)] ?? 999
+                        
+                        // 디버깅 로그
+                        console.log(`Sorting: ${a.device_type?.name || 'unknown'} (ID: ${a.device_type_id}, Type: ${typeof a.device_type_id}, Order: ${orderA}) vs ${b.device_type?.name || 'unknown'} (ID: ${b.device_type_id}, Type: ${typeof b.device_type_id}, Order: ${orderB})`)
+                        console.log(`DeviceTypeOrder keys:`, Object.keys(deviceTypeOrder))
+                        
+                        return orderA - orderB
+                      })
+                      ?.slice(0, 5)
+                      .map((block: any, index: number) => {
+                      
+                                             // Device type에 따른 아이콘과 이름 결정
+                       const getDeviceInfo = (block: any) => {
+                         const deviceTypeId = block.device_type_id
+                         const deviceTypeName = block.device_type?.name || 'unknown'
+                         
+                         if (block.custom_name) {
+                           // Custom name이 있는 경우
+                           return {
+                             name: block.custom_name,
+                             icon: getDeviceIcon(deviceTypeName),
+                             isCustom: true
+                           }
+                         } else if (block.products) {
+                           // Product가 있는 경우
+                           return {
+                             name: block.products.model,
+                             icon: getDeviceIcon(deviceTypeName),
+                             isCustom: false
+                           }
+                         } else {
+                           // 기본값
+                           return {
+                             name: 'Unknown device',
+                             icon: '📱',
+                             isCustom: false
+                           }
+                         }
+                       }
+                      
+                      const deviceInfo = getDeviceInfo(block)
+                      
+                      return (
+                        <div key={block.id || index} className="flex flex-col p-2 w-[140px] h-[140px]">
+                          <div className="w-[124px] h-[108px] p-3 flex items-center justify-center">
+                            {block.products?.image_url ? (
+                              <img 
+                                src={block.products.image_url} 
+                                alt={deviceInfo.name}
+                                className="max-w-full max-h-full object-contain"
+                              />
+                            ) : (
+                              <div className="text-4xl flex items-center justify-center">
+                                {deviceInfo.icon}
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-[12px] leading-[16px] text-[#15171a] text-center overflow-ellipsis overflow-hidden text-nowrap w-full font-pretendard">
+                            {deviceInfo.name}
+                          </p>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
-              </Link>
-            )
+              </div>
+            </Link>
+          )
           })
         )}
 
