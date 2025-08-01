@@ -282,7 +282,7 @@ export default function CombinationDetail({ setupId }: Props) {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex overflow-hidden">
+    <div className="h-[calc(100vh-4rem)] flex overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
       <div className="w-80 bg-[#f9f9fa] flex flex-col p-4">
         <div className="flex flex-col gap-6">
