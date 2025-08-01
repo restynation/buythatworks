@@ -288,20 +288,20 @@ export default function CombinationDetail({ setupId }: Props) {
       
       <div className="h-[calc(100vh-10rem)] flex gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
-      <div className="w-80 bg-[#f9f9fa] flex flex-col p-4 rounded-[32px]">
-        {/* Contact us button */}
+      <div className="w-80 flex flex-col">
+        {/* Back to list button */}
         <div className="flex flex-row h-12 items-center justify-center p-4 rounded-lg bg-[#f9f9fa] mb-4">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            <span className="text-[16px] text-gray-500 leading-[24px]">Contact us</span>
+            <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
           </div>
         </div>
 
         {/* Products list */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="flex flex-col gap-4">
+        <div className="flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[32px] p-4">
+          <div className="flex flex-col gap-0">
             {blocks.map((block, index) => (
               <div key={block.id} className="flex flex-col gap-2 items-center p-3 rounded-2xl">
                 <div className="flex flex-col gap-2 items-start justify-start w-full">
