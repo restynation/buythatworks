@@ -60,68 +60,6 @@ export default function CombinationDetail({ setupId }: Props) {
     }
   }, [])
 
-  const loadSetupDetail = async () => {
-    try {
-      setLoading(true)
-
-      // Load setup
-      const { data: setupData, error: setupError } = await supabase
-        .from('setups')
-        .select('*')
-        .eq('id', setupId)
-        .is('deleted_at', null)
-        .single()
-
-      if (setupError) {
-        console.error('Error loading setup:', setupError)
-        return
-      }
-
-      setSetup(setupData)
-
-      // Load blocks
-      const { data: blocksData, error: blocksError } = await supabase
-        .from('setup_blocks')
-        .select(`
-          *,
-          product:products (*),
-          device_type:device_types (*)
-        `)
-        .eq('setup_id', setupId)
-
-      if (blocksError) {
-        console.error('Error loading blocks:', blocksError)
-        return
-      }
-
-      setBlocks(blocksData || [])
-
-      // Load edges
-      const { data: edgesData, error: edgesError } = await supabase
-        .from('setup_edges')
-        .select(`
-          *,
-          source_port_type:port_types!source_port_type_id (*),
-          target_port_type:port_types!target_port_type_id (*)
-        `)
-        .eq('setup_id', setupId)
-
-      if (edgesError) {
-        console.error('Error loading edges:', edgesError)
-        return
-      }
-
-      setEdges(edgesData || [])
-
-      // Convert to React Flow format
-      convertToFlowFormat(blocksData || [], edgesData || [])
-    } catch (err) {
-      console.error('Failed to load setup detail:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const convertToFlowFormat = (blocks: SetupBlock[], edges: SetupEdge[]) => {
     // Convert blocks to FlowNodes
     const nodes: Node[] = blocks.map(block => ({
@@ -226,6 +164,68 @@ export default function CombinationDetail({ setupId }: Props) {
 
     setFlowNodes(nodes)
     setFlowEdges(flowEdges)
+  }
+
+  const loadSetupDetail = async () => {
+    try {
+      setLoading(true)
+
+      // Load setup
+      const { data: setupData, error: setupError } = await supabase
+        .from('setups')
+        .select('*')
+        .eq('id', setupId)
+        .is('deleted_at', null)
+        .single()
+
+      if (setupError) {
+        console.error('Error loading setup:', setupError)
+        return
+      }
+
+      setSetup(setupData)
+
+      // Load blocks
+      const { data: blocksData, error: blocksError } = await supabase
+        .from('setup_blocks')
+        .select(`
+          *,
+          product:products (*),
+          device_type:device_types (*)
+        `)
+        .eq('setup_id', setupId)
+
+      if (blocksError) {
+        console.error('Error loading blocks:', blocksError)
+        return
+      }
+
+      setBlocks(blocksData || [])
+
+      // Load edges
+      const { data: edgesData, error: edgesError } = await supabase
+        .from('setup_edges')
+        .select(`
+          *,
+          source_port_type:port_types!source_port_type_id (*),
+          target_port_type:port_types!target_port_type_id (*)
+        `)
+        .eq('setup_id', setupId)
+
+      if (edgesError) {
+        console.error('Error loading edges:', edgesError)
+        return
+      }
+
+      setEdges(edgesData || [])
+
+      // Convert to React Flow format
+      convertToFlowFormat(blocksData || [], edgesData || [])
+    } catch (err) {
+      console.error('Failed to load setup detail:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleShare = async () => {

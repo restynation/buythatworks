@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from 'react'
+import React, { useState, useEffect, Suspense, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Setup, Product, SetupBlock } from '@/lib/types'
 import Link from 'next/link'
@@ -17,49 +17,110 @@ function CombinationsPageContent() {
   const searchParams = useSearchParams()
   
   const [setups, setSetups] = useState<SetupWithBlocks[]>([])
+  const [displayedSetups, setDisplayedSetups] = useState<SetupWithBlocks[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [openDropdownId, setOpenDropdownId] = useState<number | 'add-more' | null>(null)
   const [closingDropdownId, setClosingDropdownId] = useState<number | 'add-more' | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [hasMore, setHasMore] = useState(true)
+  const [currentPage, setCurrentPage] = useState(0)
+  const ITEMS_PER_PAGE = 12
+
+  // Intersection Observer를 위한 ref
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const loadingRef = useRef<HTMLDivElement>(null)
+  
+  // 현재 표시된 항목들을 추적하기 위한 ref
+  const displayedSetupsRef = useRef<SetupWithBlocks[]>([])
 
   // localStorage에서 필터 상태 읽기
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('combinations-selected-products')
-      if (saved) {
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
+  const [onlyRealUsers, setOnlyRealUsers] = useState(true)
+  const [isClient, setIsClient] = useState(false)
+
+  // 클라이언트에서만 localStorage에서 상태 읽기
+  useEffect(() => {
+    setIsClient(true)
+    
+    // localStorage에서 상태 복원
+    const restoreState = () => {
+      const savedProducts = localStorage.getItem('combinations-selected-products')
+      if (savedProducts) {
         try {
-          return JSON.parse(saved)
+          const parsedProducts = JSON.parse(savedProducts)
+          if (Array.isArray(parsedProducts)) {
+            setSelectedProducts(parsedProducts)
+          }
         } catch {
-          return []
+          setSelectedProducts([])
         }
       }
+      
+      const savedOnlyRealUsers = localStorage.getItem('combinations-only-real-users')
+      if (savedOnlyRealUsers !== null) {
+        setOnlyRealUsers(savedOnlyRealUsers === 'true')
+      }
     }
-    return []
-  })
-  
-  const [onlyRealUsers, setOnlyRealUsers] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('combinations-only-real-users')
-      return saved === 'true'
+    
+    // 초기 상태 복원
+    restoreState()
+    
+    // 페이지 포커스 시 상태 복원 (다른 페이지에서 돌아올 때)
+    const handleFocus = () => {
+      restoreState()
     }
-    return true
-  })
+    
+    window.addEventListener('focus', handleFocus)
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [])
 
   // 필터 상태가 변경될 때 localStorage에 저장
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('combinations-selected-products', JSON.stringify(selectedProducts))
-      localStorage.setItem('combinations-only-real-users', onlyRealUsers.toString())
+    if (isClient && typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('combinations-selected-products', JSON.stringify(selectedProducts))
+        localStorage.setItem('combinations-only-real-users', onlyRealUsers.toString())
+      } catch (error) {
+        console.error('localStorage 저장 실패:', error)
+      }
     }
-  }, [selectedProducts, onlyRealUsers])
+  }, [selectedProducts, onlyRealUsers, isClient])
 
   useEffect(() => {
     loadData()
   }, [])
 
+  // 페이지 마운트 시 상태 복원 (다른 페이지에서 돌아올 때)
   useEffect(() => {
+    if (isClient) {
+      const savedProducts = localStorage.getItem('combinations-selected-products')
+      if (savedProducts) {
+        try {
+          const parsedProducts = JSON.parse(savedProducts)
+          if (Array.isArray(parsedProducts)) {
+            setSelectedProducts(parsedProducts)
+          }
+        } catch {
+          setSelectedProducts([])
+        }
+      }
+      
+      const savedOnlyRealUsers = localStorage.getItem('combinations-only-real-users')
+      if (savedOnlyRealUsers !== null) {
+        setOnlyRealUsers(savedOnlyRealUsers === 'true')
+      }
+    }
+  }, [isClient])
+
+  useEffect(() => {
+    if (!isClient) return
+    
     // 스크롤 차단
     document.body.style.overflow = 'hidden'
     
@@ -67,7 +128,134 @@ function CombinationsPageContent() {
     return () => {
       document.body.style.overflow = 'unset'
     }
-  }, [])
+  }, [isClient])
+
+  const loadMore = useCallback(async () => {
+    if (isLoadingMore || !hasMore || !isClient) return
+
+    setIsLoadingMore(true)
+    
+    // 필터링된 결과에서 현재 페이지에 해당하는 항목들을 가져옴
+    const filteredSetups = setups.filter(setup => {
+      // 선택된 제품들로 필터링
+      if (selectedProducts.length > 0) {
+        const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
+        const hasAllSelectedProducts = selectedProducts.every(product => 
+          setupProductIds.includes(product.id)
+        )
+        if (!hasAllSelectedProducts) return false
+      }
+
+      // 실제 사용자 설정만 보기 필터
+      if (onlyRealUsers && !setup.is_current) {
+        return false
+      }
+
+      return true
+    })
+
+    // ref를 사용하여 현재 표시된 항목들의 ID를 추출하여 중복 방지
+    const currentDisplayedIds = new Set(displayedSetupsRef.current.map(setup => setup.id))
+    
+    // 아직 표시되지 않은 항목들만 필터링
+    const availableSetups = filteredSetups.filter(setup => !currentDisplayedIds.has(setup.id))
+    
+    const newItems = availableSetups.slice(0, ITEMS_PER_PAGE)
+
+    if (newItems.length > 0) {
+      setDisplayedSetups(prev => {
+        const newDisplayedSetups = [...prev, ...newItems]
+        displayedSetupsRef.current = newDisplayedSetups // ref 업데이트
+        return newDisplayedSetups
+      })
+      setCurrentPage(prev => prev + 1)
+      setHasMore(newItems.length === ITEMS_PER_PAGE && availableSetups.length > ITEMS_PER_PAGE)
+    } else {
+      setHasMore(false)
+    }
+
+    setIsLoadingMore(false)
+  }, [setups, selectedProducts, onlyRealUsers, isClient, isLoadingMore, hasMore])
+
+  // Intersection Observer 설정
+  useEffect(() => {
+    if (!isClient) return
+
+    // 기존 observer 정리
+    if (observerRef.current) {
+      observerRef.current.disconnect()
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          loadMore()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    observerRef.current = observer
+
+    if (loadingRef.current) {
+      observer.observe(loadingRef.current)
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+      }
+    }
+  }, [hasMore, isLoadingMore, isClient, loadMore])
+
+  // 필터링된 결과가 변경될 때 완전히 처음부터 로드
+  useEffect(() => {
+    if (isClient && setups.length > 0) {
+      // 기존 observer 정리 (필터 변경 시 observer 재설정)
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+      }
+
+      // 상태 완전 리셋
+      setCurrentPage(0)
+      setDisplayedSetups([])
+      setHasMore(true)
+      setIsLoadingMore(false)
+      
+      // 필터링된 결과 계산
+      const filteredSetups = setups.filter(setup => {
+        // 선택된 제품들로 필터링
+        if (selectedProducts.length > 0) {
+          const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
+          const hasAllSelectedProducts = selectedProducts.every(product => 
+            setupProductIds.includes(product.id)
+          )
+          if (!hasAllSelectedProducts) return false
+        }
+
+        // 실제 사용자 설정만 보기 필터
+        if (onlyRealUsers && !setup.is_current) {
+          return false
+        }
+
+        return true
+      })
+
+      // 처음 12개 항목만 로드 (완전히 새로 시작)
+      const initialItems = filteredSetups.slice(0, ITEMS_PER_PAGE)
+      setDisplayedSetups(initialItems)
+      displayedSetupsRef.current = initialItems // ref 업데이트
+      setCurrentPage(1)
+      setHasMore(ITEMS_PER_PAGE < filteredSetups.length)
+
+      // 새로운 observer 설정 (다음 tick에서)
+      setTimeout(() => {
+        if (loadingRef.current && observerRef.current) {
+          observerRef.current.observe(loadingRef.current)
+        }
+      }, 0)
+    }
+  }, [selectedProducts, onlyRealUsers, isClient, setups])
 
   // 드롭다운 닫기 함수
   const closeDropdown = () => {
@@ -143,6 +331,13 @@ function CombinationsPageContent() {
 
       setProducts(productsData || [])
       setSetups(setupsData || [])
+      
+      // 데이터 로딩 완료 후 초기 데이터 로드
+      if (isClient) {
+        setTimeout(() => {
+          loadMore()
+        }, 0)
+      }
     } catch (err: any) {
       console.error('데이터 로드 오류:', err)
       
@@ -196,24 +391,6 @@ function CombinationsPageContent() {
     setSelectedProducts(selectedProducts.filter(p => p.id !== productId))
   }
 
-  const filteredSetups = setups.filter(setup => {
-    // 선택된 제품들로 필터링
-    if (selectedProducts.length > 0) {
-      const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
-      const hasAllSelectedProducts = selectedProducts.every(product => 
-        setupProductIds.includes(product.id)
-      )
-      if (!hasAllSelectedProducts) return false
-    }
-
-    // 실제 사용자 설정만 보기 필터
-    if (onlyRealUsers && !setup.is_current) {
-      return false
-    }
-
-    return true
-  })
-
   const getAvailableProducts = (forProductId?: number) => {
     const filteredProducts = products.filter(product => {
       if (forProductId) {
@@ -233,8 +410,6 @@ function CombinationsPageContent() {
 
     return filteredProducts
   }
-
-
 
   if (error) {
     return (
@@ -459,7 +634,7 @@ function CombinationsPageContent() {
             <div key={i} className="h-80 rounded-[32px] skeleton-shimmer"></div>
           ))
         ) : (
-           filteredSetups.map((setup) => {
+           displayedSetups.map((setup) => {
              // 제품별로 그룹화
              const productGroups = setup.setup_blocks?.reduce((groups: Record<string, any[]>, block) => {
                const productId = block.product_id?.toString() || 'unknown'
@@ -530,10 +705,25 @@ function CombinationsPageContent() {
             )
           })
         )}
+
+        {/* 무한 스크롤 로딩 인디케이터 */}
+        {isLoadingMore && (
+          <div className="col-span-full flex justify-center py-8">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
+              <span className="text-gray-500">Loading more...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Intersection Observer를 위한 요소 */}
+        {hasMore && !isLoadingMore && (
+          <div ref={loadingRef} className="col-span-full h-4"></div>
+        )}
       </div>
       
       {/* 검색 결과 없음 화면 - 별도 컨테이너로 분리 */}
-      {filteredSetups.length === 0 && !isLoading && (
+      {displayedSetups.length === 0 && !isLoading && (
         <div className="h-[calc(100vh-24rem)] flex items-center justify-center">
           <div className="text-center">
             <p className="text-gray-500 text-lg mb-2">No results found</p>
