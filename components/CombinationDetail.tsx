@@ -289,41 +289,51 @@ export default function CombinationDetail({ setupId }: Props) {
       <div className="h-[calc(100vh-10rem)] flex gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
       <div className="w-80 bg-[#f9f9fa] flex flex-col p-4 rounded-[32px]">
-        <div className="flex flex-col gap-6">
-          {blocks.map(block => (
-            <div key={block.id} className="flex flex-col gap-2 items-center p-2 rounded-2xl">
-              <div className="flex flex-col h-[88px] items-start justify-start w-full">
-                <div className="flex flex-col gap-2 grow items-center justify-center p-3 w-full">
-                  <div className="aspect-[234/146] bg-[50.3%_50%] bg-no-repeat bg-size-[171.17%_126.03%] w-full rounded-lg bg-gray-200 flex items-center justify-center">
-                    {block.product?.image_url ? (
-                      <img 
-                        src={block.product.image_url} 
-                        alt={block.product.model}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    ) : (
-                      <div className="text-gray-400 text-xs text-center">
-                        {block.device_type?.name}
-                      </div>
-                    )}
+        {/* Contact us button */}
+        <div className="flex flex-row h-12 items-center justify-center p-4 rounded-lg bg-[#f9f9fa] mb-4">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="text-[16px] text-gray-500 leading-[24px]">Contact us</span>
+          </div>
+        </div>
+
+        {/* Products list */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            {blocks.map((block, index) => (
+              <div key={block.id} className="flex flex-col gap-2 items-center p-3 rounded-2xl">
+                <div className="flex flex-col gap-2 items-start justify-start w-full">
+                  <div className="flex flex-col font-medium items-start justify-start text-left w-full">
+                    <div className="overflow-hidden text-[#15171a] text-[14px] w-full leading-[20px]">
+                      {block.product ? 
+                        `${block.product.brand} ${block.product.model}` : 
+                        block.custom_name
+                      }
+                    </div>
+                    <div className="overflow-hidden text-[12px] text-gray-500 w-full leading-[16px]">
+                      {block.product?.brand || block.device_type?.name}
+                    </div>
+                  </div>
+                  <div 
+                    onClick={() => block.product && handleSeePrice(block.product)}
+                    className="flex flex-row h-9 items-center justify-center px-3 py-2 rounded-xl w-full bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex flex-row gap-2.5 items-center justify-center px-1.5 py-0">
+                      <span className="text-[14px] text-gray-500 leading-[20px]">See price</span>
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
-                <div className="text-[12px] text-center text-[#15171a] leading-[16px] w-full truncate">
-                  {block.product ? 
-                    `${block.product.brand} ${block.product.model}` : 
-                    block.custom_name
-                  }
-                </div>
+                {index < blocks.length - 1 && (
+                  <div className="h-px w-full bg-[#e1e3e6]" />
+                )}
               </div>
-              <button
-                onClick={() => block.product && handleSeePrice(block.product)}
-                className="flex flex-row h-9 items-center justify-center px-3 py-2 rounded-xl w-full bg-white text-[14px] text-gray-500 hover:bg-gray-50 transition-colors"
-              >
-                <span className="leading-[20px]">See price</span>
-                <ArrowUpRight className="w-4 h-4 ml-1" />
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
