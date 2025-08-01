@@ -321,7 +321,7 @@ export default function CombinationDetail({ setupId }: Props) {
         </div>
 
         {/* Products list */}
-        <div className="flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[32px]">
+        <div className="flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[24px]">
           <div className="flex flex-col gap-0">
             {blocks.map((block, index) => (
               <div key={block.id} className="flex flex-col gap-2 items-center pt-3 px-4 pb-4 rounded-2xl">
@@ -333,7 +333,7 @@ export default function CombinationDetail({ setupId }: Props) {
                         block.custom_name
                       }
                     </div>
-                    <div className="overflow-hidden text-[12px] text-gray-500 w-full leading-[16px] font-medium">
+                    <div className="overflow-hidden text-[12px] text-gray-500 w-full leading-[16px]">
                       {block.product?.brand || block.device_type?.name}
                     </div>
                   </div>
