@@ -393,7 +393,6 @@ export default function CombinationDetail({ setupId }: Props) {
             proOptions={{ hideAttribution: true }}
           >
             <Background color="#F9F9FA" />
-            <Controls />
           </ReactFlow>
         </ReactFlowProvider>
       </div>
