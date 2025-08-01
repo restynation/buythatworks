@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Setup, Product, SetupBlock } from '@/lib/types'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface SetupWithBlocks extends Setup {
   setup_blocks?: (SetupBlock & {
@@ -12,15 +13,49 @@ interface SetupWithBlocks extends Setup {
 }
 
 export default function CombinationsPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  
   const [setups, setSetups] = useState<SetupWithBlocks[]>([])
   const [products, setProducts] = useState<Product[]>([])
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
-  const [onlyRealUsers, setOnlyRealUsers] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [openDropdownId, setOpenDropdownId] = useState<number | 'add-more' | null>(null)
   const [closingDropdownId, setClosingDropdownId] = useState<number | 'add-more' | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+
+  // URL 파라미터에서 필터 상태 읽기
+  const selectedProductsParam = searchParams.get('products')
+  const onlyRealUsersParam = searchParams.get('onlyRealUsers')
+  
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>(() => {
+    if (selectedProductsParam) {
+      try {
+        return JSON.parse(decodeURIComponent(selectedProductsParam))
+      } catch {
+        return []
+      }
+    }
+    return []
+  })
+  
+  const [onlyRealUsers, setOnlyRealUsers] = useState(() => {
+    return onlyRealUsersParam === 'true'
+  })
+
+  // 필터 상태가 변경될 때 URL 업데이트
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (selectedProducts.length > 0) {
+      params.set('products', encodeURIComponent(JSON.stringify(selectedProducts)))
+    }
+    if (onlyRealUsers) {
+      params.set('onlyRealUsers', 'true')
+    }
+    
+    const newUrl = params.toString() ? `?${params.toString()}` : '/combinations'
+    router.replace(newUrl, { scroll: false })
+  }, [selectedProducts, onlyRealUsers, router])
 
   useEffect(() => {
     loadData()

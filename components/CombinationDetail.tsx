@@ -14,6 +14,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 import DeviceNode from './DeviceNode'
 import CustomEdge from './CustomEdge'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const nodeTypes = {
   device: DeviceNode,
@@ -28,6 +29,9 @@ interface Props {
 }
 
 export default function CombinationDetail({ setupId }: Props) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  
   const [setup, setSetup] = useState<Setup | null>(null)
   const [blocks, setBlocks] = useState<SetupBlock[]>([])
   const [edges, setEdges] = useState<SetupEdge[]>([])
@@ -36,6 +40,13 @@ export default function CombinationDetail({ setupId }: Props) {
   const [deletePin, setDeletePin] = useState('')
   const [flowNodes, setFlowNodes] = useState<Node[]>([])
   const [flowEdges, setFlowEdges] = useState<Edge[]>([])
+
+  const handleBackToList = () => {
+    // 현재 URL 파라미터를 유지하면서 combinations 페이지로 이동
+    const currentParams = searchParams.toString()
+    const backUrl = currentParams ? `/combinations?${currentParams}` : '/combinations'
+    router.push(backUrl)
+  }
 
   useEffect(() => {
     loadSetupDetail()
@@ -291,7 +302,7 @@ export default function CombinationDetail({ setupId }: Props) {
       <div className="w-80 flex flex-col">
         {/* Back to list button */}
         <div 
-          onClick={() => window.history.back()}
+          onClick={handleBackToList}
           className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mb-4 cursor-pointer hover:bg-gray-100 transition-colors"
         >
           <div className="flex items-center gap-2">
