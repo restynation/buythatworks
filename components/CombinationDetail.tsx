@@ -42,10 +42,8 @@ export default function CombinationDetail({ setupId }: Props) {
   const [flowEdges, setFlowEdges] = useState<Edge[]>([])
 
   const handleBackToList = () => {
-    // 현재 URL 파라미터를 유지하면서 combinations 페이지로 이동
-    const currentParams = searchParams.toString()
-    const backUrl = currentParams ? `/combinations?${currentParams}` : '/combinations'
-    router.push(backUrl)
+    // localStorage에 저장된 필터 상태가 자동으로 복원되므로 단순히 뒤로가기
+    window.history.back()
   }
 
   useEffect(() => {

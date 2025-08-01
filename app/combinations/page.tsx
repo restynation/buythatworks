@@ -24,38 +24,36 @@ export default function CombinationsPage() {
   const [closingDropdownId, setClosingDropdownId] = useState<number | 'add-more' | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
 
-  // URL 파라미터에서 필터 상태 읽기
-  const selectedProductsParam = searchParams.get('products')
-  const onlyRealUsersParam = searchParams.get('onlyRealUsers')
-  
+  // localStorage에서 필터 상태 읽기
   const [selectedProducts, setSelectedProducts] = useState<Product[]>(() => {
-    if (selectedProductsParam) {
-      try {
-        return JSON.parse(decodeURIComponent(selectedProductsParam))
-      } catch {
-        return []
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('combinations-selected-products')
+      if (saved) {
+        try {
+          return JSON.parse(saved)
+        } catch {
+          return []
+        }
       }
     }
     return []
   })
   
   const [onlyRealUsers, setOnlyRealUsers] = useState(() => {
-    return onlyRealUsersParam === 'true'
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('combinations-only-real-users')
+      return saved === 'true'
+    }
+    return true
   })
 
-  // 필터 상태가 변경될 때 URL 업데이트
+  // 필터 상태가 변경될 때 localStorage에 저장
   useEffect(() => {
-    const params = new URLSearchParams()
-    if (selectedProducts.length > 0) {
-      params.set('products', encodeURIComponent(JSON.stringify(selectedProducts)))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('combinations-selected-products', JSON.stringify(selectedProducts))
+      localStorage.setItem('combinations-only-real-users', onlyRealUsers.toString())
     }
-    if (onlyRealUsers) {
-      params.set('onlyRealUsers', 'true')
-    }
-    
-    const newUrl = params.toString() ? `?${params.toString()}` : '/combinations'
-    router.replace(newUrl, { scroll: false })
-  }, [selectedProducts, onlyRealUsers, router])
+  }, [selectedProducts, onlyRealUsers])
 
   useEffect(() => {
     loadData()
