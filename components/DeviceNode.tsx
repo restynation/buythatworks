@@ -254,7 +254,7 @@ export default function DeviceNode({ id, data, selected }: Props) {
                     placeholder={`Enter ${data.deviceType.name} name`}
                     value={customName}
                     onChange={(e) => handleCustomNameChange(e.target.value)}
-                    className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-[14px] text-[#15171a] w-full border-none outline-none pr-8"
+                    className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] w-full border-none outline-none pr-8"
                   />
                   <button
                     onClick={() => setIsTextInput(false)}
@@ -300,7 +300,7 @@ export default function DeviceNode({ id, data, selected }: Props) {
                           placeholder="Search products..."
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-full px-3 py-2 text-[14px] border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-[#15171a]"
+                          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-[#15171a]"
                           autoFocus
                           onWheel={(e) => {
                             e.stopPropagation();
