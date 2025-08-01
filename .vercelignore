@@ -1,0 +1,6 @@
+# Supabase Edge Functions
+supabase/functions/
+supabase/edge-functions/
+
+# Supabase CLI
+.supabase/ 
