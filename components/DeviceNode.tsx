@@ -27,9 +27,11 @@ export default function DeviceNode({ id, data, selected }: Props) {
   const [closingDropdown, setClosingDropdown] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [customName, setCustomName] = useState(data.customName || '')
+  const [isTextInput, setIsTextInput] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   
-  const isTextInput = ['mouse', 'keyboard', 'hub'].includes(data.deviceType.name)
+  // Allow both product selection and custom input for all device types
+  const canUseCustomInput = ['mouse', 'keyboard', 'hub'].includes(data.deviceType.name)
   
   // Outside click detection
   useEffect(() => {
@@ -246,15 +248,106 @@ export default function DeviceNode({ id, data, selected }: Props) {
             </div>
           ) : (
             <>
-              {isTextInput ? (
-                <input
-                  type="text"
-                  placeholder={`Enter ${data.deviceType.name} name`}
-                  value={customName}
-                  onChange={(e) => handleCustomNameChange(e.target.value)}
-                  className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] w-full border-none outline-none"
-                />
+              {canUseCustomInput ? (
+                <>
+                  {/* Toggle between product selection and custom input */}
+                  <div className="flex gap-1 mb-2">
+                    <button
+                      onClick={() => setIsTextInput(false)}
+                      className={`px-2 py-1 text-xs rounded-lg transition-colors ${
+                        !isTextInput 
+                          ? 'bg-[#15171a] text-white' 
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      }`}
+                    >
+                      Product
+                    </button>
+                    <button
+                      onClick={() => setIsTextInput(true)}
+                      className={`px-2 py-1 text-xs rounded-lg transition-colors ${
+                        isTextInput 
+                          ? 'bg-[#15171a] text-white' 
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      }`}
+                    >
+                      Custom
+                    </button>
+                  </div>
+                  
+                  {isTextInput ? (
+                    <input
+                      type="text"
+                      placeholder={`Enter ${data.deviceType.name} name`}
+                      value={customName}
+                      onChange={(e) => handleCustomNameChange(e.target.value)}
+                      className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] w-full border-none outline-none"
+                    />
+                  ) : (
+                    <>
+                      <button
+                        onClick={toggleDropdown}
+                        className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] flex items-center justify-between w-full"
+                      >
+                        <span className="truncate text-left flex-1">
+                          {getDisplayText()}
+                        </span>
+                        <svg 
+                          className={`w-4 h-4 ml-2 transition-transform duration-200 flex-shrink-0 ${
+                            openDropdown ? 'rotate-180' : ''
+                          }`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      
+                      {(openDropdown || closingDropdown) && (
+                        <div 
+                          ref={dropdownRef}
+                          className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[180px] bg-white border border-[#e1e3e6] rounded-[24px] shadow-lg z-20 duration-200 ${
+                            closingDropdown ? 'animate-out fade-out slide-out-to-top-2' : 'animate-in fade-in slide-in-from-top-2'
+                          }`}
+                        >
+                          {/* Search input */}
+                          <div className="p-3 border-b border-gray-100">
+                            <input
+                              type="text"
+                              placeholder="Search products..."
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-[#15171a] focus:border-[#15171a]"
+                              autoFocus
+                            />
+                          </div>
+                          
+                          {/* Product list */}
+                          <div className="max-h-80 overflow-y-auto scrollbar-hide">
+                            {filteredProducts.length > 0 ? (
+                              filteredProducts.map((product) => (
+                                <button
+                                  key={product.id}
+                                  onClick={() => handleProductSelect(product)}
+                                  className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                                >
+                                  <div className="font-medium">{product.brand}</div>
+                                  <div className="text-gray-500 text-xs">{product.model}</div>
+                                </button>
+                              ))
+                            ) : (
+                              <div className="px-3 py-2 text-sm text-gray-500">
+                                {searchTerm ? 'No results found' : 'No products available'}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
               ) : (
+                // For devices that only use product selection (computer, monitor)
                 <>
                   <button
                     onClick={toggleDropdown}
