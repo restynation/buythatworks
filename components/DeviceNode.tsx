@@ -239,7 +239,7 @@ export default function DeviceNode({ id, data, selected }: Props) {
           {data.isViewerMode ? (
             // Viewer mode - display only
             <div className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] w-full">
-              <span className="truncate text-left flex-1">
+              <span className="truncate text-left flex-1 block w-full">
                 {getDisplayText()}
               </span>
             </div>
@@ -270,7 +270,7 @@ export default function DeviceNode({ id, data, selected }: Props) {
                     onClick={toggleDropdown}
                     className="bg-[#f9f9fa] px-3 py-2 rounded-[24px] text-sm text-[#15171a] flex items-center justify-between w-full"
                   >
-                    <span className="truncate text-left flex-1">
+                    <span className="truncate text-left flex-1 block w-full">
                       {getDisplayText()}
                     </span>
                     <svg 
@@ -327,8 +327,8 @@ export default function DeviceNode({ id, data, selected }: Props) {
                               onClick={() => handleProductSelect(product)}
                               className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
                             >
-                              <div className="font-medium">{product.brand}</div>
-                              <div className="text-gray-500 text-xs">{product.model}</div>
+                              <div className="font-medium truncate">{product.brand}</div>
+                              <div className="text-gray-500 text-xs truncate">{product.model}</div>
                             </button>
                           ))
                         ) : (
