@@ -330,7 +330,7 @@ export default function CombinationDetail({ setupId }: Props) {
       {/* Right graph area */}
       <div className="flex-1 bg-[#f9f9fa] rounded-[32px] overflow-hidden relative">
         {/* Top bar - Display only */}
-        <div className="absolute top-2 left-2 right-2 z-50 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-[32px] border border-gray-200 shadow-sm">
+        <div className="absolute top-2 left-2 right-2 z-50 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-[32px] shadow-sm">
           <div className="flex items-center gap-2">
             <div className="flex-1 min-w-0">
               <div className="text-2xl font-medium text-[#15171a] font-alpha-lyrae">
@@ -345,7 +345,7 @@ export default function CombinationDetail({ setupId }: Props) {
         </div>
 
         {/* Bottom bar - User info and actions */}
-        <div className="absolute bottom-2 left-2 right-2 z-50 px-4 py-4 bg-white/90 backdrop-blur-sm rounded-[24px] border border-gray-200 shadow-sm">
+        <div className="absolute bottom-2 left-2 right-2 z-50 px-4 py-4 bg-white/90 backdrop-blur-sm rounded-[24px] shadow-sm">
           <div className="flex items-end justify-between">
             <div className="flex flex-col">
               <div className="text-[16px] text-gray-500 font-medium leading-[24px]">

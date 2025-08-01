@@ -85,7 +85,7 @@ export default function UploadPage() {
       
       <div className="relative h-[calc(100vh-10rem)] w-full bg-white rounded-[32px] overflow-hidden">
         {/* 상단 입력 영역 - 캔버스 내부에 위치 */}
-        <div className="absolute top-2 left-2 right-2 z-50 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-[32px] border border-gray-200 shadow-sm">
+        <div className="absolute top-2 left-2 right-2 z-50 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-[32px] shadow-sm">
           <div className="flex items-center gap-2">
             <div className="flex-1 min-w-0">
               <input
