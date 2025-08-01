@@ -168,8 +168,8 @@ export default function CustomEdge({
           path={edgePath} 
           style={{
             stroke: '#6B7280',
-            strokeWidth: 2,
-            strokeDasharray: '5,5'
+            strokeWidth: 1,
+            strokeDasharray: '4 4'
           }}
         />
         <EdgeLabelRenderer>
@@ -286,8 +286,8 @@ export default function CustomEdge({
         path={edgePath} 
         style={{
           stroke: '#6B7280',
-          strokeWidth: 2,
-          strokeDasharray: '5,5'
+          strokeWidth: 1,
+          strokeDasharray: '4 4'
         }}
       />
       <EdgeLabelRenderer>

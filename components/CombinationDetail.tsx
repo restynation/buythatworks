@@ -389,6 +389,18 @@ export default function CombinationDetail({ setupId }: Props) {
             defaultViewport={{ x: 0, y: 0, zoom: 1.25 }}
             minZoom={0.3}
             maxZoom={2}
+            connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 3, strokeDasharray: '5,5' }}
+            defaultEdgeOptions={{
+              type: 'custom',
+              style: { 
+                stroke: '#6B7280', 
+                strokeWidth: 1,
+                strokeDasharray: '4 4',
+                cursor: 'pointer'
+              },
+              focusable: true,
+              deletable: true
+            }}
             style={{ backgroundColor: '#F9F9FA' }}
             proOptions={{ hideAttribution: true }}
           >
