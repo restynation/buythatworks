@@ -290,7 +290,10 @@ export default function CombinationDetail({ setupId }: Props) {
       {/* Left sidebar */}
       <div className="w-80 flex flex-col">
         {/* Back to list button */}
-        <div className="flex flex-row h-12 items-center justify-center p-4 rounded-lg bg-[#f9f9fa] mb-4">
+        <div 
+          onClick={() => window.history.back()}
+          className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mb-4 cursor-pointer hover:bg-gray-100 transition-colors"
+        >
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
