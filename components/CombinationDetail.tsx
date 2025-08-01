@@ -358,13 +358,13 @@ export default function CombinationDetail({ setupId }: Props) {
             <div className="flex gap-2">
               <button
                 onClick={handleShare}
-                className="w-12 h-12 bg-[#f9f9fa] rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors"
+                className="w-12 h-12 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center hover:bg-gray-100 transition-colors"
               >
                 <Share2 className="w-6 h-6 text-gray-500" />
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="w-12 h-12 bg-[#f9f9fa] rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors"
+                className="w-12 h-12 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center hover:bg-gray-100 transition-colors"
               >
                 <Trash2 className="w-6 h-6 text-gray-500" />
               </button>
