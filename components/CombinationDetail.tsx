@@ -306,7 +306,7 @@ export default function CombinationDetail({ setupId }: Props) {
       
       <div className="h-[calc(100vh-10rem)] flex gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
-      <div className="w-80 flex flex-col">
+      <div className="w-[200px] flex flex-col">
         {/* Back to list button */}
         <div 
           onClick={handleBackToList}
@@ -321,19 +321,19 @@ export default function CombinationDetail({ setupId }: Props) {
         </div>
 
         {/* Products list */}
-        <div className="flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[32px] p-4">
+        <div className="flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[32px]">
           <div className="flex flex-col gap-0">
             {blocks.map((block, index) => (
-              <div key={block.id} className="flex flex-col gap-2 items-center p-3 rounded-2xl">
+              <div key={block.id} className="flex flex-col gap-2 items-center pt-3 px-4 pb-4 rounded-2xl">
                 <div className="flex flex-col gap-2 items-start justify-start w-full">
                   <div className="flex flex-col font-medium items-start justify-start text-left w-full">
-                    <div className="overflow-hidden text-[#15171a] text-[14px] w-full leading-[20px]">
+                    <div className="overflow-hidden text-[#15171a] text-[14px] w-full leading-[20px] font-medium">
                       {block.product ? 
-                        `${block.product.brand} ${block.product.model}` : 
+                        block.product.model : 
                         block.custom_name
                       }
                     </div>
-                    <div className="overflow-hidden text-[12px] text-gray-500 w-full leading-[16px]">
+                    <div className="overflow-hidden text-[12px] text-gray-500 w-full leading-[16px] font-medium">
                       {block.product?.brand || block.device_type?.name}
                     </div>
                   </div>
