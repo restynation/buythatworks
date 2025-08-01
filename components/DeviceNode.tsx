@@ -305,8 +305,17 @@ export default function DeviceNode({ id, data, selected }: Props) {
                         />
                       </div>
                       
-                      {/* Product list */}
-                      <div className="max-h-80 overflow-y-auto scrollbar-hide">
+                      {/* 2. Product list area - fixed height with scroll */}
+                      <div 
+                        className="h-[172px] overflow-y-auto" 
+                        onWheel={(e) => {
+                          e.stopPropagation();
+                          const target = e.currentTarget;
+                          const scrollAmount = e.deltaY;
+                          target.scrollTop += scrollAmount;
+                        }}
+                        onTouchMove={(e) => e.stopPropagation()}
+                      >
                         {filteredProducts.length > 0 ? (
                           filteredProducts.map((product) => (
                             <button
