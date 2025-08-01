@@ -338,17 +338,19 @@ export default function CombinationDetail({ setupId }: Props) {
                         {block.product?.brand || block.device_type?.name}
                       </div>
                     </div>
-                    <div 
-                      onClick={() => block.product && handleSeePrice(block.product)}
-                      className="flex flex-row h-9 items-center justify-center px-3 py-2 rounded-xl w-full bg-white cursor-pointer hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex flex-row gap-2.5 items-center justify-center px-1.5 py-0">
-                        <span className="text-[14px] text-gray-500 leading-[20px]">See price</span>
-                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
-                        </svg>
+                    {block.product && (
+                      <div 
+                        onClick={() => handleSeePrice(block.product!)}
+                        className="flex flex-row h-9 items-center justify-center px-3 py-2 rounded-xl w-full bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex flex-row gap-2.5 items-center justify-center px-1.5 py-0">
+                          <span className="text-[14px] text-gray-500 leading-[20px]">See price</span>
+                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
+                          </svg>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
                 {index < blocks.length - 1 && (
