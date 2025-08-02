@@ -415,13 +415,14 @@ export default function CombinationDetail({ setupId }: Props) {
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             fitView
+            fitViewOptions={{ padding: 0.2 }}
             nodesDraggable={false}
             nodesConnectable={false}
             elementsSelectable={false}
             panOnDrag={true}
             zoomOnDoubleClick={false}
             deleteKeyCode={[]} // Disable delete
-            defaultViewport={{ x: 0, y: 0, zoom: 1.25 }}
+            defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
             minZoom={0.3}
             maxZoom={2}
             connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 3, strokeDasharray: '5,5' }}
