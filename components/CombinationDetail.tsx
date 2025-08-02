@@ -323,7 +323,16 @@ export default function CombinationDetail({ setupId }: Props) {
         {/* Products list */}
         <div className="flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[24px]">
           <div className="flex flex-col gap-0">
-            {blocks.map((block, index) => (
+            {blocks
+              .filter((block, index, self) => {
+                // product_id가 있는 경우에만 중복 제거
+                if (block.product_id) {
+                  return index === self.findIndex(b => b.product_id === block.product_id)
+                }
+                // product_id가 없는 경우 (custom_name만 있는 경우)는 그대로 유지
+                return true
+              })
+              .map((block, index) => (
               <div key={block.id} className="flex flex-col">
                 <div className="flex flex-col gap-2 items-center pt-3 px-4 pb-4">
                   <div className="flex flex-col gap-2 items-start justify-start w-full">
