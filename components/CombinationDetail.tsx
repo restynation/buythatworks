@@ -332,6 +332,13 @@ export default function CombinationDetail({ setupId }: Props) {
                 // product_id가 없는 경우 (custom_name만 있는 경우)는 그대로 유지
                 return true
               })
+              .sort((a, b) => {
+                // Device type별 정렬: computer, monitor, hub, mouse, keyboard
+                const deviceTypeOrder: Record<number, number> = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }
+                const orderA = deviceTypeOrder[Number(a.device_type_id)] ?? 999
+                const orderB = deviceTypeOrder[Number(b.device_type_id)] ?? 999
+                return orderA - orderB
+              })
               .map((block, index) => (
               <div key={block.id} className="flex flex-col">
                 <div className="flex flex-col gap-2 items-center pt-3 px-4 pb-4">
