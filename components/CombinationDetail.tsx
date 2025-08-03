@@ -307,7 +307,7 @@ export default function CombinationDetail({ setupId }: Props) {
       {/* Navigation 높이만큼 패딩 추가 */}
       <div className="h-32"></div>
       
-      <div className="h-[480px] md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-4 overflow-hidden bg-[#FFFFFF]">
+      <div className="h-auto md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
       <div className="w-full md:w-[200px] flex flex-col order-2 md:order-1">
         {/* Back to list button */}
