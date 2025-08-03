@@ -455,7 +455,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           )}
 
           {/* Leave your short comment */}
-          <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
+          <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full h-full flex-1">
             <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
               Leave your short comment
             </div>
