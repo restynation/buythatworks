@@ -215,9 +215,9 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="box-border content-stretch flex flex-col gap-4 items-center justify-center p-0 relative rounded-[32px] w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-        {/* Select your combi's type */}
-        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-center overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
+      <div className="box-border content-stretch flex flex-row gap-4 items-start justify-center p-0 relative rounded-[32px] w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+        {/* Select your combi's type - 좌측 */}
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-center overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[300px]">
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             Select your combi's type
           </div>
@@ -352,172 +352,175 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           </div>
         </div>
 
-        {/* New Selection Area - 600x247px - Only show when computer has built-in display */}
-        {hasBuiltinDisplay && (
+        {/* 오른쪽 섹션들 */}
+        <div className="flex flex-col gap-4 w-[400px]">
+          {/* New Selection Area - Only show when computer has built-in display */}
+          {hasBuiltinDisplay && (
+            <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
+              <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
+                Is the built-in display usable?
+              </div>
+              <div className="flex flex-col gap-2 w-full">
+                {/* Option 1 */}
+                <div 
+                  className="relative rounded-[24px] shrink-0 w-full cursor-pointer h-[100px]"
+                  onClick={() => handleSelectionClick('option1')}
+                >
+                  <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
+                    <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0 w-full">
+                      <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
+                        <input
+                          type="radio"
+                          name="selectionType"
+                          value="option1"
+                          checked={formData.selectionType === 'option1'}
+                          onChange={() => {}}
+                          className="sr-only"
+                        />
+                        <div className={`relative rounded-[16px] shrink-0 size-6 ${
+                          formData.selectionType === 'option1' 
+                            ? 'bg-[#000000]' 
+                            : ''
+                        }`}>
+                          <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
+                            {formData.selectionType === 'option1' ? (
+                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            ) : (
+                              <div className="opacity-0 relative shrink-0 size-4" />
+                            )}
+                          </div>
+                          {formData.selectionType !== 'option1' && (
+                            <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
+                          )}
+                        </div>
+                      </div>
+                      <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
+                        Yes, built-in and external displays work together.
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
+                    formData.selectionType === 'option1' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+                  }`} />
+                </div>
+
+                {/* Option 2 (기본값) */}
+                <div 
+                  className="relative rounded-[24px] shrink-0 w-full cursor-pointer h-[100px]"
+                  onClick={() => handleSelectionClick('option2')}
+                >
+                  <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
+                    <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0 w-full">
+                      <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
+                        <input
+                          type="radio"
+                          name="selectionType"
+                          value="option2"
+                          checked={formData.selectionType === 'option2'}
+                          onChange={() => {}}
+                          className="sr-only"
+                        />
+                        <div className={`relative rounded-[16px] shrink-0 size-6 ${
+                          formData.selectionType === 'option2' 
+                            ? 'bg-[#000000]' 
+                            : ''
+                        }`}>
+                          <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
+                            {formData.selectionType === 'option2' ? (
+                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            ) : (
+                              <div className="opacity-0 relative shrink-0 size-4" />
+                            )}
+                          </div>
+                          {formData.selectionType !== 'option2' && (
+                            <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
+                          )}
+                        </div>
+                      </div>
+                      <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
+                        No, built-in display must be turned off for this combination to work.
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
+                    formData.selectionType === 'option2' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+                  }`} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Leave your short comment */}
           <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
             <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
-              Is the built-in display usable?
+              Leave your short comment
             </div>
-            <div className="flex flex-col gap-2 w-full">
-              {/* Option 1 */}
-              <div 
-                className="relative rounded-[24px] shrink-0 w-full cursor-pointer h-[100px]"
-                onClick={() => handleSelectionClick('option1')}
-              >
-                <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
-                  <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0 w-full">
-                    <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
-                      <input
-                        type="radio"
-                        name="selectionType"
-                        value="option1"
-                        checked={formData.selectionType === 'option1'}
-                        onChange={() => {}}
-                        className="sr-only"
-                      />
-                      <div className={`relative rounded-[16px] shrink-0 size-6 ${
-                        formData.selectionType === 'option1' 
-                          ? 'bg-[#000000]' 
-                          : ''
-                      }`}>
-                        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
-                          {formData.selectionType === 'option1' ? (
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          ) : (
-                            <div className="opacity-0 relative shrink-0 size-4" />
-                          )}
-                        </div>
-                        {formData.selectionType !== 'option1' && (
-                          <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
-                        )}
-                      </div>
-                    </div>
-                    <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
-                      Yes, built-in and external displays work together.
-                    </div>
-                  </div>
-                </div>
-                <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
-                  formData.selectionType === 'option1' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
-                }`} />
+            <div className="bg-[#ffffff] h-[120px] relative rounded-[12px] shrink-0 w-full">
+              <div className="box-border content-stretch flex flex-row h-[120px] items-center justify-start overflow-clip px-4 py-3 relative w-full">
+                <textarea
+                  value={formData.comment}
+                  onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
+                  onFocus={() => setCommentFocused(true)}
+                  onBlur={() => setCommentFocused(false)}
+                  className={`basis-0 font-pretendard grow h-full leading-[24px] min-h-px min-w-px not-italic relative shrink-0 text-[16px] text-left bg-transparent border-none outline-none resize-none ${
+                    formData.comment ? 'text-[#15171a]' : 'text-[#c4c7cc]'
+                  }`}
+                  placeholder="MacBook is God"
+                  required
+                />
               </div>
+              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[12px] transition-colors ${
+                commentFocused ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+              }`} />
+            </div>
+          </div>
 
-              {/* Option 2 (기본값) */}
-              <div 
-                className="relative rounded-[24px] shrink-0 w-full cursor-pointer h-[100px]"
-                onClick={() => handleSelectionClick('option2')}
-              >
-                <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
-                  <div className="box-border content-stretch flex flex-row gap-3 items-start justify-start p-0 relative shrink-0 w-full">
-                    <div className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0">
-                      <input
-                        type="radio"
-                        name="selectionType"
-                        value="option2"
-                        checked={formData.selectionType === 'option2'}
-                        onChange={() => {}}
-                        className="sr-only"
-                      />
-                      <div className={`relative rounded-[16px] shrink-0 size-6 ${
-                        formData.selectionType === 'option2' 
-                          ? 'bg-[#000000]' 
-                          : ''
-                      }`}>
-                        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip p-0 relative size-6">
-                          {formData.selectionType === 'option2' ? (
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          ) : (
-                            <div className="opacity-0 relative shrink-0 size-4" />
-                          )}
-                        </div>
-                        {formData.selectionType !== 'option2' && (
-                          <div className="absolute border border-[#898e99] border-solid inset-0 pointer-events-none rounded-[16px]" />
-                        )}
-                      </div>
-                    </div>
-                    <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
-                      No, built-in display must be turned off for this combination to work.
-                    </div>
-                  </div>
-                </div>
-                <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] ${
-                  formData.selectionType === 'option2' ? 'border-[#15171a]' : 'border-[#e1e3e6]'
-                }`} />
+          {/* 4-digit Password */}
+          <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
+            <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
+              4-digit Password
+            </div>
+            <div className="bg-[#ffffff] relative rounded-[24px] shrink-0 w-full">
+              <div className="box-border content-stretch flex flex-row items-center justify-start overflow-clip px-3 py-2 relative size-full">
+                <input
+                  type="password"
+                  maxLength={4}
+                  pattern="[0-9]{4}"
+                  value={formData.password}
+                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
+                  className={`basis-0 font-pretendard grow leading-[20px] min-h-px min-w-px not-italic relative shrink-0 text-[14px] text-center bg-transparent border-none outline-none ${
+                    formData.password ? 'text-[#15171a]' : 'text-[#c4c7cc]'
+                  }`}
+                  placeholder="****"
+                  required
+                />
               </div>
+              <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] transition-colors ${
+                passwordFocused ? 'border-[#15171a]' : 'border-[#e1e3e6]'
+              }`} />
             </div>
           </div>
-        )}
 
-        {/* Leave your short comment */}
-        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
-          <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
-            Leave your short comment
+          {/* Finish Button */}
+          <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-[24px] shrink-0 w-full h-[60px]">
+            <div className="absolute bg-[#000000] inset-0 rounded-[24px]" />
+            <button
+              type="submit"
+              onClick={handleSubmit}
+              disabled={uploading}
+              className="absolute inset-0 flex items-center justify-center z-10"
+            >
+              <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+                {uploading ? 'Uploading...' : 'Finish'}
+              </div>
+            </button>
           </div>
-          <div className="bg-[#ffffff] h-[120px] relative rounded-[12px] shrink-0 w-full">
-            <div className="box-border content-stretch flex flex-row h-[120px] items-center justify-start overflow-clip px-4 py-3 relative w-full">
-              <textarea
-                value={formData.comment}
-                onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
-                onFocus={() => setCommentFocused(true)}
-                onBlur={() => setCommentFocused(false)}
-                            className={`basis-0 font-pretendard grow h-full leading-[24px] min-h-px min-w-px not-italic relative shrink-0 text-[16px] text-left bg-transparent border-none outline-none resize-none ${
-              formData.comment ? 'text-[#15171a]' : 'text-[#c4c7cc]'
-            }`}
-                placeholder="MacBook is God"
-                required
-              />
-            </div>
-            <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[12px] transition-colors ${
-              commentFocused ? 'border-[#15171a]' : 'border-[#e1e3e6]'
-            }`} />
-          </div>
-        </div>
-
-        {/* 4-digit Password */}
-        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
-          <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
-            4-digit Password
-          </div>
-          <div className="bg-[#ffffff] relative rounded-[24px] shrink-0 w-full">
-            <div className="box-border content-stretch flex flex-row items-center justify-start overflow-clip px-3 py-2 relative size-full">
-              <input
-                type="password"
-                maxLength={4}
-                pattern="[0-9]{4}"
-                value={formData.password}
-                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                onFocus={() => setPasswordFocused(true)}
-                onBlur={() => setPasswordFocused(false)}
-                            className={`basis-0 font-pretendard grow leading-[20px] min-h-px min-w-px not-italic relative shrink-0 text-[14px] text-center bg-transparent border-none outline-none ${
-              formData.password ? 'text-[#15171a]' : 'text-[#c4c7cc]'
-            }`}
-                placeholder="****"
-                required
-              />
-            </div>
-            <div className={`absolute border border-solid inset-0 pointer-events-none rounded-[24px] transition-colors ${
-              passwordFocused ? 'border-[#15171a]' : 'border-[#e1e3e6]'
-            }`} />
-          </div>
-        </div>
-
-        {/* Finish Button */}
-        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-[24px] shrink-0 w-full h-[60px]">
-          <div className="absolute bg-[#000000] inset-0 rounded-[24px]" />
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={uploading}
-            className="absolute inset-0 flex items-center justify-center z-10"
-          >
-            <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
-              {uploading ? 'Uploading...' : 'Finish'}
-            </div>
-          </button>
         </div>
       </div>
     </div>
