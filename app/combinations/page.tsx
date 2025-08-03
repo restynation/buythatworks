@@ -724,7 +724,7 @@ function CombinationsPageContent() {
                   </div>
 
                   {/* 디바이스 목록 */}
-                  <div className="flex gap-2 overflow-hidden">
+                  <div className="flex overflow-hidden">
                     {setup.setup_blocks
                       ?.sort((a: any, b: any) => {
                         // Device type별 정렬: computer, monitor, hub, mouse, keyboard
@@ -773,7 +773,7 @@ function CombinationsPageContent() {
                       const deviceInfo = getDeviceInfo(block)
                       
                       return (
-                        <div key={block.id || index} className="flex flex-col p-2 w-[140px] h-[140px]">
+                        <div key={block.id || index} className="flex flex-col w-[140px] h-[140px]">
                           <div className="w-[124px] h-[108px] p-3 flex items-center justify-center">
                             {block.products?.image_url ? (
                               <img 
