@@ -409,7 +409,7 @@ export default function CombinationDetail({ setupId }: Props) {
                 {setup.comment || 'No comment provided'}
               </div>
             </div>
-            <div className="flex flex-col md:flex-row gap-2">
+            <div className="flex gap-2">
               <button
                 onClick={handleShare}
                 className="w-12 h-12 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center hover:bg-gray-100 transition-colors"
