@@ -724,7 +724,7 @@ function CombinationsPageContent() {
                   </div>
 
                   {/* 디바이스 목록 */}
-                  <div className="flex overflow-hidden" style={{ height: '140px' }}>
+                  <div className="flex overflow-hidden h-35">
                     {setup.setup_blocks
                       ?.sort((a: any, b: any) => {
                         // Device type별 정렬: computer, monitor, hub, mouse, keyboard
