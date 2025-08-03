@@ -311,7 +311,7 @@ export default function DeviceNode({ id, data, selected }: Props) {
                       
                       {/* 2. Product list area - fixed height with scroll */}
                       <div 
-                        className="h-[172px] overflow-y-auto" 
+                        className="h-[172px] overflow-y-auto custom-scrollbar" 
                         onWheel={(e) => {
                           e.stopPropagation();
                           const target = e.currentTarget;
