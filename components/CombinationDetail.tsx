@@ -316,8 +316,8 @@ export default function CombinationDetail({ setupId }: Props) {
           className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mb-4 cursor-pointer hover:bg-gray-100 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
+              <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" fill="#6B7280"/>
             </svg>
             <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
           </div>
