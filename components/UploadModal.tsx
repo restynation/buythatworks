@@ -221,10 +221,10 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             Select your combi's type
           </div>
-          <div className="box-border content-stretch flex flex-col gap-2 items-start justify-start p-0 relative shrink-0">
+          <div className="box-border content-stretch flex flex-col gap-2 items-start justify-start p-0 relative shrink-0 w-full h-full flex-1">
             {/* It's my dream setup - 280x200px card (왼쪽) */}
             <div 
-              className="relative rounded-[24px] shrink-0 w-full h-[120px] cursor-pointer"
+              className="relative rounded-[24px] shrink-0 w-full h-full flex-1 cursor-pointer"
               onClick={() => handleCardClick('dream')}
             >
               <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative w-full h-full">
@@ -269,7 +269,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
             {/* It's my current setup - 280x200px card (오른쪽) */}
             <div 
-              className="relative rounded-[24px] shrink-0 w-full h-[120px] cursor-pointer"
+              className="relative rounded-[24px] shrink-0 w-full h-full flex-1 cursor-pointer"
               onClick={() => handleCardClick('current')}
             >
               <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative w-full h-full">
