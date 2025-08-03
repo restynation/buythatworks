@@ -699,6 +699,12 @@ function CombinationsPageContent() {
                     <div className="flex-1">
                       <h3 
                         className="text-2xl font-medium text-[#15171a] mb-1 leading-normal font-alpha-lyrae"
+                        style={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          display: 'block'
+                        }}
                       >
                         {setup.name}
                       </h3>
@@ -710,6 +716,13 @@ function CombinationsPageContent() {
                       <span className="text-base">by</span>
                       <span 
                         className="text-lg text-[#15171a] leading-normal font-alpha-lyrae"
+                        style={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          display: 'block',
+                          maxWidth: '120px'
+                        }}
                       >
                         {setup.user_name}
                       </span>
