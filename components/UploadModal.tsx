@@ -356,14 +356,14 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         <div className="flex flex-col gap-4 w-[526px] h-[609px]">
           {/* New Selection Area - Only show when computer has built-in display */}
           {hasBuiltinDisplay && (
-            <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
+            <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full h-[247px]">
               <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
                 Is the built-in display usable?
               </div>
-              <div className="flex flex-col gap-2 w-full">
+              <div className="flex flex-row gap-2 w-full">
                 {/* Option 1 */}
                 <div 
-                  className="relative rounded-[24px] shrink-0 w-full cursor-pointer h-[100px]"
+                  className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[100px]"
                   onClick={() => handleSelectionClick('option1')}
                 >
                   <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
@@ -408,7 +408,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
                 {/* Option 2 (기본값) */}
                 <div 
-                  className="relative rounded-[24px] shrink-0 w-full cursor-pointer h-[100px]"
+                  className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[100px]"
                   onClick={() => handleSelectionClick('option2')}
                 >
                   <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
@@ -442,7 +442,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
                         </div>
                       </div>
                       <div className="font-pretendard leading-[28px] not-italic relative shrink-0 text-[#15171a] text-[20px] text-left flex-1">
-                        No, built-in display must be turned off for this combination to work.
+                        No, built-in display must be turned off.
                       </div>
                     </div>
                   </div>
