@@ -455,7 +455,7 @@ function CombinationsPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f9f9fa]">
+    <div className="min-h-screen bg-white">
 
       
       {/* 스크롤 가능한 메인 컨테이너 */}
