@@ -29,16 +29,16 @@ serve(async (req) => {
     }
 
     // Validate text lengths
-    if (setup.name.length > 200) {
+    if (setup.name.length > 60) {
       return new Response(
-        JSON.stringify({ error: 'Setup name must be 200 characters or less' }),
+        JSON.stringify({ error: 'Setup name must be 60 characters or less' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    if (setup.user_name.length > 100) {
+    if (setup.user_name.length > 40) {
       return new Response(
-        JSON.stringify({ error: 'User name must be 100 characters or less' }),
+        JSON.stringify({ error: 'User name must be 40 characters or less' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }

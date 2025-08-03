@@ -55,7 +55,7 @@ export default function CombinationCard({ setup }: Props) {
         
         <div className="space-y-3">
           <div>
-            <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
+            <h3 className="font-semibold text-lg text-gray-900 truncate">
               {setup.name}
             </h3>
             <p className="text-sm text-gray-600 mt-1">
@@ -64,9 +64,9 @@ export default function CombinationCard({ setup }: Props) {
           </div>
           
           <div className="flex items-center justify-between text-sm text-gray-500">
-            <div className="flex items-center space-x-1">
-              <UserIcon className="w-4 h-4" />
-              <span>{setup.user_name}</span>
+            <div className="flex items-center space-x-1 min-w-0 flex-1">
+              <UserIcon className="w-4 h-4 flex-shrink-0" />
+              <span className="truncate max-w-[80px]">{setup.user_name}</span>
             </div>
             
             <div className="flex items-center space-x-1">

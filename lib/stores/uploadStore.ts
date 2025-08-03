@@ -123,14 +123,14 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   validateTextLengths: (setupName: string, userName: string, comment: string) => {
     const errors: string[] = []
     
-    // Setup name validation (max 200 characters)
-    if (setupName.length > 200) {
-      errors.push('Setup name must be 200 characters or less')
+    // Setup name validation (max 60 characters)
+    if (setupName.length > 60) {
+      errors.push('Setup name must be 60 characters or less')
     }
     
-    // User name validation (max 100 characters)
-    if (userName.length > 100) {
-      errors.push('User name must be 100 characters or less')
+    // User name validation (max 40 characters)
+    if (userName.length > 40) {
+      errors.push('User name must be 40 characters or less')
     }
     
     // Comment validation (max 500 characters for UI consistency)
