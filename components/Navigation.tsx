@@ -167,17 +167,17 @@ export default function Navigation() {
             aria-label="Toggle menu"
           >
             <div className="w-6 h-6 relative flex flex-col justify-center items-center">
-              <div className={`w-5 h-0.5 bg-[#15171a] absolute transition-all duration-300 ease-in-out ${
+              <div className={`w-5 h-0.5 bg-[#15171a] absolute transition-all duration-500 ease-in-out ${
                 isMobileMenuOpen 
                   ? 'rotate-45 translate-y-0' 
                   : '-translate-y-1.5'
               }`} />
-              <div className={`w-5 h-0.5 bg-[#15171a] absolute transition-all duration-300 ease-in-out ${
+              <div className={`w-5 h-0.5 bg-[#15171a] absolute transition-all duration-500 ease-in-out ${
                 isMobileMenuOpen 
                   ? 'opacity-0 scale-0' 
                   : 'translate-y-0'
               }`} />
-              <div className={`w-5 h-0.5 bg-[#15171a] absolute transition-all duration-300 ease-in-out ${
+              <div className={`w-5 h-0.5 bg-[#15171a] absolute transition-all duration-500 ease-in-out ${
                 isMobileMenuOpen 
                   ? '-rotate-45 translate-y-0' 
                   : 'translate-y-1.5'
@@ -187,8 +187,11 @@ export default function Navigation() {
         </div>
 
         {/* 모바일 확장 메뉴 - fixed positioning으로 변경 */}
-        {isMobileMenuOpen && (
-          <div className="fixed top-16 left-0 right-0 bg-white z-30 animate-in fade-in slide-in-from-top-full-width">
+        <div className={`fixed top-16 left-0 right-0 bg-white z-30 transition-all duration-500 ease-in-out ${
+          isMobileMenuOpen 
+            ? 'opacity-100 transform translate-y-0' 
+            : 'opacity-0 transform -translate-y-full pointer-events-none'
+        }`}>
             <div className="px-4 py-3 space-y-1">
               {navItems.map((item) => (
                 <div key={item.href} className="relative">
@@ -243,7 +246,6 @@ export default function Navigation() {
               </div>
             </div>
           </div>
-        )}
       </div>
 
       {/* 모바일 메뉴 오버레이 - z-index 조정 */}
