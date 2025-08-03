@@ -480,11 +480,11 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           </div>
 
           {/* 4-digit Password */}
-          <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
+          <div className="bg-[#ffffff] box-border content-stretch flex flex-row gap-4 items-center justify-between overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full h-[70px]">
             <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
               4-digit Password
             </div>
-            <div className="bg-[#ffffff] relative rounded-[24px] shrink-0 w-full">
+            <div className="bg-[#ffffff] relative rounded-[24px] shrink-0 w-32">
               <div className="box-border content-stretch flex flex-row items-center justify-start overflow-clip px-3 py-2 relative size-full">
                 <input
                   type="password"
