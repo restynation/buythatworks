@@ -692,7 +692,7 @@ function CombinationsPageContent() {
 
                         return (
              <Link key={setup.id} href={`/combinations/${setup.id}`}>
-               <div className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group">
+               <div className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group w-full">
                 <div className="h-full flex flex-col gap-20">
                   {/* 헤더 */}
                   <div className="flex items-start justify-between min-w-0 gap-4">
