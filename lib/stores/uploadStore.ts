@@ -22,6 +22,7 @@ interface UploadStore {
   
   // Validation
   validateSetup: () => { isValid: boolean; errors: string[] }
+  validateTextLengths: (setupName: string, userName: string, comment: string) => { isValid: boolean; errors: string[] }
   
   // Reset
   resetStore: () => void
@@ -111,6 +112,30 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
           errors.push(`${deviceType} must have a name`)
         }
       }
+    }
+    
+    return {
+      isValid: errors.length === 0,
+      errors
+    }
+  },
+  
+  validateTextLengths: (setupName: string, userName: string, comment: string) => {
+    const errors: string[] = []
+    
+    // Setup name validation (max 200 characters)
+    if (setupName.length > 200) {
+      errors.push('Setup name must be 200 characters or less')
+    }
+    
+    // User name validation (max 100 characters)
+    if (userName.length > 100) {
+      errors.push('User name must be 100 characters or less')
+    }
+    
+    // Comment validation (max 500 characters for UI consistency)
+    if (comment.length > 500) {
+      errors.push('Comment must be 500 characters or less')
     }
     
     return {

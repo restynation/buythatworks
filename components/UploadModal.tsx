@@ -5,6 +5,7 @@ import { Node, Edge } from 'reactflow'
 import { supabase } from '@/lib/supabase'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
 import bcrypt from 'bcryptjs'
+import { useUploadStore } from '@/lib/stores/uploadStore'
 
 interface Props {
   isOpen: boolean
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function UploadModal({ isOpen, onClose, setupName, builderName, nodes, edges }: Props) {
+  const { validateTextLengths } = useUploadStore()
   const [formData, setFormData] = useState({
     password: '',
     setupType: 'dream' as 'current' | 'dream', // 기본값을 dream으로 변경
@@ -55,6 +57,13 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
     if (!formData.comment.trim()) {
       alert('Comment is required')
+      return
+    }
+
+    // Validate text lengths (including comment)
+    const textValidation = validateTextLengths(setupName, builderName, formData.comment)
+    if (!textValidation.isValid) {
+      alert(textValidation.errors.join('\n'))
       return
     }
 

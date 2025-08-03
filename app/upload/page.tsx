@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Node, Edge } from 'reactflow'
 import UploadCanvas from '@/components/UploadCanvas'
 import UploadModal from '@/components/UploadModal'
+import { useUploadStore } from '@/lib/stores/uploadStore'
 
 export default function UploadPage() {
   const [setupName, setSetupName] = useState('')
@@ -11,6 +12,7 @@ export default function UploadPage() {
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [nodes, setNodes] = useState<Node[]>([])
   const [edges, setEdges] = useState<Edge[]>([])
+  const { validateTextLengths } = useUploadStore()
 
   useEffect(() => {
     // 스크롤 차단
@@ -56,6 +58,13 @@ export default function UploadPage() {
     // Check builder name
     if (!builderName.trim()) {
       alert('Builder name is required')
+      return
+    }
+
+    // Validate text lengths
+    const textValidation = validateTextLengths(setupName, builderName, '')
+    if (!textValidation.isValid) {
+      alert(textValidation.errors.join('\n'))
       return
     }
 

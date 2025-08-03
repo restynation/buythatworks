@@ -28,6 +28,28 @@ serve(async (req) => {
       )
     }
 
+    // Validate text lengths
+    if (setup.name.length > 200) {
+      return new Response(
+        JSON.stringify({ error: 'Setup name must be 200 characters or less' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (setup.user_name.length > 100) {
+      return new Response(
+        JSON.stringify({ error: 'User name must be 100 characters or less' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (setup.comment && setup.comment.length > 500) {
+      return new Response(
+        JSON.stringify({ error: 'Comment must be 500 characters or less' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     if (!blocks || blocks.length === 0) {
       return new Response(
         JSON.stringify({ error: 'Setup must have at least one block' }),
