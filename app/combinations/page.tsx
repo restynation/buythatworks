@@ -695,8 +695,8 @@ function CombinationsPageContent() {
                <div className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group">
                 <div className="h-full flex flex-col gap-20">
                   {/* 헤더 */}
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex items-start justify-between min-w-0">
+                    <div className="flex-1 min-w-0">
                       <h3 
                         className="text-2xl font-medium text-[#15171a] mb-1 leading-normal font-alpha-lyrae"
                         style={{
@@ -712,7 +712,7 @@ function CombinationsPageContent() {
                         {setup.is_current ? "Real user's setup" : "Dream setup"}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-500">
+                    <div className="flex items-center gap-2 text-gray-500 min-w-0">
                       <span className="text-base">by</span>
                       <span 
                         className="text-lg text-[#15171a] leading-normal font-alpha-lyrae"
