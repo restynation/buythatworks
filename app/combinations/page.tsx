@@ -668,7 +668,7 @@ function CombinationsPageContent() {
         {isLoading ? (
           // 간단한 로딩 스켈레톤
           Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-60 md:h-80 rounded-[32px] skeleton-shimmer"></div>
+            <div key={i} className="h-70 md:h-80 rounded-[32px] skeleton-shimmer"></div>
           ))
         ) : (
            displayedSetups.map((setup) => {
@@ -686,7 +686,7 @@ function CombinationsPageContent() {
 
                         return (
              <Link key={setup.id} href={`/combinations/${setup.id}`}>
-               <div className="h-60 md:h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group">
+               <div className="h-70 md:h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group">
                 <div className="h-full flex flex-col gap-20">
                   {/* 헤더 */}
                   <div className="flex items-start justify-between min-w-0 gap-4">
