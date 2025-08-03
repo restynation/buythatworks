@@ -89,8 +89,8 @@ export default function UploadPage() {
 
   return (
     <main className="p-4 bg-white min-h-screen">
-      {/* Navigation 높이만큼 패딩 추가 (64px) */}
-      <div className="h-16"></div>
+      {/* Navigation 높이만큼 패딩 추가 */}
+      <div className="h-24"></div>
       
       <div className="relative h-[calc(100vh-10rem)] w-full bg-white rounded-[32px] overflow-hidden">
         {/* 상단 입력 영역 - 캔버스 내부에 위치 */}

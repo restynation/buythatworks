@@ -460,8 +460,8 @@ function CombinationsPageContent() {
       
       {/* 스크롤 가능한 메인 컨테이너 */}
       <div className="pt-6 px-6 min-h-screen">
-        {/* Navigation 높이만큼 패딩 추가 (64px) */}
-        <div className="h-16 mb-6"></div>
+        {/* Navigation 높이만큼 패딩 추가 */}
+        <div className="h-24 mb-6"></div>
       
              {/* 필터 섹션 */}
        <div className="bg-white rounded-[32px] p-0 mb-4">
