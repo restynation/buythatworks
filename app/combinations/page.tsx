@@ -462,8 +462,8 @@ function CombinationsPageContent() {
         <div className="h-16" />
       </div>
       
-      {/* 헤더 높이만큼 패딩 추가 */}
-      <div className="pt-6 px-6">
+      {/* 스크롤 가능한 메인 컨테이너 */}
+      <div className="pt-6 px-6 min-h-screen">
         {/* 빈 영역 추가 (120px - 24px = 96px) */}
         <div className="h-24 mb-6"></div>
       
