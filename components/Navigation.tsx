@@ -83,7 +83,7 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="bg-white relative z-50">
+    <nav className="fixed top-0 left-0 right-0 bg-white z-50">
       {/* 데스크톱 네비게이션 */}
       <div className="hidden md:block">
         <div className="h-16 px-6 flex items-center justify-center gap-6">

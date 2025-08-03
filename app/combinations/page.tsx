@@ -456,24 +456,12 @@ function CombinationsPageContent() {
 
   return (
     <div className="min-h-screen bg-[#f9f9fa]">
-      {/* 고정 헤더 */}
-      <div className="fixed top-0 left-0 right-0 z-10 bg-[#f9f9fa] p-6 pb-4">
-        <div className="flex items-start justify-between min-w-0 gap-4">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold text-[#15171a] mb-2 truncate">
-              Combinations
-            </h1>
-            <p className="text-sm text-[#6b7280] truncate">
-              {displayedSetups.length > 0 ? `${displayedSetups.length} results` : 'No results'}
-            </p>
-          </div>
-        </div>
-      </div>
+
       
       {/* 스크롤 가능한 메인 컨테이너 */}
       <div className="pt-6 px-6 min-h-screen">
-        {/* 헤더 높이만큼 패딩 추가 */}
-        <div className="h-32 mb-6"></div>
+        {/* Navigation 높이만큼 패딩 추가 (64px) */}
+        <div className="h-16 mb-6"></div>
       
              {/* 필터 섹션 */}
        <div className="bg-white rounded-[32px] p-0 mb-4">
