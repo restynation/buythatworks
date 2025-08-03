@@ -465,9 +465,15 @@ function CombinationsPageContent() {
   }
 
   return (
-    <div className="bg-white h-[calc(100vh-4rem)] p-4 overflow-y-auto">
-      {/* 헤더 공간 */}
-      <div className="h-16" />
+    <div className="min-h-screen bg-[#f9f9fa]">
+      {/* 상단 고정 헤더 */}
+      <div className="fixed top-0 left-0 right-0 z-10 bg-[#f9f9fa] p-6 pb-4">
+        {/* 헤더 공간 */}
+        <div className="h-16" />
+      </div>
+      
+      {/* 헤더 높이만큼 패딩 추가 */}
+      <div className="pt-[120px] px-6">
       
              {/* 필터 섹션 */}
        <div className="bg-white rounded-[32px] p-0 mb-4">
@@ -832,6 +838,7 @@ function CombinationsPageContent() {
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }
