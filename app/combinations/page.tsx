@@ -136,17 +136,7 @@ function CombinationsPageContent() {
     }
   }, [isClient])
 
-  useEffect(() => {
-    if (!isClient) return
-    
-    // 스크롤 차단
-    document.body.style.overflow = 'hidden'
-    
-    // 컴포넌트 언마운트 시 스크롤 복원
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isClient])
+
 
   const loadMore = useCallback(async () => {
     if (isLoadingMore || !hasMore || !isClient) return
