@@ -360,10 +360,10 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
               <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
                 Is the built-in display usable?
               </div>
-              <div className="flex flex-row gap-2 w-full">
+              <div className="flex flex-row gap-2 w-full h-full flex-1">
                 {/* Option 1 */}
                 <div 
-                  className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[100px]"
+                  className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-full"
                   onClick={() => handleSelectionClick('option1')}
                 >
                   <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
@@ -408,7 +408,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
                 {/* Option 2 (기본값) */}
                 <div 
-                  className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[100px]"
+                  className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-full"
                   onClick={() => handleSelectionClick('option2')}
                 >
                   <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
