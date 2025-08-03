@@ -301,8 +301,8 @@ export default function CombinationDetail({ setupId }: Props) {
 
   return (
     <div className="p-4 bg-[#FFFFFF] min-h-screen">
-      {/* 헤더 공간 */}
-      <div className="h-16" />
+      {/* Navigation 높이만큼 패딩 추가 (64px) */}
+      <div className="h-16"></div>
       
       <div className="h-[calc(100vh-10rem)] flex gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
