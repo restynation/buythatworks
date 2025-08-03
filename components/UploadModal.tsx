@@ -459,8 +459,8 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
             <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
               Leave your short comment
             </div>
-            <div className="bg-[#ffffff] h-full relative rounded-[12px] shrink-0 w-full">
-              <div className="box-border content-stretch flex flex-row h-full items-center justify-start overflow-clip px-4 py-3 relative w-full">
+            <div className="bg-[#ffffff] h-full relative rounded-[12px] shrink-0 w-full overflow-hidden">
+              <div className="box-border content-stretch flex flex-row h-full items-start justify-start overflow-clip px-4 py-3 relative w-full">
                 <textarea
                   value={formData.comment}
                   onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
