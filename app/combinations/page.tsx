@@ -695,7 +695,7 @@ function CombinationsPageContent() {
                <div className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group">
                 <div className="h-full flex flex-col gap-20">
                   {/* 헤더 */}
-                  <div className="flex items-start justify-between min-w-0 px-4">
+                  <div className="flex items-start justify-between min-w-0 gap-4">
                     <div className="flex-1 min-w-0">
                       <h3 
                         className="text-2xl font-medium text-[#15171a] mb-1 leading-normal font-alpha-lyrae"
