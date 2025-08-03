@@ -724,7 +724,7 @@ function CombinationsPageContent() {
                   </div>
 
                   {/* 디바이스 목록 */}
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2 overflow-hidden">
                     {setup.setup_blocks
                       ?.sort((a: any, b: any) => {
                         // Device type별 정렬: computer, monitor, hub, mouse, keyboard
