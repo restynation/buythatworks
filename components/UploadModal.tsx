@@ -217,7 +217,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
     >
       <div className="box-border content-stretch flex flex-row gap-4 items-start justify-center p-0 relative rounded-[32px] w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
         {/* Select your combi's type - 좌측 */}
-        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-center overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[300px]">
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-center overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[354px] h-[609px]">
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             Select your combi's type
           </div>
@@ -353,7 +353,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         </div>
 
         {/* 오른쪽 섹션들 */}
-        <div className="flex flex-col gap-4 w-[400px]">
+        <div className="flex flex-col gap-4 w-[526px] h-[609px]">
           {/* New Selection Area - Only show when computer has built-in display */}
           {hasBuiltinDisplay && (
             <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
