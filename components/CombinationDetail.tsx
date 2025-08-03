@@ -324,7 +324,7 @@ export default function CombinationDetail({ setupId }: Props) {
         </div>
 
         {/* Products list */}
-        <div className="flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[24px]">
+        <div className="h-[200px] md:h-auto md:flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[24px]">
           <div className="flex flex-col gap-0">
             {blocks
               .filter((block, index, self) => {
