@@ -774,7 +774,7 @@ function CombinationsPageContent() {
                       
                       return (
                         <div key={block.id || index} className="flex flex-col items-center w-[100px] h-[100px] md:w-[140px] md:h-[140px]">
-                                                      <div className="w-[84px] h-[68px] md:w-[124px] md:h-[108px] p-3 flex items-center justify-center">
+                                                      <div className="w-[100px] h-[84px] md:w-[124px] md:h-[108px] p-2 md:p-3 flex items-center justify-center">
                             {block.products?.image_url ? (
                               <img 
                                 src={block.products.image_url} 
