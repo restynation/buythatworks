@@ -826,6 +826,9 @@ function CombinationsPageContent() {
           </div>
         </div>
       )}
+      
+      {/* 하단 여백 */}
+      <div className="h-4"></div>
       </div>
     </div>
   )
