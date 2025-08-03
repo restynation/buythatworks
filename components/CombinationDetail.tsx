@@ -382,7 +382,7 @@ export default function CombinationDetail({ setupId }: Props) {
       </div>
 
       {/* Right graph area */}
-      <div className="flex-1 bg-[#f9f9fa] rounded-[32px] overflow-hidden relative order-1 md:order-2">
+      <div className="h-[480px] md:h-auto md:flex-1 bg-[#f9f9fa] rounded-[32px] overflow-hidden relative order-1 md:order-2">
         {/* Top bar - Display only */}
         <div className="absolute top-2 left-2 right-2 z-50 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-[32px] shadow-sm">
           <div className="flex items-center gap-2">
