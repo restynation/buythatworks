@@ -215,16 +215,16 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="box-border content-stretch flex flex-col gap-2 items-center justify-center p-0 relative rounded-[32px] w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="box-border content-stretch flex flex-col gap-4 items-center justify-center p-0 relative rounded-[32px] w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         {/* Select your combi's type */}
-        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-center overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[600px]">
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-center overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             Select your combi's type
           </div>
-          <div className="box-border content-stretch flex flex-row gap-2 items-start justify-start p-0 relative shrink-0">
+          <div className="box-border content-stretch flex flex-col gap-2 items-start justify-start p-0 relative shrink-0">
             {/* It's my dream setup - 280x200px card (왼쪽) */}
             <div 
-              className="relative rounded-[24px] shrink-0 w-[280px] h-[200px] cursor-pointer"
+              className="relative rounded-[24px] shrink-0 w-full h-[120px] cursor-pointer"
               onClick={() => handleCardClick('dream')}
             >
               <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative w-full h-full">
@@ -269,7 +269,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
             {/* It's my current setup - 280x200px card (오른쪽) */}
             <div 
-              className="relative rounded-[24px] shrink-0 w-[280px] h-[200px] cursor-pointer"
+              className="relative rounded-[24px] shrink-0 w-full h-[120px] cursor-pointer"
               onClick={() => handleCardClick('current')}
             >
               <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative w-full h-full">
@@ -354,14 +354,14 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
         {/* New Selection Area - 600x247px - Only show when computer has built-in display */}
         {hasBuiltinDisplay && (
-          <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[600px] h-[247px]">
+          <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
             <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
               Is the built-in display usable?
             </div>
-            <div className="flex flex-row gap-2 w-full">
+            <div className="flex flex-col gap-2 w-full">
               {/* Option 1 */}
               <div 
-                className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[160px]"
+                className="relative rounded-[24px] shrink-0 w-full cursor-pointer h-[100px]"
                 onClick={() => handleSelectionClick('option1')}
               >
                 <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
@@ -406,7 +406,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
 
               {/* Option 2 (기본값) */}
               <div 
-                className="relative rounded-[24px] shrink-0 flex-1 cursor-pointer h-[160px]"
+                className="relative rounded-[24px] shrink-0 w-full cursor-pointer h-[100px]"
                 onClick={() => handleSelectionClick('option2')}
               >
                 <div className="box-border content-stretch flex flex-col gap-6 items-start justify-start overflow-clip p-[24px] relative h-full">
@@ -453,7 +453,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         )}
 
         {/* Leave your short comment */}
-        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[600px]">
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             Leave your short comment
           </div>
@@ -478,11 +478,11 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         </div>
 
         {/* 4-digit Password */}
-        <div className="bg-[#ffffff] box-border content-stretch flex flex-row items-start justify-between overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-[600px]">
+        <div className="bg-[#ffffff] box-border content-stretch flex flex-col gap-4 items-start justify-start overflow-clip p-[16px] relative rounded-[24px] shrink-0 w-full">
           <div className="font-['Alpha_Lyrae'] font-medium leading-[normal] not-italic relative shrink-0 text-[#15171a] text-[28px] text-left text-nowrap">
             4-digit Password
           </div>
-          <div className="bg-[#ffffff] relative rounded-[24px] shrink-0 w-32">
+          <div className="bg-[#ffffff] relative rounded-[24px] shrink-0 w-full">
             <div className="box-border content-stretch flex flex-row items-center justify-start overflow-clip px-3 py-2 relative size-full">
               <input
                 type="password"
@@ -506,7 +506,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         </div>
 
         {/* Finish Button */}
-        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-[24px] shrink-0 w-[600px] h-[60px]">
+        <div className="box-border content-stretch flex flex-row items-center justify-center overflow-clip px-6 py-4 relative rounded-[24px] shrink-0 w-full h-[60px]">
           <div className="absolute bg-[#000000] inset-0 rounded-[24px]" />
           <button
             type="submit"
