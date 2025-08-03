@@ -664,7 +664,7 @@ function CombinationsPageContent() {
       </div>
 
       {/* 결과 그리드 */}
-      <div className="grid grid-cols-1 gap-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 lg:gap-4">
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4">
         {isLoading ? (
           // 간단한 로딩 스켈레톤
           Array.from({ length: 6 }).map((_, i) => (
