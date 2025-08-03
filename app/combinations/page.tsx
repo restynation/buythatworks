@@ -670,7 +670,7 @@ function CombinationsPageContent() {
       </div>
 
       {/* 결과 그리드 */}
-      <div className="results-grid gap-2">
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-1 lg:gap-4">
         {isLoading ? (
           // 간단한 로딩 스켈레톤
           Array.from({ length: 6 }).map((_, i) => (
@@ -692,7 +692,7 @@ function CombinationsPageContent() {
 
                         return (
              <Link key={setup.id} href={`/combinations/${setup.id}`}>
-               <div className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group w-full">
+               <div className="h-80 bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer hover:bg-white hover:border hover:border-[#e1e3e6] transition-all group">
                 <div className="h-full flex flex-col gap-20">
                   {/* 헤더 */}
                   <div className="flex items-start justify-between min-w-0 gap-4">
