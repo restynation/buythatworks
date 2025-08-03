@@ -463,7 +463,9 @@ function CombinationsPageContent() {
       </div>
       
       {/* 헤더 높이만큼 패딩 추가 */}
-      <div className="pt-[120px] px-6">
+      <div className="pt-6 px-6">
+        {/* 빈 영역 추가 (120px - 24px = 96px) */}
+        <div className="h-24 mb-6"></div>
       
              {/* 필터 섹션 */}
        <div className="bg-white rounded-[32px] p-0 mb-4">
