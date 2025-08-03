@@ -302,7 +302,7 @@ export default function CombinationDetail({ setupId }: Props) {
   return (
     <div className="p-4 bg-[#FFFFFF] min-h-screen">
       {/* Navigation 높이만큼 패딩 추가 */}
-      <div className="h-24"></div>
+      <div className="h-8"></div>
       
       <div className="h-[calc(100vh-10rem)] flex gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
