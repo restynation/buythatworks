@@ -51,8 +51,11 @@ export default function CombinationDetail({ setupId }: Props) {
   }, [setupId])
 
   useEffect(() => {
-    // 스크롤 차단
-    document.body.style.overflow = 'hidden'
+    // 데스크톱에서만 스크롤 차단
+    const isMobile = window.innerWidth < 768
+    if (!isMobile) {
+      document.body.style.overflow = 'hidden'
+    }
     
     // 컴포넌트 언마운트 시 스크롤 복원
     return () => {
@@ -304,7 +307,7 @@ export default function CombinationDetail({ setupId }: Props) {
       {/* Navigation 높이만큼 패딩 추가 */}
       <div className="h-32"></div>
       
-      <div className="h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-4 overflow-hidden bg-[#FFFFFF]">
+      <div className="h-[480px] md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
       <div className="w-full md:w-[200px] flex flex-col order-2 md:order-1">
         {/* Back to list button */}
