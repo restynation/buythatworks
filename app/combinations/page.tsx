@@ -773,7 +773,7 @@ function CombinationsPageContent() {
                       const deviceInfo = getDeviceInfo(block)
                       
                       return (
-                        <div key={block.id || index} className="flex flex-col w-[140px] h-[140px]">
+                        <div key={block.id || index} className="flex flex-col items-center w-[140px] h-[140px]">
                           <div className="w-[124px] h-[108px] p-3 flex items-center justify-center">
                             {block.products?.image_url ? (
                               <img 
