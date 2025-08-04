@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import Navigation from '@/components/Navigation'
 import MobileKeyboardHandler from '@/components/MobileKeyboardHandler'
+import InitialOverlay from '@/components/InitialOverlay'
 import React from 'react'
 import type { Metadata, Viewport } from 'next'
 
@@ -56,11 +57,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <MobileKeyboardHandler />
-        <Navigation />
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <InitialOverlay />
+        <div className="relative">
+          <MobileKeyboardHandler />
+          <Navigation />
+          <main className="min-h-screen">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   )
