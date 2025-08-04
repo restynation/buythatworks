@@ -304,22 +304,24 @@ export default function CombinationDetail({ setupId }: Props) {
 
   return (
     <div className="p-4 bg-[#FFFFFF] min-h-screen">
-      {/* Navigation 높이만큼 패딩 추가 */}
-      <div className="h-32"></div>
+      {/* Navigation 높이만큼 패딩 추가 - 모바일에서는 줄임 */}
+      <div className="h-16 md:h-32"></div>
       
       <div className="h-auto md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-4 overflow-hidden bg-[#FFFFFF]">
       {/* Left sidebar */}
       <div className="w-full md:w-[200px] flex flex-col order-2 md:order-1">
-        {/* Back to list button */}
-        <div 
-          onClick={handleBackToList}
-          className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mb-4 cursor-pointer hover:bg-gray-100 transition-colors"
-        >
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
-              <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" fill="#6B7280"/>
-            </svg>
-            <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
+        {/* Back to list button - 데스크톱에서는 위에, 모바일에서는 숨김 */}
+        <div className="hidden md:block">
+          <div 
+            onClick={handleBackToList}
+            className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mb-4 cursor-pointer hover:bg-gray-100 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" fill="#6B7280"/>
+              </svg>
+              <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
+            </div>
           </div>
         </div>
 
@@ -377,6 +379,21 @@ export default function CombinationDetail({ setupId }: Props) {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Back to list button - 모바일에서만 제품 목록 아래에 표시 */}
+        <div className="block md:hidden">
+          <div 
+            onClick={handleBackToList}
+            className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mt-4 cursor-pointer hover:bg-gray-100 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" fill="#6B7280"/>
+              </svg>
+              <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
+            </div>
           </div>
         </div>
       </div>
