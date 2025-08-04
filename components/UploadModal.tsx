@@ -118,7 +118,6 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
           builtin_display_usage: hasBuiltinDisplay ? formData.selectionType === 'option1' : null
         },
         blocks: nodes.map(node => ({
-          node_id: node.id, // React Flow node ID 추가
           product_id: node.data.product?.id || null,
           custom_name: node.data.customName || null,
           device_type_id: node.data.deviceType.id,
