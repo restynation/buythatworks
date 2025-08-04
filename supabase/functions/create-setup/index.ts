@@ -160,10 +160,33 @@ serve(async (req) => {
 
     // Create edges if provided
     if (edges && edges.length > 0) {
-      const edgesWithSetupId = edges.map((edge: any) => ({
-        ...edge,
-        setup_id: setupId
-      }))
+      // Create a mapping from React Flow node IDs to database block IDs
+      const nodeIdToBlockIdMap = new Map()
+      blocksData.forEach((block: any, index: number) => {
+        const originalBlock = blocks[index]
+        if (originalBlock.node_id) {
+          nodeIdToBlockIdMap.set(originalBlock.node_id, block.id)
+        }
+      })
+
+      // Map edges to use database block IDs
+      const edgesWithSetupId = edges.map((edge: any) => {
+        const sourceBlockId = nodeIdToBlockIdMap.get(edge.source_block_id)
+        const targetBlockId = nodeIdToBlockIdMap.get(edge.target_block_id)
+        
+        if (!sourceBlockId || !targetBlockId) {
+          console.log('Could not map edge:', edge, 'Available mappings:', Array.from(nodeIdToBlockIdMap.entries()))
+          return null // Skip this edge
+        }
+
+        return {
+          setup_id: setupId,
+          source_block_id: sourceBlockId,
+          target_block_id: targetBlockId,
+          source_port_type_id: edge.source_port_type_id,
+          target_port_type_id: edge.target_port_type_id
+        }
+      }).filter(edge => edge !== null)
 
       const { error: edgesError } = await supabase
         .from('setup_edges')
