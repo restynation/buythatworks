@@ -15,10 +15,10 @@ export default function InitialOverlay() {
       setIsFading(true)
     }, 1000)
     
-    // 2초 후 오버레이 완전히 숨김
+    // 1.5초 후 오버레이 완전히 숨김 (1초 표시 + 0.5초 페이드 아웃)
     const hideTimer = setTimeout(() => {
       setShowOverlay(false)
-    }, 2000)
+    }, 1500)
     
     return () => {
       clearTimeout(fadeTimer)
@@ -31,7 +31,7 @@ export default function InitialOverlay() {
   }
 
   return (
-    <div className={`fixed inset-0 bg-white z-[9999] flex items-center justify-center transition-opacity duration-1000 ${
+    <div className={`fixed inset-0 bg-white z-[9999] flex items-center justify-center transition-opacity duration-500 ${
       isFading ? 'opacity-0' : 'opacity-100'
     }`}>
       <div className="animate-fade-in">
