@@ -150,7 +150,7 @@ export default function Navigation() {
       {/* 모바일 네비게이션 */}
       <div className="md:hidden relative" ref={mobileMenuRef}>
         {/* 모바일 헤더 - z-index 추가 */}
-        <div className="h-16 px-4 flex items-center justify-between relative z-20 bg-white">
+        <div className="h-16 px-4 flex items-center justify-between relative z-40 bg-white">
           {/* 로고 */}
           <Link href="/" className="block">
             <span 
@@ -163,7 +163,7 @@ export default function Navigation() {
           {/* 햄버거 메뉴 버튼 */}
           <button
             onClick={toggleMobileMenu}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors relative z-40"
+            className="p-2 rounded-md hover:bg-gray-100 transition-colors relative z-50"
             aria-label="Toggle menu"
           >
             <div className="w-6 h-6 relative flex flex-col justify-center items-center">
@@ -186,7 +186,7 @@ export default function Navigation() {
           </button>
         </div>
 
-        {/* 모바일 확장 메뉴 - fixed positioning으로 변경 */}
+        {/* 모바일 확장 메뉴 - z-index 조정 */}
         <div className={`fixed top-16 left-0 right-0 bg-white z-30 transition-all duration-500 ease-in-out ${
           isMobileMenuOpen 
             ? 'opacity-100 transform translate-y-0' 
