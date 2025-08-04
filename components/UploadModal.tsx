@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Node, Edge } from 'reactflow'
 import { supabase } from '@/lib/supabase'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
-import bcrypt from 'bcryptjs'
 import { useUploadStore } from '@/lib/stores/uploadStore'
 
 interface Props {
@@ -95,8 +94,8 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         imageUrl = urlData.publicUrl
       }
 
-      // 🔐 비밀번호 해시화
-      const passwordHash = await bcrypt.hash(formData.password, 10)
+      // 🔐 비밀번호 해시화 - 서버 사이드로 이동됨
+      // const passwordHash = await bcrypt.hash(formData.password, 10)
 
       // Check for daisy chain (monitor-to-monitor connections)
       const hasDaisyChain = edges.some(edge => {
@@ -111,7 +110,7 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         setup: {
           name: setupName,
           user_name: builderName,
-          password_hash: passwordHash,
+          password: formData.password, // 평문 비밀번호 전송 (서버에서 해싱)
           is_current: formData.setupType === 'current',
           comment: formData.comment,
           image_url: imageUrl,
@@ -146,19 +145,24 @@ export default function UploadModal({ isOpen, onClose, setupName, builderName, n
         console.error('Error response data:', data)
         let errorMessage = 'Failed to create setup'
         
+        // 일반화된 에러 메시지
         if (error.message?.includes('duplicate key')) {
           errorMessage = 'A setup with this name already exists'
         } else if (error.message?.includes('password')) {
-          errorMessage = 'Invalid password format'
+          errorMessage = 'Invalid input provided'
         } else if (error.message?.includes('comment')) {
-          errorMessage = 'Comment is required'
+          errorMessage = 'Invalid input provided'
         }
         
-        // Edge Function에서 반환된 에러 확인
+        // Edge Function에서 반환된 에러 확인 (일반화)
         if (data && data.error) {
-          errorMessage += `: ${data.error}`
-          if (data.details) {
-            errorMessage += ` (${data.details})`
+          // 특정 에러 메시지만 노출하고 상세 정보는 숨김
+          if (data.error.includes('password')) {
+            errorMessage = 'Invalid input provided'
+          } else if (data.error.includes('comment')) {
+            errorMessage = 'Invalid input provided'
+          } else {
+            errorMessage = 'An error occurred while processing your request'
           }
         }
         

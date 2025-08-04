@@ -2,13 +2,33 @@
 
 import { useEffect, useState } from 'react'
 
+// 안전한 localStorage 함수들
+const safeSetItem = (key: string, value: string) => {
+  try {
+    if (typeof value === 'string' && value.length < 1000) {
+      localStorage.setItem(key, value)
+    }
+  } catch (error) {
+    console.error('localStorage 저장 실패:', error)
+  }
+}
+
+const safeGetItem = (key: string): string | null => {
+  try {
+    return localStorage.getItem(key)
+  } catch (error) {
+    console.error('localStorage 읽기 실패:', error)
+    return null
+  }
+}
+
 export default function InitialLoading() {
   const [showLoading, setShowLoading] = useState(false)
   const [isFirstVisit, setIsFirstVisit] = useState(false)
 
   useEffect(() => {
     // 첫 방문 여부 확인
-    const hasVisited = localStorage.getItem('hasVisited')
+    const hasVisited = safeGetItem('hasVisited')
     
     if (!hasVisited) {
       setIsFirstVisit(true)
@@ -17,7 +37,7 @@ export default function InitialLoading() {
       // 2초 후 로딩 화면 숨김
       const timer = setTimeout(() => {
         setShowLoading(false)
-        localStorage.setItem('hasVisited', 'true')
+        safeSetItem('hasVisited', 'true')
       }, 2000)
       
       return () => clearTimeout(timer)

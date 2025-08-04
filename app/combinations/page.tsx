@@ -59,36 +59,67 @@ function CombinationsPageContent() {
   const [onlyRealUsers, setOnlyRealUsers] = useState(true)
   const [isClient, setIsClient] = useState(false)
 
+  // 안전한 localStorage 함수들
+  const safeSetItem = (key: string, value: string) => {
+    try {
+      // XSS 방지를 위한 간단한 검증
+      if (typeof value === 'string' && value.length < 10000) {
+        localStorage.setItem(key, value)
+      }
+    } catch (error) {
+      console.error('localStorage 저장 실패:', error)
+    }
+  }
+
+  const safeGetItem = (key: string): string | null => {
+    try {
+      return localStorage.getItem(key)
+    } catch (error) {
+      console.error('localStorage 읽기 실패:', error)
+      return null
+    }
+  }
+
   // 클라이언트에서만 localStorage에서 상태 읽기
   useEffect(() => {
     setIsClient(true)
     
     // localStorage에서 상태 복원
-    const restoreState = () => {
-      const savedProducts = localStorage.getItem('combinations-selected-products')
+    const savedProducts = safeGetItem('combinations-selected-products')
+    if (savedProducts) {
+      try {
+        const parsed = JSON.parse(savedProducts)
+        if (Array.isArray(parsed)) {
+          setSelectedProducts(parsed)
+        }
+      } catch (error) {
+        console.error('저장된 제품 데이터 파싱 실패:', error)
+      }
+    }
+
+    const savedOnlyRealUsers = safeGetItem('combinations-only-real-users')
+    if (savedOnlyRealUsers) {
+      setOnlyRealUsers(savedOnlyRealUsers === 'true')
+    }
+    
+    // 페이지 포커스 시 상태 복원 (다른 페이지에서 돌아올 때)
+    const handleFocus = () => {
+      const savedProducts = safeGetItem('combinations-selected-products')
       if (savedProducts) {
         try {
-          const parsedProducts = JSON.parse(savedProducts)
-          if (Array.isArray(parsedProducts)) {
-            setSelectedProducts(parsedProducts)
+          const parsed = JSON.parse(savedProducts)
+          if (Array.isArray(parsed)) {
+            setSelectedProducts(parsed)
           }
         } catch {
           setSelectedProducts([])
         }
       }
       
-      const savedOnlyRealUsers = localStorage.getItem('combinations-only-real-users')
+      const savedOnlyRealUsers = safeGetItem('combinations-only-real-users')
       if (savedOnlyRealUsers !== null) {
         setOnlyRealUsers(savedOnlyRealUsers === 'true')
       }
-    }
-    
-    // 초기 상태 복원
-    restoreState()
-    
-    // 페이지 포커스 시 상태 복원 (다른 페이지에서 돌아올 때)
-    const handleFocus = () => {
-      restoreState()
     }
     
     window.addEventListener('focus', handleFocus)
@@ -101,12 +132,8 @@ function CombinationsPageContent() {
   // 필터 상태가 변경될 때 localStorage에 저장
   useEffect(() => {
     if (isClient && typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('combinations-selected-products', JSON.stringify(selectedProducts))
-        localStorage.setItem('combinations-only-real-users', onlyRealUsers.toString())
-      } catch (error) {
-        console.error('localStorage 저장 실패:', error)
-      }
+      safeSetItem('combinations-selected-products', JSON.stringify(selectedProducts))
+      safeSetItem('combinations-only-real-users', onlyRealUsers.toString())
     }
   }, [selectedProducts, onlyRealUsers, isClient])
 
@@ -117,19 +144,19 @@ function CombinationsPageContent() {
   // 페이지 마운트 시 상태 복원 (다른 페이지에서 돌아올 때)
   useEffect(() => {
     if (isClient) {
-      const savedProducts = localStorage.getItem('combinations-selected-products')
+      const savedProducts = safeGetItem('combinations-selected-products')
       if (savedProducts) {
         try {
-          const parsedProducts = JSON.parse(savedProducts)
-          if (Array.isArray(parsedProducts)) {
-            setSelectedProducts(parsedProducts)
+          const parsed = JSON.parse(savedProducts)
+          if (Array.isArray(parsed)) {
+            setSelectedProducts(parsed)
           }
         } catch {
           setSelectedProducts([])
         }
       }
       
-      const savedOnlyRealUsers = localStorage.getItem('combinations-only-real-users')
+      const savedOnlyRealUsers = safeGetItem('combinations-only-real-users')
       if (savedOnlyRealUsers !== null) {
         setOnlyRealUsers(savedOnlyRealUsers === 'true')
       }

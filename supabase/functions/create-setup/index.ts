@@ -1,8 +1,9 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import * as bcrypt from 'https://deno.land/x/bcrypt@v0.4.1/mod.ts'
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://workswith.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
@@ -21,12 +22,23 @@ serve(async (req) => {
     const { setup, blocks, edges } = await req.json()
 
     // Validate input
-    if (!setup.name || !setup.user_name || !setup.password_hash) {
+    if (!setup.name || !setup.user_name || !setup.password) {
       return new Response(
         JSON.stringify({ error: 'Missing required setup fields' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
+    // Validate password format (4 digits)
+    if (!/^\d{4}$/.test(setup.password)) {
+      return new Response(
+        JSON.stringify({ error: 'Password must be exactly 4 digits' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Hash password on server side
+    const passwordHash = await bcrypt.hash(setup.password, 10)
 
     // Validate text lengths
     if (setup.name.length > 60) {
@@ -98,10 +110,17 @@ serve(async (req) => {
     
     console.log('✅ Debug: All blocks validation passed')
 
+    // Create setup with hashed password
+    const setupWithHash = {
+      ...setup,
+      password_hash: passwordHash
+    }
+    delete setupWithHash.password // Remove plain password
+
     // Create setup in transaction
     const { data: setupData, error: setupError } = await supabase
       .from('setups')
-      .insert([setup])
+      .insert([setupWithHash])
       .select('id')
       .single()
 
