@@ -1,6 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import * as bcrypt from 'https://deno.land/x/bcrypt@v0.4.1/mod.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://www.workswith.dev',
@@ -37,8 +36,12 @@ serve(async (req) => {
       )
     }
 
-    // Hash password on server side
-    const passwordHash = await bcrypt.hash(setup.password, 10)
+    // Hash password on server side using Deno's crypto API
+    const encoder = new TextEncoder()
+    const data = encoder.encode(setup.password + 'workswith-salt-2024')
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 
     // Validate text lengths
     if (setup.name.length > 60) {
