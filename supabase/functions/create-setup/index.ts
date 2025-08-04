@@ -137,11 +137,14 @@ serve(async (req) => {
 
     const setupId = setupData.id
 
-    // Create blocks with setup_id
-    const blocksWithSetupId = blocks.map((block: any) => ({
-      ...block,
-      setup_id: setupId
-    }))
+    // Create blocks with setup_id (remove node_id before inserting)
+    const blocksWithSetupId = blocks.map((block: any) => {
+      const { node_id, ...blockWithoutNodeId } = block
+      return {
+        ...blockWithoutNodeId,
+        setup_id: setupId
+      }
+    })
 
     const { data: blocksData, error: blocksError } = await supabase
       .from('setup_blocks')
