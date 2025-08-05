@@ -136,13 +136,16 @@ export default function Navigation() {
 
           {/* Contact us 버튼 */}
           <div className="flex-1 min-w-0 flex justify-end">
-            <button className="h-9 px-3 py-2 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center">
+            <a 
+              href="mailto:ye3873@gmail.com"
+              className="h-9 px-3 py-2 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center hover:bg-gray-100 transition-colors"
+            >
               <div className="px-1.5">
                 <span className="text-[14px] font-normal text-[#15171a] leading-[20px] whitespace-nowrap">
                   Contact us
                 </span>
               </div>
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -238,11 +241,14 @@ export default function Navigation() {
               
               {/* Contact us 버튼 (모바일) - border 제거 */}
               <div className="pt-3 mt-3">
-                <button className="w-full h-12 px-3 py-3 bg-[#f9f9fa] rounded-[12px] flex items-center justify-center">
+                <a 
+                  href="mailto:ye3873@gmail.com"
+                  className="w-full h-12 px-3 py-3 bg-[#f9f9fa] rounded-[12px] flex items-center justify-center hover:bg-gray-100 transition-colors"
+                >
                   <span className="text-[16px] font-normal text-[#15171a] leading-[20px]">
                     Contact us
                   </span>
-                </button>
+                </a>
               </div>
             </div>
           </div>
