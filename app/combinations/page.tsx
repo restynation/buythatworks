@@ -165,49 +165,60 @@ function CombinationsPageContent() {
     loadData()
   }, [])
 
-  // 필터 변경 시 결과 다시 로드
+  // 필터링된 결과를 반환하는 함수
+  const getFilteredSetups = useCallback(() => {
+    return setups.filter(setup => {
+      // 선택된 제품들로 필터링
+      if (selectedProducts.length > 0) {
+        const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
+        const hasAllSelectedProducts = selectedProducts.every(product => 
+          setupProductIds.includes(product.id)
+        )
+        if (!hasAllSelectedProducts) return false
+      }
+
+      // 실제 사용자 설정만 보기 필터
+      if (onlyRealUsers && !setup.is_current) {
+        return false
+      }
+
+      // 이미지가 있는 설정만 보기 필터
+      if (withPhoto && !setup.image_url) {
+        return false
+      }
+
+      // Daisy chain 설정만 보기 필터
+      if (daisyChain && !setup.daisy_chain) {
+        return false
+      }
+
+      return true
+    })
+  }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain])
+
+  // 필터 변경 시 결과 완전히 새로 로드
+  const reloadResults = useCallback(() => {
+    if (!isClient) return
+    
+    setDisplayedSetups([])
+    setCurrentPage(0)
+    setHasMore(true)
+    displayedSetupsRef.current = []
+    
+    const filteredSetups = getFilteredSetups()
+    const initialItems = filteredSetups.slice(0, ITEMS_PER_PAGE)
+    
+    setDisplayedSetups(initialItems)
+    displayedSetupsRef.current = initialItems
+    setHasMore(filteredSetups.length > ITEMS_PER_PAGE)
+  }, [getFilteredSetups, isClient])
+
+  // 필터 변경 시 결과 새로 로드
   useEffect(() => {
-    if (isClient) {
-      setDisplayedSetups([])
-      setCurrentPage(0)
-      setHasMore(true)
-      displayedSetupsRef.current = []
-      
-      // 필터링된 결과에서 첫 페이지 로드
-      const filteredSetups = setups.filter(setup => {
-        // 선택된 제품들로 필터링
-        if (selectedProducts.length > 0) {
-          const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
-          const hasAllSelectedProducts = selectedProducts.every(product => 
-            setupProductIds.includes(product.id)
-          )
-          if (!hasAllSelectedProducts) return false
-        }
-
-        // 실제 사용자 설정만 보기 필터
-        if (onlyRealUsers && !setup.is_current) {
-          return false
-        }
-
-        // 이미지가 있는 설정만 보기 필터
-        if (withPhoto && !setup.image_url) {
-          return false
-        }
-
-        // Daisy chain 설정만 보기 필터
-        if (daisyChain && !setup.daisy_chain) {
-          return false
-        }
-
-        return true
-      })
-
-      const initialItems = filteredSetups.slice(0, ITEMS_PER_PAGE)
-      setDisplayedSetups(initialItems)
-      displayedSetupsRef.current = initialItems
-      setHasMore(filteredSetups.length > ITEMS_PER_PAGE)
+    if (isClient && setups.length > 0) {
+      reloadResults()
     }
-  }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient])
+  }, [selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient, reloadResults])
 
   // 페이지 마운트 시 상태 복원 (다른 페이지에서 돌아올 때)
   useEffect(() => {
@@ -249,33 +260,7 @@ function CombinationsPageContent() {
     setIsLoadingMore(true)
     
     // 필터링된 결과에서 현재 페이지에 해당하는 항목들을 가져옴
-    const filteredSetups = setups.filter(setup => {
-      // 선택된 제품들로 필터링
-      if (selectedProducts.length > 0) {
-        const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
-        const hasAllSelectedProducts = selectedProducts.every(product => 
-          setupProductIds.includes(product.id)
-        )
-        if (!hasAllSelectedProducts) return false
-      }
-
-      // 실제 사용자 설정만 보기 필터
-      if (onlyRealUsers && !setup.is_current) {
-        return false
-      }
-
-      // 이미지가 있는 설정만 보기 필터
-      if (withPhoto && !setup.image_url) {
-        return false
-      }
-
-      // Daisy chain 설정만 보기 필터
-      if (daisyChain && !setup.daisy_chain) {
-        return false
-      }
-
-      return true
-    })
+    const filteredSetups = getFilteredSetups()
 
     // ref를 사용하여 현재 표시된 항목들의 ID를 추출하여 중복 방지
     const currentDisplayedIds = new Set(displayedSetupsRef.current.map(setup => setup.id))
@@ -298,7 +283,7 @@ function CombinationsPageContent() {
     }
 
     setIsLoadingMore(false)
-  }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient, isLoadingMore, hasMore])
+  }, [getFilteredSetups, isClient, isLoadingMore, hasMore])
 
   // Intersection Observer 설정
   useEffect(() => {
@@ -483,7 +468,7 @@ function CombinationsPageContent() {
       // 데이터 로딩 완료 후 초기 데이터 로드
       if (isClient) {
         setTimeout(() => {
-          loadMore()
+          reloadResults()
         }, 0)
       }
     } catch (err: any) {
