@@ -183,9 +183,23 @@ function CombinationsPageContent() {
     loadData()
   }, [])
 
-  // 필터링된 결과를 반환하는 함수
-  const getFilteredSetups = useCallback(() => {
-    const filtered = setups.filter((setup: any) => {
+  // 통합 필터링 로직
+  const applyFilters = useCallback(() => {
+    if (!isClient || setups.length === 0) return
+    
+    // 기존 observer 정리
+    if (observerRef.current) {
+      observerRef.current.disconnect()
+    }
+
+    // 상태 완전 리셋
+    setCurrentPage(0)
+    setDisplayedSetups([])
+    setHasMore(true)
+    setIsLoadingMore(false)
+    
+    // 필터링된 결과 계산
+    const filteredSetups = setups.filter((setup: any) => {
       // 모든 필터 조건을 AND로 적용
       const conditions = []
 
@@ -217,51 +231,37 @@ function CombinationsPageContent() {
       return conditions.every(condition => condition === true)
     })
 
-    // 디버깅 로그는 개발 환경에서만 출력
+    // 처음 12개 항목만 로드
+    const initialItems = filteredSetups.slice(0, ITEMS_PER_PAGE)
+    setDisplayedSetups(initialItems)
+    displayedSetupsRef.current = initialItems
+    setCurrentPage(1)
+    setHasMore(ITEMS_PER_PAGE < filteredSetups.length)
+
+    // 새로운 observer 설정
+    setTimeout(() => {
+      if (loadingRef.current && observerRef.current) {
+        observerRef.current.observe(loadingRef.current)
+      }
+    }, 0)
+
+    // 디버깅 로그
     if (process.env.NODE_ENV === 'development') {
       console.log('Filter summary:', {
         totalSetups: setups.length,
-        filteredCount: filtered.length,
+        filteredCount: filteredSetups.length,
         selectedProducts: selectedProducts.length,
         onlyRealUsers,
         withPhoto,
         daisyChain
       })
     }
+  }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient])
 
-    return filtered
-  }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain])
-
-  // 필터 변경 시 결과 완전히 새로 로드
-  const reloadResults = useCallback(() => {
-    if (!isClient) return
-    
-    setDisplayedSetups([])
-    setCurrentPage(0)
-    setHasMore(true)
-    displayedSetupsRef.current = []
-    
-    const filteredSetups = getFilteredSetups()
-    const initialItems = filteredSetups.slice(0, ITEMS_PER_PAGE)
-    
-    setDisplayedSetups(initialItems)
-    displayedSetupsRef.current = initialItems
-    setHasMore(filteredSetups.length > ITEMS_PER_PAGE)
-  }, [getFilteredSetups, isClient])
-
-  // 필터 변경 시 결과 새로 로드 (localStorage 저장과 분리)
+  // 단일 useEffect로 모든 필터 변경 처리
   useEffect(() => {
-    if (isClient && setups.length > 0) {
-      reloadResults()
-    }
-  }, [selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient, reloadResults])
-
-  // 초기 데이터 로드 시 필터 적용
-  useEffect(() => {
-    if (isClient && setups.length > 0 && displayedSetups.length === 0) {
-      reloadResults()
-    }
-  }, [setups, isClient, reloadResults, displayedSetups.length])
+    applyFilters()
+  }, [applyFilters])
 
   // 페이지 마운트 시 상태 복원 (다른 페이지에서 돌아올 때)
   useEffect(() => {
@@ -312,7 +312,37 @@ function CombinationsPageContent() {
     setIsLoadingMore(true)
     
     // 필터링된 결과에서 현재 페이지에 해당하는 항목들을 가져옴
-    const filteredSetups = getFilteredSetups()
+    const filteredSetups = setups.filter((setup: any) => {
+      // 모든 필터 조건을 AND로 적용
+      const conditions = []
+
+      // 1. 선택된 제품들로 필터링 (AND 조건)
+      if (selectedProducts.length > 0) {
+        const setupProductIds = setup.setup_blocks?.map((block: any) => block.product_id) || []
+        const hasAllSelectedProducts = selectedProducts.every(product => 
+          setupProductIds.includes(product.id)
+        )
+        conditions.push(hasAllSelectedProducts)
+      }
+
+      // 2. 실제 사용자 설정만 보기 필터
+      if (onlyRealUsers) {
+        conditions.push(setup.is_current)
+      }
+
+      // 3. 이미지가 있는 설정만 보기 필터
+      if (withPhoto) {
+        conditions.push(!!setup.image_url)
+      }
+
+      // 4. Daisy chain 설정만 보기 필터
+      if (daisyChain) {
+        conditions.push(!!setup.daisy_chain)
+      }
+
+      // 모든 조건이 true여야 함 (AND 조건)
+      return conditions.every(condition => condition === true)
+    })
 
     // ref를 사용하여 현재 표시된 항목들의 ID를 추출하여 중복 방지
     const currentDisplayedIds = new Set(displayedSetupsRef.current.map(setup => setup.id))
@@ -335,7 +365,7 @@ function CombinationsPageContent() {
     }
 
     setIsLoadingMore(false)
-  }, [getFilteredSetups, isClient, isLoadingMore, hasMore])
+  }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient, isLoadingMore, hasMore])
 
   // Intersection Observer 설정
   useEffect(() => {
@@ -368,54 +398,7 @@ function CombinationsPageContent() {
     }
   }, [hasMore, isLoadingMore, isClient, loadMore])
 
-  // 필터링된 결과가 변경될 때 완전히 처음부터 로드
-  useEffect(() => {
-    if (isClient && setups.length > 0) {
-      // 기존 observer 정리 (필터 변경 시 observer 재설정)
-      if (observerRef.current) {
-        observerRef.current.disconnect()
-      }
 
-      // 상태 완전 리셋
-      setCurrentPage(0)
-      setDisplayedSetups([])
-      setHasMore(true)
-      setIsLoadingMore(false)
-      
-      // 필터링된 결과 계산
-      const filteredSetups = setups.filter(setup => {
-        // 선택된 제품들로 필터링
-        if (selectedProducts.length > 0) {
-          const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
-          const hasAllSelectedProducts = selectedProducts.every(product => 
-            setupProductIds.includes(product.id)
-          )
-          if (!hasAllSelectedProducts) return false
-        }
-
-        // 실제 사용자 설정만 보기 필터
-        if (onlyRealUsers && !setup.is_current) {
-          return false
-        }
-
-        return true
-      })
-
-      // 처음 12개 항목만 로드 (완전히 새로 시작)
-      const initialItems = filteredSetups.slice(0, ITEMS_PER_PAGE)
-      setDisplayedSetups(initialItems)
-      displayedSetupsRef.current = initialItems // ref 업데이트
-      setCurrentPage(1)
-      setHasMore(ITEMS_PER_PAGE < filteredSetups.length)
-
-      // 새로운 observer 설정 (다음 tick에서)
-      setTimeout(() => {
-        if (loadingRef.current && observerRef.current) {
-          observerRef.current.observe(loadingRef.current)
-        }
-      }, 0)
-    }
-  }, [selectedProducts, onlyRealUsers, isClient, setups])
 
   // 드롭다운 닫기 함수
   const closeDropdown = () => {
@@ -520,7 +503,7 @@ function CombinationsPageContent() {
       // 데이터 로딩 완료 후 초기 데이터 로드
       if (isClient) {
         setTimeout(() => {
-          reloadResults()
+          applyFilters()
         }, 0)
       }
     } catch (err: any) {
@@ -796,7 +779,11 @@ function CombinationsPageContent() {
             <input
               type="checkbox"
               checked={onlyRealUsers}
-              onChange={(e) => setOnlyRealUsers(e.target.checked)}
+              onChange={(e) => {
+                const newValue = e.target.checked
+                setOnlyRealUsers(newValue)
+                safeSetItem('combinations-only-real-users', newValue.toString())
+              }}
               className="sr-only"
             />
                          <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
@@ -820,10 +807,14 @@ function CombinationsPageContent() {
               type="checkbox"
               checked={withPhoto}
               onChange={(e) => {
-                setWithPhoto(e.target.checked)
+                const newValue = e.target.checked
+                setWithPhoto(newValue)
+                safeSetItem('combinations-with-photo', newValue.toString())
+                
                 // With photo가 체크되면 Exclude dream setup도 자동으로 체크
-                if (e.target.checked) {
+                if (newValue) {
                   setOnlyRealUsers(true)
+                  safeSetItem('combinations-only-real-users', 'true')
                 }
               }}
               className="sr-only"
@@ -848,7 +839,11 @@ function CombinationsPageContent() {
             <input
               type="checkbox"
               checked={daisyChain}
-              onChange={(e) => setDaisyChain(e.target.checked)}
+              onChange={(e) => {
+                const newValue = e.target.checked
+                setDaisyChain(newValue)
+                safeSetItem('combinations-daisy-chain', newValue.toString())
+              }}
               className="sr-only"
             />
             <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
