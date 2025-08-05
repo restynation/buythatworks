@@ -774,7 +774,7 @@ function CombinationsPageContent() {
               )}
             </div>
           </div>
-          <span className="text-sm text-[#15171a]">See only real users' setups</span>
+          <span className="text-sm text-[#15171a]">Exclude dream setup</span>
         </label>
 
         <label className="flex items-center gap-2 cursor-pointer">
@@ -782,7 +782,13 @@ function CombinationsPageContent() {
             <input
               type="checkbox"
               checked={withPhoto}
-              onChange={(e) => setWithPhoto(e.target.checked)}
+              onChange={(e) => {
+                setWithPhoto(e.target.checked)
+                // With photo가 체크되면 Exclude dream setup도 자동으로 체크
+                if (e.target.checked) {
+                  setOnlyRealUsers(true)
+                }
+              }}
               className="sr-only"
             />
             <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
