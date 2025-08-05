@@ -214,31 +214,20 @@ function CombinationsPageContent() {
       }
 
       // 모든 조건이 true여야 함 (AND 조건)
-      const result = conditions.every(condition => condition === true)
-      
-      // 디버깅을 위한 로그 (daisyChain과 onlyRealUsers가 모두 체크된 경우)
-      if (daisyChain && onlyRealUsers) {
-        console.log('Filter debug:', {
-          setupId: setup.id,
-          setupName: setup.name,
-          isCurrent: setup.is_current,
-          daisyChain: setup.daisy_chain,
-          conditions: conditions,
-          result: result
-        })
-      }
-      
-      return result
+      return conditions.every(condition => condition === true)
     })
 
-    console.log('Filter summary:', {
-      totalSetups: setups.length,
-      filteredCount: filtered.length,
-      selectedProducts: selectedProducts.length,
-      onlyRealUsers,
-      withPhoto,
-      daisyChain
-    })
+    // 디버깅 로그는 개발 환경에서만 출력
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Filter summary:', {
+        totalSetups: setups.length,
+        filteredCount: filtered.length,
+        selectedProducts: selectedProducts.length,
+        onlyRealUsers,
+        withPhoto,
+        daisyChain
+      })
+    }
 
     return filtered
   }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain])
@@ -939,10 +928,6 @@ function CombinationsPageContent() {
                         const deviceTypeOrder: Record<number, number> = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }
                         const orderA = deviceTypeOrder[Number(a.device_type_id)] ?? 999
                         const orderB = deviceTypeOrder[Number(b.device_type_id)] ?? 999
-                        
-                        // 디버깅 로그
-                        console.log(`Sorting: ${a.device_type?.name || 'unknown'} (ID: ${a.device_type_id}, Type: ${typeof a.device_type_id}, Order: ${orderA}) vs ${b.device_type?.name || 'unknown'} (ID: ${b.device_type_id}, Type: ${typeof b.device_type_id}, Order: ${orderB})`)
-                        console.log(`DeviceTypeOrder keys:`, Object.keys(deviceTypeOrder))
                         
                         return orderA - orderB
                       })
