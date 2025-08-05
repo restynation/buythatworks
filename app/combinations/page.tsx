@@ -57,6 +57,8 @@ function CombinationsPageContent() {
   // localStorage에서 필터 상태 읽기
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
   const [onlyRealUsers, setOnlyRealUsers] = useState(true)
+  const [withPhoto, setWithPhoto] = useState(false)
+  const [daisyChain, setDaisyChain] = useState(false)
   const [isClient, setIsClient] = useState(false)
 
   // 안전한 localStorage 함수들
@@ -101,6 +103,16 @@ function CombinationsPageContent() {
     if (savedOnlyRealUsers) {
       setOnlyRealUsers(savedOnlyRealUsers === 'true')
     }
+
+    const savedWithPhoto = safeGetItem('combinations-with-photo')
+    if (savedWithPhoto) {
+      setWithPhoto(savedWithPhoto === 'true')
+    }
+
+    const savedDaisyChain = safeGetItem('combinations-daisy-chain')
+    if (savedDaisyChain) {
+      setDaisyChain(savedDaisyChain === 'true')
+    }
     
     // 페이지 포커스 시 상태 복원 (다른 페이지에서 돌아올 때)
     const handleFocus = () => {
@@ -120,6 +132,16 @@ function CombinationsPageContent() {
       if (savedOnlyRealUsers !== null) {
         setOnlyRealUsers(savedOnlyRealUsers === 'true')
       }
+
+      const savedWithPhoto = safeGetItem('combinations-with-photo')
+      if (savedWithPhoto !== null) {
+        setWithPhoto(savedWithPhoto === 'true')
+      }
+
+      const savedDaisyChain = safeGetItem('combinations-daisy-chain')
+      if (savedDaisyChain !== null) {
+        setDaisyChain(savedDaisyChain === 'true')
+      }
     }
     
     window.addEventListener('focus', handleFocus)
@@ -134,12 +156,58 @@ function CombinationsPageContent() {
     if (isClient && typeof window !== 'undefined') {
       safeSetItem('combinations-selected-products', JSON.stringify(selectedProducts))
       safeSetItem('combinations-only-real-users', onlyRealUsers.toString())
+      safeSetItem('combinations-with-photo', withPhoto.toString())
+      safeSetItem('combinations-daisy-chain', daisyChain.toString())
     }
-  }, [selectedProducts, onlyRealUsers, isClient])
+  }, [selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient])
 
   useEffect(() => {
     loadData()
   }, [])
+
+  // 필터 변경 시 결과 다시 로드
+  useEffect(() => {
+    if (isClient) {
+      setDisplayedSetups([])
+      setCurrentPage(0)
+      setHasMore(true)
+      displayedSetupsRef.current = []
+      
+      // 필터링된 결과에서 첫 페이지 로드
+      const filteredSetups = setups.filter(setup => {
+        // 선택된 제품들로 필터링
+        if (selectedProducts.length > 0) {
+          const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
+          const hasAllSelectedProducts = selectedProducts.every(product => 
+            setupProductIds.includes(product.id)
+          )
+          if (!hasAllSelectedProducts) return false
+        }
+
+        // 실제 사용자 설정만 보기 필터
+        if (onlyRealUsers && !setup.is_current) {
+          return false
+        }
+
+        // 이미지가 있는 설정만 보기 필터
+        if (withPhoto && !setup.image_url) {
+          return false
+        }
+
+        // Daisy chain 설정만 보기 필터
+        if (daisyChain && !setup.daisy_chain) {
+          return false
+        }
+
+        return true
+      })
+
+      const initialItems = filteredSetups.slice(0, ITEMS_PER_PAGE)
+      setDisplayedSetups(initialItems)
+      displayedSetupsRef.current = initialItems
+      setHasMore(filteredSetups.length > ITEMS_PER_PAGE)
+    }
+  }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient])
 
   // 페이지 마운트 시 상태 복원 (다른 페이지에서 돌아올 때)
   useEffect(() => {
@@ -159,6 +227,16 @@ function CombinationsPageContent() {
       const savedOnlyRealUsers = safeGetItem('combinations-only-real-users')
       if (savedOnlyRealUsers !== null) {
         setOnlyRealUsers(savedOnlyRealUsers === 'true')
+      }
+
+      const savedWithPhoto = safeGetItem('combinations-with-photo')
+      if (savedWithPhoto !== null) {
+        setWithPhoto(savedWithPhoto === 'true')
+      }
+
+      const savedDaisyChain = safeGetItem('combinations-daisy-chain')
+      if (savedDaisyChain !== null) {
+        setDaisyChain(savedDaisyChain === 'true')
       }
     }
   }, [isClient])
@@ -186,6 +264,16 @@ function CombinationsPageContent() {
         return false
       }
 
+      // 이미지가 있는 설정만 보기 필터
+      if (withPhoto && !setup.image_url) {
+        return false
+      }
+
+      // Daisy chain 설정만 보기 필터
+      if (daisyChain && !setup.daisy_chain) {
+        return false
+      }
+
       return true
     })
 
@@ -210,7 +298,7 @@ function CombinationsPageContent() {
     }
 
     setIsLoadingMore(false)
-  }, [setups, selectedProducts, onlyRealUsers, isClient, isLoadingMore, hasMore])
+  }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient, isLoadingMore, hasMore])
 
   // Intersection Observer 설정
   useEffect(() => {
@@ -665,7 +753,7 @@ function CombinationsPageContent() {
        </div>
 
              {/* 체크박스 섹션 */}
-       <div className="bg-white rounded-[32px] p-0 mb-4">
+       <div className="bg-white rounded-[32px] p-4 mb-4 space-y-3">
         <label className="flex items-center gap-2 cursor-pointer">
           <div className="relative">
             <input
@@ -687,6 +775,52 @@ function CombinationsPageContent() {
             </div>
           </div>
           <span className="text-sm text-[#15171a]">See only real users' setups</span>
+        </label>
+
+        <label className="flex items-center gap-2 cursor-pointer">
+          <div className="relative">
+            <input
+              type="checkbox"
+              checked={withPhoto}
+              onChange={(e) => setWithPhoto(e.target.checked)}
+              className="sr-only"
+            />
+            <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
+              withPhoto 
+                ? 'bg-black border-black' 
+                : 'bg-white border-[#e1e3e6]'
+            }`}>
+              {withPhoto && (
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </div>
+          </div>
+          <span className="text-sm text-[#15171a]">With photo</span>
+        </label>
+
+        <label className="flex items-center gap-2 cursor-pointer">
+          <div className="relative">
+            <input
+              type="checkbox"
+              checked={daisyChain}
+              onChange={(e) => setDaisyChain(e.target.checked)}
+              className="sr-only"
+            />
+            <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center ${
+              daisyChain 
+                ? 'bg-black border-black' 
+                : 'bg-white border-[#e1e3e6]'
+            }`}>
+              {daisyChain && (
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </div>
+          </div>
+          <span className="text-sm text-[#15171a]">Daisychain</span>
         </label>
       </div>
 
