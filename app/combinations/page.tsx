@@ -773,8 +773,8 @@ function CombinationsPageContent() {
        </div>
 
              {/* 체크박스 섹션 */}
-       <div className="bg-white rounded-[32px] p-4 mb-4 space-y-3">
-        <label className="flex items-center gap-2 cursor-pointer">
+       <div className="bg-white rounded-[32px] p-0 mb-4 space-y-3">
+        <label className="flex items-center gap-2 cursor-pointer w-fit">
           <div className="relative">
             <input
               type="checkbox"
@@ -801,7 +801,7 @@ function CombinationsPageContent() {
           <span className="text-sm text-[#15171a]">Exclude dream setup</span>
         </label>
 
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label className="flex items-center gap-2 cursor-pointer w-fit">
           <div className="relative">
             <input
               type="checkbox"
@@ -834,7 +834,7 @@ function CombinationsPageContent() {
           <span className="text-sm text-[#15171a]">With photo</span>
         </label>
 
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label className="flex items-center gap-2 cursor-pointer w-fit">
           <div className="relative">
             <input
               type="checkbox"
