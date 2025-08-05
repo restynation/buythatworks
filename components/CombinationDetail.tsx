@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Setup, SetupBlock, SetupEdge, FlowNode, FlowEdge, Product, DeviceType, PortType } from '@/lib/types'
-import { Share2, Trash2, Calendar, User, ArrowUpRight } from 'lucide-react'
+import { Share2, Trash2, Calendar, User, ArrowUpRight, X } from 'lucide-react'
 import ReactFlow, { 
   Node, 
   Edge, 
@@ -40,6 +40,7 @@ export default function CombinationDetail({ setupId }: Props) {
   const [deletePin, setDeletePin] = useState('')
   const [flowNodes, setFlowNodes] = useState<Node[]>([])
   const [flowEdges, setFlowEdges] = useState<Edge[]>([])
+  const [showImageModal, setShowImageModal] = useState(false)
 
   const handleBackToList = () => {
     // 명확히 combinations 페이지로 이동
@@ -98,55 +99,57 @@ export default function CombinationDetail({ setupId }: Props) {
       if (sourceBlock && targetBlock) {
         const handlePositions = {
           source: {
-            left: { x: sourceBlock.position_x - 90, y: sourceBlock.position_y },
-            right: { x: sourceBlock.position_x + 90, y: sourceBlock.position_y },
-            top: { x: sourceBlock.position_x, y: sourceBlock.position_y - 90 },
-            bottom: { x: sourceBlock.position_x, y: sourceBlock.position_y + 90 }
+            x: sourceBlock.position_x,
+            y: sourceBlock.position_y
           },
           target: {
-            left: { x: targetBlock.position_x - 90, y: targetBlock.position_y },
-            right: { x: targetBlock.position_x + 90, y: targetBlock.position_y },
-            top: { x: targetBlock.position_x, y: targetBlock.position_y - 90 },
-            bottom: { x: targetBlock.position_x, y: targetBlock.position_y + 90 }
+            x: targetBlock.position_x,
+            y: targetBlock.position_y
           }
         }
-        
-        // Find the closest handle pair
-        let minDistance = Infinity
-        let closestSourceHandle = 'left'
-        let closestTargetHandle = 'left-target'
-        
-        const sourceHandles = ['left', 'right', 'top', 'bottom']
-        const targetHandles = ['left-target', 'right-target', 'top-target', 'bottom-target']
-        
-        for (const sh of sourceHandles) {
-          for (const th of targetHandles) {
-            const sourcePos = handlePositions.source[sh as keyof typeof handlePositions.source]
-            const targetPos = handlePositions.target[th.replace('-target', '') as keyof typeof handlePositions.target]
-            
-            const distance = Math.sqrt(
-              Math.pow(sourcePos.x - targetPos.x, 2) + 
-              Math.pow(sourcePos.y - targetPos.y, 2)
-            )
-            
-            if (distance < minDistance) {
-              minDistance = distance
-              closestSourceHandle = sh
-              closestTargetHandle = th
-            }
+
+        // Calculate distances to each handle
+        const sourceHandles = [
+          { id: 'left', x: handlePositions.source.x - 50, y: handlePositions.source.y },
+          { id: 'right', x: handlePositions.source.x + 50, y: handlePositions.source.y },
+          { id: 'top', x: handlePositions.source.x, y: handlePositions.source.y - 50 },
+          { id: 'bottom', x: handlePositions.source.x, y: handlePositions.source.y + 50 }
+        ]
+
+        const targetHandles = [
+          { id: 'left-target', x: handlePositions.target.x - 50, y: handlePositions.target.y },
+          { id: 'right-target', x: handlePositions.target.x + 50, y: handlePositions.target.y },
+          { id: 'top-target', x: handlePositions.target.x, y: handlePositions.target.y - 50 },
+          { id: 'bottom-target', x: handlePositions.target.x, y: handlePositions.target.y + 50 }
+        ]
+
+        // Find closest source handle to target
+        let minSourceDistance = Infinity
+        sourceHandles.forEach(handle => {
+          const distance = Math.sqrt(
+            Math.pow(handle.x - handlePositions.target.x, 2) +
+            Math.pow(handle.y - handlePositions.target.y, 2)
+          )
+          if (distance < minSourceDistance) {
+            minSourceDistance = distance
+            sourceHandle = handle.id
           }
-        }
-        
-        sourceHandle = closestSourceHandle
-        targetHandle = closestTargetHandle
-        
-        console.log('Calculated closest handles:', {
-          calculatedSource: closestSourceHandle,
-          calculatedTarget: closestTargetHandle,
-          distance: minDistance
+        })
+
+        // Find closest target handle to source
+        let minTargetDistance = Infinity
+        targetHandles.forEach(handle => {
+          const distance = Math.sqrt(
+            Math.pow(handle.x - handlePositions.source.x, 2) +
+            Math.pow(handle.y - handlePositions.source.y, 2)
+          )
+          if (distance < minTargetDistance) {
+            minTargetDistance = distance
+            targetHandle = handle.id
+          }
         })
       }
-      
+
       return {
         id: edge.id,
         source: edge.source_block_id,
@@ -155,30 +158,36 @@ export default function CombinationDetail({ setupId }: Props) {
         targetHandle: targetHandle,
         type: 'custom',
         data: {
-          edgeId: edge.id,
-          sourcePortType: edge.source_port_type!,
-          targetPortType: edge.target_port_type!,
-          isViewerMode: true // Disable editing
-        },
-        deletable: false,
-        selectable: false
+          sourcePortType: edge.source_port_type,
+          targetPortType: edge.target_port_type
+        }
       }
     })
 
-    setFlowNodes(nodes)
-    setFlowEdges(flowEdges)
+    return { nodes, edges: flowEdges }
   }
 
   const loadSetupDetail = async () => {
     try {
       setLoading(true)
-
-      // Load setup
+      
+      // Load setup with blocks and edges
       const { data: setupData, error: setupError } = await supabase
         .from('setups')
-        .select('*')
+        .select(`
+          *,
+          setup_blocks (
+            *,
+            product:products (*),
+            device_type:device_types (*)
+          ),
+          setup_edges (
+            *,
+            source_port_type:port_types!setup_edges_source_port_type_id_fkey (*),
+            target_port_type:port_types!setup_edges_target_port_type_id_fkey (*)
+          )
+        `)
         .eq('id', setupId)
-        .is('deleted_at', null)
         .single()
 
       if (setupError) {
@@ -186,46 +195,22 @@ export default function CombinationDetail({ setupId }: Props) {
         return
       }
 
+      if (!setupData) {
+        console.error('Setup not found')
+        return
+      }
+
       setSetup(setupData)
+      setBlocks(setupData.setup_blocks || [])
+      setEdges(setupData.setup_edges || [])
 
-      // Load blocks
-      const { data: blocksData, error: blocksError } = await supabase
-        .from('setup_blocks')
-        .select(`
-          *,
-          product:products (*),
-          device_type:device_types (*)
-        `)
-        .eq('setup_id', setupId)
+      // Convert to Flow format
+      const { nodes, edges } = convertToFlowFormat(setupData.setup_blocks || [], setupData.setup_edges || [])
+      setFlowNodes(nodes)
+      setFlowEdges(edges)
 
-      if (blocksError) {
-        console.error('Error loading blocks:', blocksError)
-        return
-      }
-
-      setBlocks(blocksData || [])
-
-      // Load edges
-      const { data: edgesData, error: edgesError } = await supabase
-        .from('setup_edges')
-        .select(`
-          *,
-          source_port_type:port_types!source_port_type_id (*),
-          target_port_type:port_types!target_port_type_id (*)
-        `)
-        .eq('setup_id', setupId)
-
-      if (edgesError) {
-        console.error('Error loading edges:', edgesError)
-        return
-      }
-
-      setEdges(edgesData || [])
-
-      // Convert to React Flow format
-      convertToFlowFormat(blocksData || [], edgesData || [])
-    } catch (err) {
-      console.error('Failed to load setup detail:', err)
+    } catch (error) {
+      console.error('Error loading setup detail:', error)
     } finally {
       setLoading(false)
     }
@@ -233,34 +218,45 @@ export default function CombinationDetail({ setupId }: Props) {
 
   const handleShare = async () => {
     try {
+      await navigator.share({
+        title: setup?.name || 'Workswith Setup',
+        text: setup?.comment || 'Check out this setup!',
+        url: window.location.href
+      })
+    } catch (error) {
+      // Fallback to copying URL
       await navigator.clipboard.writeText(window.location.href)
-      alert('Link copied to clipboard!')
-    } catch (err) {
-      console.error('Failed to copy link:', err)
+      alert('URL copied to clipboard!')
     }
   }
 
   const handleDelete = async () => {
-    if (!deletePin || deletePin.length !== 4) {
+    if (deletePin.length !== 4) {
       alert('Please enter a 4-digit PIN')
       return
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke('delete-setup', {
-        body: { setupId, pin: deletePin }
+      const { error } = await supabase.functions.invoke('delete-setup', {
+        body: {
+          setupId,
+          password: deletePin
+        }
       })
 
       if (error) {
-        alert('Invalid PIN or error deleting setup')
+        alert('Failed to delete setup. Please check your PIN.')
         return
       }
 
-      alert('Setup deleted successfully')
-      window.location.href = '/combinations'
-    } catch (err) {
-      console.error('Failed to delete setup:', err)
+      alert('Setup deleted successfully!')
+      router.push('/combinations')
+    } catch (error) {
+      console.error('Delete error:', error)
       alert('Failed to delete setup')
+    } finally {
+      setShowDeleteModal(false)
+      setDeletePin('')
     }
   }
 
@@ -273,8 +269,8 @@ export default function CombinationDetail({ setupId }: Props) {
   }
 
   const handleSeePrice = (product: Product) => {
-    // TODO: Implement price lookup functionality
-    console.log('See price for:', product)
+    // Open product link in new tab
+    window.open(product.image_url, '_blank')
   }
 
   if (loading) {
@@ -302,185 +298,245 @@ export default function CombinationDetail({ setupId }: Props) {
     )
   }
 
+  const showImage = setup.is_current && setup.image_url
+
   return (
     <div className="p-4 bg-[#FFFFFF] min-h-screen">
       {/* Navigation 높이만큼 패딩 추가 - 모바일에서는 줄임 */}
       <div className="h-16 md:h-32"></div>
       
       <div className="h-auto md:h-[calc(100vh-10rem)] flex flex-col md:flex-row gap-4 overflow-hidden bg-[#FFFFFF]">
-      {/* Left sidebar */}
-      <div className="w-full md:w-[200px] flex flex-col order-2 md:order-1">
-        {/* Back to list button - 데스크톱에서는 위에, 모바일에서는 숨김 */}
-        <div className="hidden md:block">
-          <div 
-            onClick={handleBackToList}
-            className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mb-4 cursor-pointer hover:bg-gray-100 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
-                <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" fill="#6B7280"/>
-              </svg>
-              <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
+        {/* Left sidebar */}
+        <div className="w-full md:w-[200px] flex flex-col order-2 md:order-1">
+          {/* Back to list button - 데스크톱에서는 위에, 모바일에서는 숨김 */}
+          <div className="hidden md:block">
+            <div 
+              onClick={handleBackToList}
+              className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mb-4 cursor-pointer hover:bg-gray-100 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                  <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" fill="#6B7280"/>
+                </svg>
+                <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Products list */}
-        <div className="h-auto md:h-auto md:flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[24px]">
-          <div className="flex flex-col gap-0">
-            {blocks
-              .filter((block, index, self) => {
-                // product_id가 있는 경우에만 중복 제거
-                if (block.product_id) {
-                  return index === self.findIndex(b => b.product_id === block.product_id)
-                }
-                // product_id가 없는 경우 (custom_name만 있는 경우)는 그대로 유지
-                return true
-              })
-              .sort((a, b) => {
-                // Device type별 정렬: computer, monitor, hub, mouse, keyboard
-                const deviceTypeOrder: Record<number, number> = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }
-                const orderA = deviceTypeOrder[Number(a.device_type_id)] ?? 999
-                const orderB = deviceTypeOrder[Number(b.device_type_id)] ?? 999
-                return orderA - orderB
-              })
-              .map((block, index) => (
-              <div key={block.id} className="flex flex-col">
-                <div className="flex flex-col gap-2 items-center pt-3 px-4 pb-4">
-                  <div className="flex flex-col gap-2 items-start justify-start w-full">
-                    <div className="flex flex-col font-medium items-start justify-start text-left w-full">
-                      <div className="overflow-hidden text-[#15171a] text-[14px] w-full leading-[20px] font-medium">
-                        {block.product ? 
-                          block.product.model : 
-                          block.custom_name
-                        }
-                      </div>
-                      <div className="overflow-hidden text-[12px] text-gray-500 w-full leading-[16px]">
-                        {block.product?.brand || block.device_type?.name}
-                      </div>
-                    </div>
-                    {block.product && (
-                      <div 
-                        onClick={() => handleSeePrice(block.product!)}
-                        className="flex flex-row h-9 items-center justify-center px-3 py-2 rounded-xl w-full bg-white cursor-pointer hover:bg-gray-50 transition-colors"
-                      >
-                        <div className="flex flex-row gap-2.5 items-center justify-center px-1.5 py-0">
-                          <span className="text-[14px] text-gray-500 leading-[20px]">See price</span>
-                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
-                          </svg>
+          {/* Image thumbnail - 데스크톱에서는 back to list와 제품 목록 사이에 */}
+          {showImage && (
+            <div className="hidden md:block mb-4">
+              <div 
+                onClick={() => setShowImageModal(true)}
+                className="w-full h-[180px] rounded-[24px] overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+              >
+                <img 
+                  src={setup.image_url} 
+                  alt={setup.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Products list */}
+          <div className="h-auto md:h-auto md:flex-1 overflow-y-auto bg-[#f9f9fa] rounded-[24px]">
+            <div className="flex flex-col gap-0">
+              {blocks
+                .filter((block, index, self) => {
+                  // product_id가 있는 경우에만 중복 제거
+                  if (block.product_id) {
+                    return index === self.findIndex(b => b.product_id === block.product_id)
+                  }
+                  // product_id가 없는 경우 (custom_name만 있는 경우)는 그대로 유지
+                  return true
+                })
+                .sort((a, b) => {
+                  // Device type별 정렬: computer, monitor, hub, mouse, keyboard
+                  const deviceTypeOrder: Record<number, number> = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }
+                  const orderA = deviceTypeOrder[Number(a.device_type_id)] ?? 999
+                  const orderB = deviceTypeOrder[Number(b.device_type_id)] ?? 999
+                  return orderA - orderB
+                })
+                .map((block, index) => (
+                <div key={block.id} className="flex flex-col">
+                  <div className="flex flex-col gap-2 items-center pt-3 px-4 pb-4">
+                    <div className="flex flex-col gap-2 items-start justify-start w-full">
+                      <div className="flex flex-col font-medium items-start justify-start text-left w-full">
+                        <div className="overflow-hidden text-[#15171a] text-[14px] w-full leading-[20px] font-medium">
+                          {block.product ? 
+                            block.product.model : 
+                            block.custom_name
+                          }
+                        </div>
+                        <div className="overflow-hidden text-[12px] text-gray-500 w-full leading-[16px]">
+                          {block.product?.brand || block.device_type?.name}
                         </div>
                       </div>
-                    )}
+                      {block.product && (
+                        <div 
+                          onClick={() => handleSeePrice(block.product!)}
+                          className="flex flex-row h-9 items-center justify-center px-3 py-2 rounded-xl w-full bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="flex flex-row gap-2.5 items-center justify-center px-1.5 py-0">
+                            <span className="text-[14px] text-gray-500 leading-[20px]">See price</span>
+                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {index < blocks.length - 1 && (
+                    <div className="h-px w-full bg-[#e1e3e6]" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Back to list button - 모바일에서만 제품 목록 아래에 표시 */}
+          <div className="block md:hidden">
+            <div 
+              onClick={handleBackToList}
+              className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mt-4 cursor-pointer hover:bg-gray-100 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                  <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" fill="#6B7280"/>
+                </svg>
+                <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center area - 모바일에서는 이미지가 위에, 데스크톱에서는 그래프만 */}
+        <div className="flex-1 flex flex-col order-1 md:order-2">
+          {/* Image thumbnail - 모바일에서만 위에 표시 */}
+          {showImage && (
+            <div className="block md:hidden mb-4">
+              <div 
+                onClick={() => setShowImageModal(true)}
+                className="w-full h-[180px] rounded-[24px] overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+              >
+                <img 
+                  src={setup.image_url} 
+                  alt={setup.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Right graph area */}
+          <div className="h-[480px] md:h-auto md:flex-1 bg-[#f9f9fa] rounded-[32px] overflow-hidden relative">
+            {/* Top bar - Display only */}
+            <div className="absolute top-2 left-2 right-2 z-10 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-[32px] shadow-sm">
+              <div className="flex items-center gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="text-2xl font-medium text-[#15171a] font-alpha-lyrae">
+                    {setup.name}
                   </div>
                 </div>
-                {index < blocks.length - 1 && (
-                  <div className="h-px w-full bg-[#e1e3e6]" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Back to list button - 모바일에서만 제품 목록 아래에 표시 */}
-        <div className="block md:hidden">
-          <div 
-            onClick={handleBackToList}
-            className="flex flex-row h-12 items-center justify-center p-4 rounded-[24px] bg-[#f9f9fa] mt-4 cursor-pointer hover:bg-gray-100 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
-                <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" fill="#6B7280"/>
-              </svg>
-              <span className="text-[16px] text-gray-500 leading-[24px]">Back to list</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right graph area */}
-      <div className="h-[480px] md:h-auto md:flex-1 bg-[#f9f9fa] rounded-[32px] overflow-hidden relative order-1 md:order-2">
-        {/* Top bar - Display only */}
-        <div className="absolute top-2 left-2 right-2 z-10 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-[32px] shadow-sm">
-                      <div className="flex items-center gap-2">
-              <div className="flex-1 min-w-0">
-                <div className="text-2xl font-medium text-[#15171a] font-alpha-lyrae">
-                  {setup.name}
+                <div className="hidden md:flex items-center gap-2 text-base">
+                  <span className="text-gray-500">by</span>
+                  <span className="text-[#15171a] font-medium">{setup.user_name}</span>
                 </div>
               </div>
-              <div className="hidden md:flex items-center gap-2 text-base">
-                <span className="text-gray-500">by</span>
-                <span className="text-[#15171a] font-medium">{setup.user_name}</span>
-              </div>
             </div>
-        </div>
 
-        {/* Bottom bar - User info and actions */}
-        <div className="absolute bottom-2 left-2 right-2 z-10 px-4 py-4 bg-white/90 backdrop-blur-sm rounded-[24px] shadow-sm">
-          <div className="flex items-end justify-between">
-            <div className="flex flex-col">
-              <div className="text-[16px] text-gray-500 font-medium leading-[24px]">
-                {setup.user_name}
-              </div>
-              <div className="text-[18px] text-[#15171a] leading-[28px]">
-                {setup.comment || 'No comment provided'}
+            {/* Bottom bar - User info and actions */}
+            <div className="absolute bottom-2 left-2 right-2 z-10 px-4 py-4 bg-white/90 backdrop-blur-sm rounded-[24px] shadow-sm">
+              <div className="flex items-end justify-between">
+                <div className="flex flex-col">
+                  <div className="text-[16px] text-gray-500 font-medium leading-[24px]">
+                    {setup.user_name}
+                  </div>
+                  <div className="text-[18px] text-[#15171a] leading-[28px]">
+                    {setup.comment || 'No comment provided'}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleShare}
+                    className="w-12 h-12 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center hover:bg-gray-100 transition-colors"
+                  >
+                    <Share2 className="w-6 h-6 text-gray-500" />
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="w-12 h-12 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center hover:bg-gray-100 transition-colors"
+                  >
+                    <Trash2 className="w-6 h-6 text-gray-500" />
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={handleShare}
-                className="w-12 h-12 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center hover:bg-gray-100 transition-colors"
+
+            {/* React Flow Canvas */}
+            <ReactFlowProvider>
+              <ReactFlow
+                nodes={flowNodes}
+                edges={flowEdges}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                fitView
+                fitViewOptions={{ padding: 0.2 }}
+                nodesDraggable={false}
+                nodesConnectable={false}
+                elementsSelectable={false}
+                panOnDrag={true}
+                zoomOnDoubleClick={false}
+                deleteKeyCode={[]} // Disable delete
+                defaultViewport={{ x: 0, y: 0, zoom: 0.7 }}
+                minZoom={0.3}
+                maxZoom={2}
+                connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 3, strokeDasharray: '5,5' }}
+                defaultEdgeOptions={{
+                  type: 'custom',
+                  style: { 
+                    stroke: '#6B7280', 
+                    strokeWidth: 1,
+                    strokeDasharray: '4 4',
+                    cursor: 'pointer'
+                  },
+                  focusable: true,
+                  deletable: true
+                }}
+                style={{ backgroundColor: '#F9F9FA' }}
+                proOptions={{ hideAttribution: true }}
               >
-                <Share2 className="w-6 h-6 text-gray-500" />
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="w-12 h-12 bg-[#f9f9fa] rounded-[24px] flex items-center justify-center hover:bg-gray-100 transition-colors"
-              >
-                <Trash2 className="w-6 h-6 text-gray-500" />
-              </button>
-            </div>
+                <Background color="#F9F9FA" />
+              </ReactFlow>
+            </ReactFlowProvider>
           </div>
         </div>
-
-        {/* React Flow Canvas */}
-        <ReactFlowProvider>
-          <ReactFlow
-            nodes={flowNodes}
-            edges={flowEdges}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            fitView
-            fitViewOptions={{ padding: 0.2 }}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            elementsSelectable={false}
-            panOnDrag={true}
-            zoomOnDoubleClick={false}
-            deleteKeyCode={[]} // Disable delete
-            defaultViewport={{ x: 0, y: 0, zoom: 0.7 }}
-            minZoom={0.3}
-            maxZoom={2}
-            connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 3, strokeDasharray: '5,5' }}
-            defaultEdgeOptions={{
-              type: 'custom',
-              style: { 
-                stroke: '#6B7280', 
-                strokeWidth: 1,
-                strokeDasharray: '4 4',
-                cursor: 'pointer'
-              },
-              focusable: true,
-              deletable: true
-            }}
-            style={{ backgroundColor: '#F9F9FA' }}
-            proOptions={{ hideAttribution: true }}
-          >
-            <Background color="#F9F9FA" />
-          </ReactFlow>
-        </ReactFlowProvider>
       </div>
-    </div>
+
+      {/* Image Modal */}
+      {showImageModal && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowImageModal(false)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] w-full h-full">
+            <button
+              onClick={() => setShowImageModal(false)}
+              className="absolute top-4 right-4 z-10 w-12 h-12 bg-black bg-opacity-50 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-opacity"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+            <img 
+              src={setup.image_url} 
+              alt={setup.name}
+              className="w-full h-full object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Delete modal */}
       {showDeleteModal && (
