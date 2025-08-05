@@ -100,18 +100,27 @@ function CombinationsPageContent() {
     }
 
     const savedOnlyRealUsers = safeGetItem('combinations-only-real-users')
-    if (savedOnlyRealUsers) {
+    if (savedOnlyRealUsers !== null) {
       setOnlyRealUsers(savedOnlyRealUsers === 'true')
+    } else {
+      setOnlyRealUsers(true)
+      safeSetItem('combinations-only-real-users', 'true')
     }
 
     const savedWithPhoto = safeGetItem('combinations-with-photo')
-    if (savedWithPhoto) {
+    if (savedWithPhoto !== null) {
       setWithPhoto(savedWithPhoto === 'true')
+    } else {
+      setWithPhoto(false)
+      safeSetItem('combinations-with-photo', 'false')
     }
 
     const savedDaisyChain = safeGetItem('combinations-daisy-chain')
-    if (savedDaisyChain) {
+    if (savedDaisyChain !== null) {
       setDaisyChain(savedDaisyChain === 'true')
+    } else {
+      setDaisyChain(false)
+      safeSetItem('combinations-daisy-chain', 'false')
     }
     
     // 페이지 포커스 시 상태 복원 (다른 페이지에서 돌아올 때)
@@ -131,16 +140,25 @@ function CombinationsPageContent() {
       const savedOnlyRealUsers = safeGetItem('combinations-only-real-users')
       if (savedOnlyRealUsers !== null) {
         setOnlyRealUsers(savedOnlyRealUsers === 'true')
+      } else {
+        setOnlyRealUsers(true)
+        safeSetItem('combinations-only-real-users', 'true')
       }
 
       const savedWithPhoto = safeGetItem('combinations-with-photo')
       if (savedWithPhoto !== null) {
         setWithPhoto(savedWithPhoto === 'true')
+      } else {
+        setWithPhoto(false)
+        safeSetItem('combinations-with-photo', 'false')
       }
 
       const savedDaisyChain = safeGetItem('combinations-daisy-chain')
       if (savedDaisyChain !== null) {
         setDaisyChain(savedDaisyChain === 'true')
+      } else {
+        setDaisyChain(false)
+        safeSetItem('combinations-daisy-chain', 'false')
       }
     }
     
@@ -267,16 +285,25 @@ function CombinationsPageContent() {
       const savedOnlyRealUsers = safeGetItem('combinations-only-real-users')
       if (savedOnlyRealUsers !== null) {
         setOnlyRealUsers(savedOnlyRealUsers === 'true')
+      } else {
+        setOnlyRealUsers(true)
+        safeSetItem('combinations-only-real-users', 'true')
       }
 
       const savedWithPhoto = safeGetItem('combinations-with-photo')
       if (savedWithPhoto !== null) {
         setWithPhoto(savedWithPhoto === 'true')
+      } else {
+        setWithPhoto(false)
+        safeSetItem('combinations-with-photo', 'false')
       }
 
       const savedDaisyChain = safeGetItem('combinations-daisy-chain')
       if (savedDaisyChain !== null) {
         setDaisyChain(savedDaisyChain === 'true')
+      } else {
+        setDaisyChain(false)
+        safeSetItem('combinations-daisy-chain', 'false')
       }
     }
   }, [isClient])
