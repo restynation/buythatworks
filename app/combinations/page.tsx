@@ -168,31 +168,35 @@ function CombinationsPageContent() {
   // 필터링된 결과를 반환하는 함수
   const getFilteredSetups = useCallback(() => {
     return setups.filter(setup => {
-      // 선택된 제품들로 필터링
+      // 모든 필터 조건을 AND로 적용
+      const conditions = []
+
+      // 1. 선택된 제품들로 필터링 (AND 조건)
       if (selectedProducts.length > 0) {
         const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
         const hasAllSelectedProducts = selectedProducts.every(product => 
           setupProductIds.includes(product.id)
         )
-        if (!hasAllSelectedProducts) return false
+        conditions.push(hasAllSelectedProducts)
       }
 
-      // 실제 사용자 설정만 보기 필터
-      if (onlyRealUsers && !setup.is_current) {
-        return false
+      // 2. 실제 사용자 설정만 보기 필터
+      if (onlyRealUsers) {
+        conditions.push(setup.is_current)
       }
 
-      // 이미지가 있는 설정만 보기 필터
-      if (withPhoto && !setup.image_url) {
-        return false
+      // 3. 이미지가 있는 설정만 보기 필터
+      if (withPhoto) {
+        conditions.push(!!setup.image_url)
       }
 
-      // Daisy chain 설정만 보기 필터
-      if (daisyChain && !setup.daisy_chain) {
-        return false
+      // 4. Daisy chain 설정만 보기 필터
+      if (daisyChain) {
+        conditions.push(!!setup.daisy_chain)
       }
 
-      return true
+      // 모든 조건이 true여야 함 (AND 조건)
+      return conditions.every(condition => condition === true)
     })
   }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain])
 
