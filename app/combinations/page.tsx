@@ -185,13 +185,13 @@ function CombinationsPageContent() {
 
   // 필터링된 결과를 반환하는 함수
   const getFilteredSetups = useCallback(() => {
-    const filtered = setups.filter(setup => {
+    const filtered = setups.filter((setup: any) => {
       // 모든 필터 조건을 AND로 적용
       const conditions = []
 
       // 1. 선택된 제품들로 필터링 (AND 조건)
       if (selectedProducts.length > 0) {
-        const setupProductIds = setup.setup_blocks?.map(block => block.product_id) || []
+        const setupProductIds = setup.setup_blocks?.map((block: any) => block.product_id) || []
         const hasAllSelectedProducts = selectedProducts.every(product => 
           setupProductIds.includes(product.id)
         )
@@ -249,12 +249,19 @@ function CombinationsPageContent() {
     setHasMore(filteredSetups.length > ITEMS_PER_PAGE)
   }, [getFilteredSetups, isClient])
 
-  // 필터 변경 시 결과 새로 로드
+  // 필터 변경 시 결과 새로 로드 (localStorage 저장과 분리)
   useEffect(() => {
     if (isClient && setups.length > 0) {
       reloadResults()
     }
   }, [selectedProducts, onlyRealUsers, withPhoto, daisyChain, isClient, reloadResults])
+
+  // 초기 데이터 로드 시 필터 적용
+  useEffect(() => {
+    if (isClient && setups.length > 0 && displayedSetups.length === 0) {
+      reloadResults()
+    }
+  }, [setups, isClient, reloadResults, displayedSetups.length])
 
   // 페이지 마운트 시 상태 복원 (다른 페이지에서 돌아올 때)
   useEffect(() => {
