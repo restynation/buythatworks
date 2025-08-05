@@ -167,7 +167,7 @@ function CombinationsPageContent() {
 
   // 필터링된 결과를 반환하는 함수
   const getFilteredSetups = useCallback(() => {
-    return setups.filter(setup => {
+    const filtered = setups.filter(setup => {
       // 모든 필터 조건을 AND로 적용
       const conditions = []
 
@@ -196,8 +196,33 @@ function CombinationsPageContent() {
       }
 
       // 모든 조건이 true여야 함 (AND 조건)
-      return conditions.every(condition => condition === true)
+      const result = conditions.every(condition => condition === true)
+      
+      // 디버깅을 위한 로그 (daisyChain과 onlyRealUsers가 모두 체크된 경우)
+      if (daisyChain && onlyRealUsers) {
+        console.log('Filter debug:', {
+          setupId: setup.id,
+          setupName: setup.name,
+          isCurrent: setup.is_current,
+          daisyChain: setup.daisy_chain,
+          conditions: conditions,
+          result: result
+        })
+      }
+      
+      return result
     })
+
+    console.log('Filter summary:', {
+      totalSetups: setups.length,
+      filteredCount: filtered.length,
+      selectedProducts: selectedProducts.length,
+      onlyRealUsers,
+      withPhoto,
+      daisyChain
+    })
+
+    return filtered
   }, [setups, selectedProducts, onlyRealUsers, withPhoto, daisyChain])
 
   // 필터 변경 시 결과 완전히 새로 로드
