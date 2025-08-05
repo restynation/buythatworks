@@ -269,8 +269,8 @@ export default function CombinationDetail({ setupId }: Props) {
   }
 
   const handleSeePrice = (product: Product) => {
-    // Open product link in new tab
-    window.open(product.image_url, '_blank')
+    // Open Apple.com in new tab
+    window.open('https://www.apple.com', '_blank')
   }
 
   if (loading) {
