@@ -5,7 +5,7 @@ export interface DeviceType {
 
 export interface PortType {
   id: number
-  code: 'TYPE_C' | 'TYPE_B' | 'HDMI' | 'DP' | 'MINIDP'
+  code: 'TYPE_C' | 'TYPE_B' | 'HDMI' | 'DP' | 'MINIDP' | 'built-in'
 }
 
 export interface Product {

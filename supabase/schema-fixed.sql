@@ -103,6 +103,19 @@ ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE device_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE port_types ENABLE ROW LEVEL SECURITY;
 
+-- Add port types
+INSERT INTO port_types (code) VALUES 
+  ('HDMI'),
+  ('DP'),
+  ('Mini DP'),
+  ('Type-C'),
+  ('Type-C (Dongle)'),
+  ('Type-A'),
+  ('Type-A (Dongle)'),
+  ('Wireless'),
+  ('built-in')
+ON CONFLICT (code) DO NOTHING;
+
 -- RLS Policies for anonymous read access
 CREATE POLICY "Allow anonymous read on setups" ON setups
   FOR SELECT TO anon

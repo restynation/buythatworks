@@ -89,11 +89,15 @@ ON CONFLICT (name) DO NOTHING;
 
 -- 포트 타입 데이터
 INSERT INTO port_types (code) VALUES 
-  ('TYPE_C'),
-  ('TYPE_B'),
   ('HDMI'),
   ('DP'),
-  ('MINIDP')
+  ('Mini DP'),
+  ('Type-C'),
+  ('Type-C (Dongle)'),
+  ('Type-A'),
+  ('Type-A (Dongle)'),
+  ('Wireless'),
+  ('built-in')
 ON CONFLICT (code) DO NOTHING;
 
 -- 5. 인덱스 생성

@@ -15,7 +15,8 @@ UPDATE port_types SET code = 'Mini DP' WHERE code = 'MINIDP';
 INSERT INTO port_types (code) VALUES
   ('Type-A (Dongle)'),
   ('Type-C (Dongle)'),
-  ('Wireless')
+  ('Wireless'),
+  ('built-in')
 ON CONFLICT (code) DO NOTHING;
 
 -- Insert sample Mac products

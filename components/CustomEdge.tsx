@@ -204,7 +204,7 @@ export default function CustomEdge({
                     {data?.portTypes
                       ?.filter(portType => portType.code !== 'Wireless')
                       ?.sort((a, b) => {
-                        const order = ['HDMI', 'DP', 'Mini DP', 'Type-C', 'Type-C (Dongle)', 'Type-A', 'Type-A (Dongle)']
+                        const order = ['HDMI', 'DP', 'Mini DP', 'Type-C', 'Type-C (Dongle)', 'Type-A', 'Type-A (Dongle)', 'built-in']
                         const aIndex = order.indexOf(a.code)
                         const bIndex = order.indexOf(b.code)
                         return aIndex - bIndex
@@ -252,7 +252,7 @@ export default function CustomEdge({
                     {data?.portTypes
                       ?.filter(portType => portType.code !== 'Wireless')
                       ?.sort((a, b) => {
-                        const order = ['HDMI', 'DP', 'Mini DP', 'Type-C', 'Type-C (Dongle)', 'Type-A', 'Type-A (Dongle)']
+                        const order = ['HDMI', 'DP', 'Mini DP', 'Type-C', 'Type-C (Dongle)', 'Type-A', 'Type-A (Dongle)', 'built-in']
                         const aIndex = order.indexOf(a.code)
                         const bIndex = order.indexOf(b.code)
                         return aIndex - bIndex
