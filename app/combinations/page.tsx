@@ -885,7 +885,7 @@ function CombinationsPageContent() {
 
                         return (
              <Link key={setup.id} href={`/combinations/${setup.id}`}>
-               <div className="bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer border border-transparent hover:bg-white hover:border-[#e1e3e6] transition-all group">
+               <div className="bg-[#f9f9fa] rounded-[32px] p-6 cursor-pointer border border-transparent hover:bg-white hover:border-[#e1e3e6] transition-all group overflow-hidden">
                 <div className="flex flex-col gap-20">
                   {/* 헤더 */}
                   <div className="flex items-start justify-between min-w-0 gap-4">
@@ -923,7 +923,7 @@ function CombinationsPageContent() {
                   </div>
 
                   {/* 디바이스 목록 */}
-                  <div className="flex overflow-hidden gap-2">
+                  <div className="flex gap-2">
                     {setup.setup_blocks
                       ?.sort((a: any, b: any) => {
                         // Device type별 정렬: computer, monitor, hub, mouse, keyboard
